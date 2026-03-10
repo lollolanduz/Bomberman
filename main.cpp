@@ -1,12 +1,69 @@
-#include <iostream>
 #include <pdcurses.h>
-using namespace std;
+#include "Mappa.h"
+#include "Menu.h"
 
 int main() {
-    initscr();            // Inizializza lo schermo
-    printw("Ciao da PDCurses su CLion!");  // Stampa testo
-    refresh();            // Aggiorna lo schermo per mostrare le modifiche
-    getch();              // Aspetta che l'utente prema un tasto
-    endwin();             // Chiude la modalità curses
+    initscr();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, 28, COLOR_BLACK);
+    cbreak();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+
+    bool chiudiTutto = false;
+
+    //Ciclo principale del programma
+    while (!chiudiTutto) {
+
+        Menu menuPrincipale;
+
+        //Funzione che disegna il menu e rimane attiva fino a che non si esegue una scelta
+        int scelta = menuPrincipale.gestisciInput();
+
+        //Se si sceglie gioca
+        if (scelta == 0) {
+            clear();
+            //Eseguiamo il codice della mappa
+            Mappa gestoreMappa;
+            gestoreMappa.livelloCorrente->disegna();
+
+            bool inGioco = true;
+            while(inGioco) {
+                int input = getch();
+
+                switch(input) {
+                    case 'd':
+                        gestoreMappa.vaiAlProssimo();
+                        break;
+                    case 'a':
+                        gestoreMappa.tornaAlPrecedente();
+                        break;
+                    case 'q':
+                        // Tasto 'q' esce dalla partita e torna al menù (per ora)
+                        inGioco = false;
+                        break;
+                }
+            }
+            clear();
+
+        }
+        //Se si sceglie classifica
+        else if (scelta == 1) {
+            clear();
+            mvprintw(10, 10, "Schermata Classifica in costruzione! Premi un tasto per tornare indietro...");
+            refresh();
+            getch();
+            clear();
+        }
+        //Se si sceglie esci
+        else if (scelta == 2) {
+            //Interrompe il ciclo while
+            chiudiTutto = true;
+        }
+    }
+
+    endwin();
     return 0;
 }

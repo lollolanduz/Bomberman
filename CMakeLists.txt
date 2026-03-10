@@ -10,6 +10,12 @@ link_directories(C:/msys64/mingw64/lib)
 add_executable(Bomberman main.cpp
         Entita.cpp
         Entita.h
+        Menu.cpp
+        Menu.h
+        Mappa.cpp
+        Mappa.h
+        Livello.cpp
+        Livello.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)
