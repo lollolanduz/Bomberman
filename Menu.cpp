@@ -26,10 +26,12 @@ void Menu::disegnaMenu() {
 
     //Serve a stampare la scritta bomberman al centro dello schermo
     int title_y = center_y - 8;
+    attron(COLOR_PAIR(3));
     mvprintw(title_y, center_x - 24,   "    __   ___   _  _  __  ___  __   _  _   __   _   ");
     mvprintw(title_y+1, center_x - 24, "   |__) / _ \\ | \\/ ||__)|___ |__)\ | \\/ | |__| | \\ |");
     mvprintw(title_y+2, center_x - 24, "   |__) \\___/ |    ||__)|___ |  \\ |    | |  | |  \\|");
     mvprintw(title_y+3, center_x - 24, "  [_________________________________________________]");
+    attroff(COLOR_PAIR(3));
 
 
     //stampa la freccia che indica le varie scelte
