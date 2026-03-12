@@ -16,6 +16,8 @@ add_executable(Bomberman main.cpp
         Mappa.h
         Livello.cpp
         Livello.h
+        Player.cpp
+        Player.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)
