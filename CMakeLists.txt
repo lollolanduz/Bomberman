@@ -8,8 +8,8 @@ include_directories(C:/msys64/mingw64/include/pdcurses)
 link_directories(C:/msys64/mingw64/lib)
 
 add_executable(Bomberman main.cpp
-        Entita.cpp
-        Entita.h
+        Entity.cpp
+        Entity.h
         Menu.cpp
         Menu.h
         Mappa.cpp

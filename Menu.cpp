@@ -68,7 +68,7 @@ int Menu::gestisciInput() {
 
             case KEY_DOWN:
             case 's':
-                sceltaSelezionata++;
+~                sceltaSelezionata++;
                 // Effetto Ciclico: se vado sotto l'ultimo, salto al primo
                 if (sceltaSelezionata > 2) {
                     sceltaSelezionata = 0;
