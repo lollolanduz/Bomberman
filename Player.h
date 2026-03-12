@@ -18,7 +18,7 @@ public:
 
     int getlife();         //funzione utile al main per sapere quante vite ha il player
 
-    void subisciDanno();   //funzione per togliere una vita quando subisce danno
+    void take_damage();   //funzione per togliere una vita quando subisce danno
 
     void bomb_placement();   //piazzamento bombe
 
