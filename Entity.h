@@ -10,21 +10,16 @@ class Entity {
 protected:          //protected così solo le sottoclassi possono ereditare
     int x;
     int y;
-    char simbolo;
+    char symbol;
 
 public:
-    Entity(int X, int Y, char S) {
-        x = X;
-        y = Y;
-        simbolo = S;
-    }
-    int getX() {            //
-        return x;           //
-    }                       //funzioni utili alla mappa per sapere
-                            //dove si trova l'entità
-    int getY() {            //
-        return y;           //
-    }
+    Entity(int X, int Y, char S);   //costruttore
+
+    int getX();                     //funzioni utili alla mappa per sapere
+                                    //dove si trova l'entità
+    int getY();
+
+    void draw();                    //funzione per disegnare il simbolo sulla mappa
 
 };
 
