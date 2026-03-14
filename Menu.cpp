@@ -10,7 +10,7 @@ Menu::Menu() {
     //Apre con "GIOCA" già selezionato
     sceltaSelezionata = 0;
 
-    // Copio le stringhe dentro la matrice
+    //Copio le stringhe dentro la matrice
     strcpy(opzioni[0], "GIOCA");
     strcpy(opzioni[1], "CLASSIFICA");
     strcpy(opzioni[2], "ESCI");
@@ -19,6 +19,7 @@ Menu::Menu() {
 void Menu::disegnaMenu() {
     clear();
 
+    //Per ottenere il centro dello schermo
     int max_y = getmaxy(stdscr);
     int max_x = getmaxx(stdscr);
     int center_y = max_y / 2;
@@ -30,7 +31,7 @@ void Menu::disegnaMenu() {
     mvprintw(title_y, center_x - 24,   "    __   ___   _  _  __  ___  __   _  _   __   _   ");
     mvprintw(title_y+1, center_x - 24, "   |__) / _ \\ | \\/ ||__)|___ |__)\ | \\/ | |__| | \\ |");
     mvprintw(title_y+2, center_x - 24, "   |__) \\___/ |    ||__)|___ |  \\ |    | |  | |  \\|");
-    mvprintw(title_y+3, center_x - 24, "  [_________________________________________________]");
+    mvprintw(title_y+3, center_x - 24, "  [________________________________________________]");
     attroff(COLOR_PAIR(3));
 
 
@@ -39,6 +40,7 @@ void Menu::disegnaMenu() {
         int riga_y = center_y + (i * 2);
 
         if (i == sceltaSelezionata) {
+            //Colore in reverse per dare l'effetto "selezionato" in un gioco o in una interfaccia
             attron(A_REVERSE | A_BOLD);
             mvprintw(riga_y, center_x - 8, " -> %s ", opzioni[i]);
             attroff(A_REVERSE | A_BOLD);
@@ -68,14 +70,14 @@ int Menu::gestisciInput() {
 
             case KEY_DOWN:
             case 's':
-~                sceltaSelezionata++;
+                sceltaSelezionata++;
                 // Effetto Ciclico: se vado sotto l'ultimo, salto al primo
                 if (sceltaSelezionata > 2) {
                     sceltaSelezionata = 0;
                 }
                 break;
 
-            // Gestione del tasto ENTER (Invio).
+            //Gestione del tasto ENTER (Invio).
             case 10:      // Windows
             case 13:      // Linux / Mac
             case KEY_ENTER:

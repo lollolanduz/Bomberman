@@ -20,7 +20,7 @@ Mappa::Mappa() {
         temp = nuovoLivello;
     }
 
-    // Iniziamo al Livello 1
+    //Inizia al livello 1
     livelloCorrente = testa;
 }
 
@@ -41,7 +41,7 @@ void Mappa::tornaAlPrecedente() {
 Mappa::~Mappa() {
     Livello* temp = testa;
 
-    // Scorriamo tutta la lista finché non finisce
+    //Scorre tutta la lista finchè non finisce
     while (temp != nullptr) {
         Livello* livelloDaCancellare = temp;
         temp = temp->successivo;

@@ -12,7 +12,7 @@ class Livello {
 public:
     int idLivello;
 
-    // I due puntatori per lista bidirezionale
+    //I due puntatori per lista bidirezionale
     Livello* successivo;
     Livello* precedente;
 

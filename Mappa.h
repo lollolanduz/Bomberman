@@ -18,6 +18,8 @@ public:
     Livello* livelloCorrente; // Punta al livello in cui si trova il giocatore ora
 
     Mappa();
+
+    //Distruttore della Mappa
     ~Mappa();
 
     void vaiAlProssimo();

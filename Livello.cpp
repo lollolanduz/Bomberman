@@ -51,6 +51,7 @@ Livello::Livello(int id) {
             }
         }
     }
+
     //S = spazio vitale
     griglia[1][1]= 'S';
     griglia[1][2]= 'S';
@@ -84,7 +85,7 @@ void Livello::disegna() {
         }
     }
 
-    // Stampa del livello
+    //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
 
     refresh();
