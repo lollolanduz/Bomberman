@@ -56,6 +56,36 @@ Livello::Livello(int id) {
     griglia[1][1]= 'S';
     griglia[1][2]= 'S';
     griglia[2][1]= 'S';
+
+    if (idLivello >= 4) {
+        bool teletrasporto_piazzato = false;
+
+        while (!teletrasporto_piazzato) {
+
+            //Coordinate casuali del primo teletrasporto
+            int rand_y = (rand() % (max_y - 2)) + 1;
+            int rand_x = (rand() % (max_x - 2)) + 1;
+
+            //Coordinate del suo opposto
+            int opp_y = max_y - 1 - rand_y;
+            int opp_x = max_x - 1 - rand_x;
+
+            //Verifico se sono spazi vuoti
+            if (griglia[rand_y][rand_x] == ' ' && griglia[opp_y][opp_x] == ' ') {
+
+                //Entrambi diversi dalla zona di spawn
+                if (griglia[rand_y][rand_x] != 'S' && griglia[opp_y][opp_x] != 'S') {
+
+                    griglia[rand_y][rand_x] = 'T';
+                    griglia[opp_y][opp_x] = 'T';
+
+                    //Serve ad uscire dal while
+                    teletrasporto_piazzato = true;
+                }
+            }
+        }
+    }
+
 }
 
 void Livello::disegna() {
@@ -77,10 +107,14 @@ void Livello::disegna() {
                 attroff(COLOR_PAIR(1) | A_REVERSE);
             }
             else if (griglia[y][x] == 'D') {
-                // Muro Distruttibile: Colore 2 (Giallo), Grassetto (BOLD), carattere scacchiera
                 attron(COLOR_PAIR(2) | A_REVERSE);
                 mvaddch(start_y + y, start_x + x, ' ');
                 attroff(COLOR_PAIR(2) | A_REVERSE);
+            }
+            else if (griglia[y][x] == 'T') {
+                attron(COLOR_PAIR(6));
+                mvaddch(start_y + y, start_x + x, '0');
+                attroff(COLOR_PAIR(6));
             }
         }
     }
