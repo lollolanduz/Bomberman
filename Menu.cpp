@@ -29,7 +29,7 @@ void Menu::disegnaMenu() {
     //animazione stile retro in cui si genera la scritta dall'alto verso il basso
     int title_y = center_y - 8;
     attron(COLOR_PAIR(4));
-    mvprintw(title_y, center_x - 24,   "    __   ___   _  _  __  ___  __   _  _   __   _   ");
+    mvprintw(title_y, center_x - 24,   "  ___  ___  __  __ ___ ___ ___ __  __   _   _  _ ");
     attroff(COLOR_PAIR(4));
 
     if (!animazioneCompletata) {
@@ -38,7 +38,7 @@ void Menu::disegnaMenu() {
     }
 
     attron(COLOR_PAIR(5) | A_BOLD);
-    mvprintw(title_y+1, center_x - 24, "   |__) / _ \\ | \\/ ||__)|___ |__)\ | \\/ | |__| | \\ |");
+    mvprintw(title_y+1, center_x - 24, " | _ )/ _ \\|  \\/  | _ ) __| _ \\  \\/  | /_\\ | \\| |");
     attroff(COLOR_PAIR(5) | A_BOLD);
 
     if (!animazioneCompletata) {
@@ -47,7 +47,7 @@ void Menu::disegnaMenu() {
     }
 
     attron(COLOR_PAIR(3) | A_BOLD);
-    mvprintw(title_y+2, center_x - 24, "   |__) \\___/ |    ||__)|___ |  \\ |    | |  | |  \\|");
+    mvprintw(title_y+2, center_x - 24, " | _ \\ (_) | |\\/| | _ \\ _||   / |\\/| |/ _ \\| .` |");
     attroff(COLOR_PAIR(3) | A_BOLD);
 
     if (!animazioneCompletata) {
@@ -56,7 +56,7 @@ void Menu::disegnaMenu() {
     }
 
     attron(COLOR_PAIR(3) | A_BOLD);
-    mvprintw(title_y+3, center_x - 24, "  [________________________________________________]");
+    mvprintw(title_y+3, center_x - 24, " |___/\\___/|_|  |_|___/___|_|_\\_|  |_/_/ \\_\\_|\\_|");
     attroff(COLOR_PAIR(3) | A_BOLD);
 
     if (!animazioneCompletata) {
