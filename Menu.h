@@ -9,6 +9,8 @@ class Menu {
 private:
     int sceltaSelezionata;
 
+    bool animazioneCompletata=false;
+
     // Matrice di char: 3 stringhe, ognuna lunga al massimo 20 caratteri
     char opzioni[3][20];
 

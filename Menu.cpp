@@ -26,31 +26,64 @@ void Menu::disegnaMenu() {
     int center_x = max_x / 2;
 
     //Serve a stampare la scritta bomberman al centro dello schermo
+    //animazione stile retro in cui si genera la scritta dall'alto verso il basso
     int title_y = center_y - 8;
-    attron(COLOR_PAIR(3));
+    attron(COLOR_PAIR(4));
     mvprintw(title_y, center_x - 24,   "    __   ___   _  _  __  ___  __   _  _   __   _   ");
-    mvprintw(title_y+1, center_x - 24, "   |__) / _ \\ | \\/ ||__)|___ |__)\ | \\/ | |__| | \\ |");
-    mvprintw(title_y+2, center_x - 24, "   |__) \\___/ |    ||__)|___ |  \\ |    | |  | |  \\|");
-    mvprintw(title_y+3, center_x - 24, "  [________________________________________________]");
-    attroff(COLOR_PAIR(3));
+    attroff(COLOR_PAIR(4));
 
+    if (!animazioneCompletata) {
+        refresh();
+        napms(100);
+    }
+
+    attron(COLOR_PAIR(5) | A_BOLD);
+    mvprintw(title_y+1, center_x - 24, "   |__) / _ \\ | \\/ ||__)|___ |__)\ | \\/ | |__| | \\ |");
+    attroff(COLOR_PAIR(5) | A_BOLD);
+
+    if (!animazioneCompletata) {
+        refresh();
+        napms(100);
+    }
+
+    attron(COLOR_PAIR(3) | A_BOLD);
+    mvprintw(title_y+2, center_x - 24, "   |__) \\___/ |    ||__)|___ |  \\ |    | |  | |  \\|");
+    attroff(COLOR_PAIR(3) | A_BOLD);
+
+    if (!animazioneCompletata) {
+        refresh();
+        napms(100);
+    }
+
+    attron(COLOR_PAIR(3) | A_BOLD);
+    mvprintw(title_y+3, center_x - 24, "  [________________________________________________]");
+    attroff(COLOR_PAIR(3) | A_BOLD);
+
+    if (!animazioneCompletata) {
+        refresh();
+        napms(100);
+    }
+
+    animazioneCompletata = true;
 
     //stampa la freccia che indica le varie scelte
     for (int i = 0; i < 3; i++) {
         int riga_y = center_y + (i * 2);
 
         if (i == sceltaSelezionata) {
-            //Colore in reverse per dare l'effetto "selezionato" in un gioco o in una interfaccia
-            attron(A_REVERSE | A_BOLD);
-            mvprintw(riga_y, center_x - 8, " -> %s ", opzioni[i]);
-            attroff(A_REVERSE | A_BOLD);
+            //Colore giallo per mettere in risalto la scelta selezionata
+            attron(COLOR_PAIR(4)| A_BOLD | A_BLINK);
+            mvprintw(riga_y, center_x - 8, " ► %s ", opzioni[i]);
+            attroff(COLOR_PAIR(4) | A_BOLD | A_BLINK);
         } else {
-            mvprintw(riga_y, center_x - 8, "    %s ", opzioni[i]);
+            mvprintw(riga_y, center_x - 8, "   %s ", opzioni[i]);
         }
     }
 
     refresh();
 }
+
+
 
 int Menu::gestisciInput() {
     while (true) {
