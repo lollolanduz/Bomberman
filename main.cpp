@@ -53,7 +53,7 @@ int main() {
 
             bool inGioco = true;
             //Serve a non far bloccare il ciclo while se no si fermerebbe
-            //a input=getch
+            //a int input=getch
             timeout(100);
             while(inGioco) {
                 int input = getch();
