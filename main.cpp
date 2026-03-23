@@ -18,8 +18,6 @@ int main() {
 
     cbreak();
     noecho();
-    //Serve a non far bloccare il ciclo while
-    timeout(100); //oppure
 
     curs_set(0);
     keypad(stdscr, TRUE);
@@ -54,6 +52,9 @@ int main() {
             refresh(); // Mostra il fotogramma aggiornato
 
             bool inGioco = true;
+            //Serve a non far bloccare il ciclo while se no si fermerebbe
+            //a input=getch
+            timeout(100);
             while(inGioco) {
                 int input = getch();
 
