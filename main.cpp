@@ -42,19 +42,34 @@ int main() {
             // 1. FAI NASCERE IL TUO EROE (fuori dal ciclo)
             Player giocatore(1, 1, '@', 3);
 
+            //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
+            gestoreMappa.livelloCorrente->disegna();
+
+            //Disegna il giocatore passandogli l'offset!
+            giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+
+            refresh(); // Mostra il fotogramma aggiornato
+
             bool inGioco = true;
             while(inGioco) {
                 int input = getch();
 
-                // ho sostituito lo switch con un solo if
-                if (input == 'q') {
-                    inGioco = false; //esce dalla partita
+                switch (input) {
+                    case 'q':
+                        inGioco = false; // Esce dalla partita e torna al menu
+                        break;
+                    case '+':
+                        gestoreMappa.vaiAlProssimo();
+                        break;
+                    case '-':
+                        gestoreMappa.tornaAlPrecedente();
+                        break;
+                    default:
+                        // Se premo le freccette (o altri tasti), muovo il giocatore
+                        giocatore.move(input, gestoreMappa.livelloCorrente);
+                        break;
                 }
-                else {
-                    giocatore.move(input, gestoreMappa.livelloCorrente);
-                }
-
-                clear(); //pulisce lo schermo vecchio
+                clear();
 
                 //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
@@ -62,7 +77,7 @@ int main() {
                 //Disegna il giocatore passandogli l'offset!
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
-                refresh(); // Mostra il fotogramma aggiornato
+                refresh();
             }
             clear();
         }
