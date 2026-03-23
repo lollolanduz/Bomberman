@@ -139,8 +139,8 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
             if (tempoAttuale - tempodiInizio >= 3) {
                 giocatore_y = max_y - 1 - giocatore_y;
                 giocatore_x = max_x - 1 - giocatore_x;
-                //Per impostare il teletrasporto in pausa
-                //Il timer non ripartirà al prossimo giro
+
+                //Per non far ripartire il timer al prossimo giro
                 tempodiInizio = -1;
             }
         }
