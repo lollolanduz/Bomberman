@@ -25,6 +25,8 @@ public:
     void collect_item();    //funzione per collezionare oggetti
 
     void move(int input, Livello* currentLevel );
+
+    void check_teleport(Livello* currentLevel); //Controlla se attivare la funzione teletrasporto
 };
 
 

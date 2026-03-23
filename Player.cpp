@@ -59,6 +59,11 @@ void Player::move(int input, Livello *currentLevel) {
     }
 }
 
+//Per la funzione teletrasporto in livello.cpp
+void Player::check_teleport(Livello* currentLevel) {
+    currentLevel->gestisciTeletrasporto(y,x);
+}
+
 
 
 
