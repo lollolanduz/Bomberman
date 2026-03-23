@@ -18,6 +18,9 @@ int main() {
 
     cbreak();
     noecho();
+    //Serve a non far bloccare il ciclo while
+    timeout(100); //oppure
+
     curs_set(0);
     keypad(stdscr, TRUE);
 
@@ -67,6 +70,9 @@ int main() {
                     default:
                         // Se premo le freccette (o altri tasti), muovo il giocatore
                         giocatore.move(input, gestoreMappa.livelloCorrente);
+                        // Controlla se attivare il teletrasporto
+                        giocatore.check_teleport(gestoreMappa.livelloCorrente);
+
                         break;
                 }
                 clear();
