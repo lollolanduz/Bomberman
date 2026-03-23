@@ -56,10 +56,10 @@ int main() {
 
                 clear(); //pulisce lo schermo vecchio
 
-                // 1. Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
+                //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
 
-                // 2. ECCO "QUELLA ROBA": Disegna il giocatore passandogli l'offset!
+                //Disegna il giocatore passandogli l'offset!
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
                 refresh(); // Mostra il fotogramma aggiornato
