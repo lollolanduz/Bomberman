@@ -94,6 +94,7 @@ int main() {
             clear();
             mvprintw(10, 10, "Schermata Classifica in costruzione! Premi un tasto per tornare indietro...");
             refresh();
+            timeout(-1); //Per non far uscire dalla schermata della classifica
             getch();
             clear();
         }
