@@ -93,8 +93,8 @@ void Livello::disegna() {
     box(stdscr, 0, 0);
 
     //Coordinate del centro dello schermo
-    int start_y = getmaxy(stdscr) / 2 - max_y / 2;
-    int start_x = getmaxx(stdscr) / 2 - max_x / 2;
+    start_y = getmaxy(stdscr) / 2 - max_y / 2;
+    start_x = getmaxx(stdscr) / 2 - max_x / 2;
 
     for (int y = 0; y < max_y; y++) {
         for (int x = 0; x < max_x; x++) {

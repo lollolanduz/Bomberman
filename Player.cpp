@@ -13,7 +13,9 @@ int Player::getlife() {
 }
 
 void Player::take_damage() {
-    life = life - 1;
+    if (life > 0) {
+        life = life - 1;
+    }
 }
 
 void Player::bomb_placement() {
@@ -25,7 +27,36 @@ void Player::collect_item() {
 }
 
 void Player::move(int input, Livello *currentLevel) {
+    int nuovaX = x;
+    int nuovaY = y;
 
+
+    //con KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT si possono usare anche le freccette direzionali della tastiera
+    if (input == 'w' || input == KEY_UP) {
+        nuovaY--; // vado su
+    }
+    else if (input == 's' || input == KEY_DOWN) {
+        nuovaY++; // vado giù
+    }
+    else if (input == 'a' || input == KEY_LEFT) {
+        nuovaX--; // vado a sinistra
+    }
+    else if (input == 'd' || input == KEY_RIGHT) {
+        nuovaX++; // vado a destra
+    }
+    else {
+        //se ha premuto un tasto a caso, non faccio nulla e fermo la funzione
+        return;
+    }
+
+    //guardo dentro la mappa
+    char ostacolo = currentLevel->griglia[nuovaY][nuovaX];
+
+    //se la casella non è un muro solido ('M') e non è un muro da rompere ('D')
+    if (ostacolo != 'M' && ostacolo != 'D') {
+        x = nuovaX;
+        y = nuovaY;
+    }
 }
 
 

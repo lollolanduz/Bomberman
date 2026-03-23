@@ -1,6 +1,7 @@
 #include <pdcurses.h>
 #include "Mappa.h"
 #include "Menu.h"
+#include "Player.h"
 
 int main() {
     initscr();
@@ -31,32 +32,41 @@ int main() {
         int scelta = menuPrincipale.gestisciInput();
 
         //Se si sceglie gioca
+        // ... (codice precedente del main) ...
+
+        // Se si sceglie gioca
         if (scelta == 0) {
             clear();
-            //Eseguiamo il codice della mappa
             Mappa gestoreMappa;
-            gestoreMappa.livelloCorrente->disegna();
+
+            // 1. FAI NASCERE IL TUO EROE (fuori dal ciclo)
+            Player giocatore(1, 1, '@', 3);
 
             bool inGioco = true;
             while(inGioco) {
                 int input = getch();
 
-                switch(input) {
-                    case 'd':
-                        gestoreMappa.vaiAlProssimo();
-                        break;
-                    case 'a':
-                        gestoreMappa.tornaAlPrecedente();
-                        break;
-                    case 'q':
-                        // Tasto 'q' esce dalla partita e torna al menù (per ora)
-                        inGioco = false;
-                        break;
+                // ho sostituito lo switch con un solo if
+                if (input == 'q') {
+                    inGioco = false; //esce dalla partita
                 }
+                else {
+                    giocatore.move(input, gestoreMappa.livelloCorrente);
+                }
+
+                clear(); //pulisce lo schermo vecchio
+
+                // 1. Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
+                gestoreMappa.livelloCorrente->disegna();
+
+                // 2. ECCO "QUELLA ROBA": Disegna il giocatore passandogli l'offset!
+                giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+
+                refresh(); // Mostra il fotogramma aggiornato
             }
             clear();
-
         }
+
         //Se si sceglie classifica
         else if (scelta == 1) {
             clear();

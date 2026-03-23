@@ -7,8 +7,8 @@ Entity::Entity(int X, int Y, char S) {
     y = Y;
     symbol = S;
 }
-void Entity::draw() {
-    mvaddch(y, x, symbol);
+void Entity::draw(int offsetY, int offsetX) {
+    mvaddch(y + offsetY, x + offsetX, symbol);
 }
 
 int Entity::getX() {

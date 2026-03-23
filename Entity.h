@@ -19,7 +19,7 @@ public:
                                     //dove si trova l'entità
     int getY();
 
-    void draw();                    //funzione per disegnare il simbolo sulla mappa
+    void draw(int offsetY, int offsetX);                    //funzione per disegnare il simbolo sulla mappa
 
 };
 

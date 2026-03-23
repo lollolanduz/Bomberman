@@ -11,7 +11,8 @@
 class Livello {
 public:
     int idLivello;
-
+    int start_y;
+    int start_x;
     //I due puntatori per lista bidirezionale
     Livello* successivo;
     Livello* precedente;
