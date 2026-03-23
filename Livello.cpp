@@ -134,14 +134,19 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
         if (tempodiInizio == 0) {
             tempodiInizio = (int)std::time(nullptr);
         }
-        int tempoAttuale = (int)std::time(nullptr);
-        if (tempoAttuale - tempodiInizio >= 3) {
-            giocatore_y = max_y - 1 - giocatore_y;
-            giocatore_x = max_x - 1 - giocatore_x;
-            tempodiInizio=0;
+        else if (tempodiInizio > 0) {
+            int tempoAttuale = (int)std::time(nullptr);
+            if (tempoAttuale - tempodiInizio >= 3) {
+                giocatore_y = max_y - 1 - giocatore_y;
+                giocatore_x = max_x - 1 - giocatore_x;
+                //Per impostare il teletrasporto in pausa
+                //Il timer non ripartirà al prossimo giro
+                tempodiInizio = -1;
+            }
         }
     }
     else {
+        // Appena il giocatore fa un passo fuori dalla 'T' reimposto tutto a 0
         tempodiInizio = 0;
     }
 }
