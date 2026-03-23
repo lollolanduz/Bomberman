@@ -24,6 +24,9 @@ public:
 
     Livello(int id);
     void disegna();
+
+    void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
+    int tempodiInizio;
 };
 
 #endif

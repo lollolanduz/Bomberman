@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 #include "Livello.h"
 
 Livello::Livello(int id) {
@@ -10,6 +11,9 @@ Livello::Livello(int id) {
     //Puntatori che inizialmente non puntano a nulla
     successivo = nullptr;
     precedente = nullptr;
+
+    //Intero usato per la funzione teletrasporto
+    tempodiInizio = 0;
 
     //Stampo lo spazio vuoto in tutta la griglia, per evitare
     //che sia formata esclusivamente di "spazzatura"
@@ -123,4 +127,21 @@ void Livello::disegna() {
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
 
     refresh();
+}
+
+void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
+    if (griglia[giocatore_y][giocatore_x] == 'T') {
+        if (tempodiInizio == 0) {
+            tempodiInizio = (int)std::time(nullptr);
+        }
+        int tempoAttuale = (int)std::time(nullptr);
+        if (tempoAttuale - tempodiInizio >= 3) {
+            giocatore_y = max_y - 1 - giocatore_y;
+            giocatore_x = max_x - 1 - giocatore_x;
+            tempodiInizio=0;
+        }
+    }
+    else {
+        tempodiInizio = 0;
+    }
 }
