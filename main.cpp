@@ -2,6 +2,7 @@
 #include "Mappa.h"
 #include "Menu.h"
 #include "Player.h"
+#include "Costanti.h"
 
 int main() {
     initscr();
@@ -9,12 +10,21 @@ int main() {
     //Per attivare l'effetto lampeggiante
     PDC_set_blink(TRUE);
 
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, 28, COLOR_BLACK);
-    init_pair(3, COLOR_RED, COLOR_BLACK);
-    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(5, 208 , COLOR_BLACK); //oppure 214
-    init_pair(6, COLOR_BLUE, COLOR_BLACK);
+    init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
+    init_pair(MURO_DISTRUTTIBILE, 28, COLOR_BLACK);
+
+    //Colori Titolo
+    init_color(LAYER_4, 500, 0, 0); //Rosso scuro (un po' puzzolente)
+    init_color(LAYER_2, 1000, 500, 0); //Arancione (forse) (non lo distinguo)
+
+    init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(LAYER_2, LAYER_2 , COLOR_BLACK); //oppure 208
+    init_pair(LAYER_3, COLOR_RED, COLOR_BLACK);
+    init_pair(LAYER_4, LAYER_4, COLOR_BLACK);
+
+    init_pair(SCELTA_MENU, COLOR_YELLOW, COLOR_BLACK);
+
+    init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
 
     cbreak();
     noecho();

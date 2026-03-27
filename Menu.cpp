@@ -3,6 +3,7 @@
 //
 
 #include "Menu.h"
+#include "Costanti.h"
 #include <iostream>
 #include <pdcurses.h>
 
@@ -28,36 +29,36 @@ void Menu::disegnaMenu() {
     //Serve a stampare la scritta bomberman al centro dello schermo
     //animazione stile retro in cui si genera la scritta dall'alto verso il basso
     int title_y = center_y - 8;
-    attron(COLOR_PAIR(4));
+    attron(COLOR_PAIR(LAYER_1));
     mvprintw(title_y, center_x - 24,   "  ___  ___  __  __ ___ ___ ___ __  __   _   _  _ ");
-    attroff(COLOR_PAIR(4));
+    attroff(COLOR_PAIR(LAYER_1));
 
     if (!animazioneCompletata) {
         refresh();
         napms(100);
     }
 
-    attron(COLOR_PAIR(5) | A_BOLD);
+    attron(COLOR_PAIR(LAYER_2) | A_BOLD);
     mvprintw(title_y+1, center_x - 24, " | _ )/ _ \\|  \\/  | _ ) __| _ \\  \\/  | /_\\ | \\| |");
-    attroff(COLOR_PAIR(5) | A_BOLD);
+    attroff(COLOR_PAIR(LAYER_2) | A_BOLD);
 
     if (!animazioneCompletata) {
         refresh();
         napms(100);
     }
 
-    attron(COLOR_PAIR(3) | A_BOLD);
+    attron(COLOR_PAIR(LAYER_3) | A_BOLD);
     mvprintw(title_y+2, center_x - 24, " | _ \\ (_) | |\\/| | _ \\ _||   / |\\/| |/ _ \\| .` |");
-    attroff(COLOR_PAIR(3) | A_BOLD);
+    attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
 
     if (!animazioneCompletata) {
         refresh();
         napms(100);
     }
 
-    attron(COLOR_PAIR(3) | A_BOLD);
+    attron(COLOR_PAIR(LAYER_4) | A_BOLD);
     mvprintw(title_y+3, center_x - 24, " |___/\\___/|_|  |_|___/___|_|_\\_|  |_/_/ \\_\\_|\\_|");
-    attroff(COLOR_PAIR(3) | A_BOLD);
+    attroff(COLOR_PAIR(LAYER_4) | A_BOLD);
 
     if (!animazioneCompletata) {
         refresh();
@@ -72,9 +73,9 @@ void Menu::disegnaMenu() {
 
         if (i == sceltaSelezionata) {
             //Colore giallo per mettere in risalto la scelta selezionata
-            attron(COLOR_PAIR(4)| A_BOLD | A_BLINK);
+            attron(COLOR_PAIR(SCELTA_MENU)| A_BOLD | A_BLINK);
             mvprintw(riga_y, center_x - 8, " ► %s ", opzioni[i]);
-            attroff(COLOR_PAIR(4) | A_BOLD | A_BLINK);
+            attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD | A_BLINK);
         } else {
             mvprintw(riga_y, center_x - 8, "   %s ", opzioni[i]);
         }

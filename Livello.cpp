@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "Livello.h"
+#include "Costanti.h"
 
 Livello::Livello(int id) {
     idLivello = id;
@@ -104,21 +105,21 @@ void Livello::disegna() {
         for (int x = 0; x < max_x; x++) {
             if (griglia[y][x] == 'M') {
                 // A_REVERSE serve per rendere il blocco pieno e senza fessure
-                attron(COLOR_PAIR(1) | A_REVERSE);
+                attron(COLOR_PAIR(MURO) | A_REVERSE);
                 //utilizzo ' ' poichè serve a riempire il 'pixel' nella schermata altrimenti con
                 //ACS_BLOCK ci sarebbero delle piccole fessure
                 mvaddch(start_y + y, start_x + x, ' ');
-                attroff(COLOR_PAIR(1) | A_REVERSE);
+                attroff(COLOR_PAIR(MURO) | A_REVERSE);
             }
             else if (griglia[y][x] == 'D') {
-                attron(COLOR_PAIR(2) | A_REVERSE);
+                attron(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
                 mvaddch(start_y + y, start_x + x, ' ');
-                attroff(COLOR_PAIR(2) | A_REVERSE);
+                attroff(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
             }
             else if (griglia[y][x] == 'T') {
-                attron(COLOR_PAIR(6));
+                attron(COLOR_PAIR(TELETRASPORTO));
                 mvaddch(start_y + y, start_x + x, '0');
-                attroff(COLOR_PAIR(6));
+                attroff(COLOR_PAIR(TELETRASPORTO));
             }
         }
     }
