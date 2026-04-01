@@ -3,6 +3,7 @@
 #include "Menu.h"
 #include "Player.h"
 #include "Costanti.h"
+#include "Enemy.h"
 
 int main() {
     initscr();
@@ -50,47 +51,65 @@ int main() {
             clear();
             Mappa gestoreMappa;
 
-            // 1. FAI NASCERE IL TUO EROE (fuori dal ciclo)
+            // facciamo nascere il giocatore e i nemici
             Player giocatore(1, 1, '@', 3);
+            Enemy nemico(5,5,'X');
 
             //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
             gestoreMappa.livelloCorrente->disegna();
 
             //Disegna il giocatore passandogli l'offset!
             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-
+            nemico.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
             refresh(); // Mostra il fotogramma aggiornato
 
             bool inGioco = true;
             //Serve a non far bloccare il ciclo while se no si fermerebbe
             //a int input=getch
             timeout(100);
+
+            // variabile per rallentare il nemico
+            int contatoreFrame = 0;
+
             while(inGioco) {
                 int input = getch();
 
-                switch (input) {
-                    case 'q':
-                        inGioco = false; // Esce dalla partita e torna al menu
-                        break;
-                    case '+':
-                        gestoreMappa.vaiAlProssimo();
-                        break;
-                    case '-':
-                        gestoreMappa.tornaAlPrecedente();
-                        break;
-                    default:
-                        // Se premo le freccette (o altri tasti), muovo il giocatore
-                        giocatore.move(input, gestoreMappa.livelloCorrente);
-                        // Controlla se attivare il teletrasporto
-                        giocatore.check_teleport(gestoreMappa.livelloCorrente);
+                /* entra nello switch solo se l'utente ha premuto
+                effettivamente qualcosa
+                 */
+                if (input != ERR) {
+                    switch (input) {
+                        case 'q':
+                            inGioco = false; // Esce dalla partita e torna al menu
+                            break;
+                        case '+':
+                            gestoreMappa.vaiAlProssimo();
+                            break;
+                        case '-':
+                            gestoreMappa.tornaAlPrecedente();
+                            break;
+                        default:
+                            // Se premo le freccette (o altri tasti), muovo il giocatore
+                            giocatore.move(input, gestoreMappa.livelloCorrente);
+                            // Controlla se attivare il teletrasporto
+                            giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
-                        break;
+                            break;
+                    }
                 }
-                clear();
+                // gestione nemico
+                contatoreFrame++;
+                // Se sono passati 5 frame (0.5 secondi), il mostro fa un passo
+                if (contatoreFrame >= 5) {
+                    nemico.move(gestoreMappa.livelloCorrente);
+                    contatoreFrame = 0; // Azzero il contatore
+                }
+
+                erase(); //ho cambiato clear() con erase() per il problema dello sfarfallio
 
                 //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
-
+                nemico.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 //Disegna il giocatore passandogli l'offset!
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 

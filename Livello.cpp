@@ -57,10 +57,13 @@ Livello::Livello(int id) {
         }
     }
 
-    //S = spazio vitale
+    //S = spazio vitale per il giocatore
     griglia[1][1]= 'S';
     griglia[1][2]= 'S';
     griglia[2][1]= 'S';
+
+    // ' ' = spazio vitale per il nemico
+    griglia[5][5] = ' ';
 
     if (idLivello >= 4) {
         bool teletrasporto_piazzato = false;
@@ -94,7 +97,7 @@ Livello::Livello(int id) {
 }
 
 void Livello::disegna() {
-    clear();
+
     box(stdscr, 0, 0);
 
     //Coordinate del centro dello schermo
@@ -127,7 +130,7 @@ void Livello::disegna() {
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
 
-    refresh();
+
 }
 
 void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {

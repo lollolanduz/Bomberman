@@ -19,6 +19,8 @@ add_executable(Bomberman main.cpp
         Player.cpp
         Player.h
         Costanti.h
+        Enemy.cpp
+        Enemy.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)
