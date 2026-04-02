@@ -91,12 +91,14 @@ int main() {
                         default:
                             // Se premo le freccette (o altri tasti), muovo il giocatore
                             giocatore.move(input, gestoreMappa.livelloCorrente);
-                            // Controlla se attivare il teletrasporto
-                            giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
                             break;
                     }
                 }
+
+                // Controlla se attivare il teletrasporto
+                giocatore.check_teleport(gestoreMappa.livelloCorrente);
+
                 // gestione nemico
                 contatoreFrame++;
                 // Se sono passati 5 frame (0.5 secondi), il mostro fa un passo
