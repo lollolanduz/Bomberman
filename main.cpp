@@ -1,9 +1,11 @@
 #include <pdcurses.h>
+#include <cstdlib>
 #include "Mappa.h"
 #include "Menu.h"
 #include "Player.h"
 #include "Costanti.h"
 #include "Enemy.h"
+#include "Enemy2.h"
 
 int main() {
     initscr();
@@ -53,14 +55,46 @@ int main() {
 
             // facciamo nascere il giocatore e i nemici
             Player giocatore(1, 1, '@', 3);
-            Enemy nemico(5,5,'X');
+
+            // CREAZIONE DELLE DUE LISTE SEPARATE
+            Enemy* nemiciX[25];
+            int contatoreX = 0;
+
+            Enemy2* nemiciZ[25];
+            int contatoreZ = 0;
+
+            int numeroNemici = 2 + gestoreMappa.livelloCorrente->idLivello;
+
+            for (int i = 0; i < numeroNemici; i++) {
+                int randY, randX;
+                do {
+                    randY = (rand() % 18) + 1;
+                    randX = (rand() % 38) + 1;
+                } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
+
+                if (i % 2 == 0) {
+                    nemiciX[contatoreX] = new Enemy(randX, randY, 'X');
+                    contatoreX++;
+                } else {
+                    nemiciZ[contatoreZ] = new Enemy2(randX, randY, 'Z');
+                    contatoreZ++;
+                }
+            }
 
             //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
             gestoreMappa.livelloCorrente->disegna();
 
             //Disegna il giocatore passandogli l'offset!
             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-            nemico.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+
+            //Disegna i nemici iniziali
+            for (int i = 0; i < contatoreX; i++) {
+                nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+            }
+            for (int i = 0; i < contatoreZ; i++) {
+                nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+            }
+
             refresh(); // Mostra il fotogramma aggiornato
 
             bool inGioco = true;
@@ -82,16 +116,70 @@ int main() {
                         case 'q':
                             inGioco = false; // Esce dalla partita e torna al menu
                             break;
+
                         case '+':
+                            // 1. Eliminiamo i vecchi nemici prima di cambiare stanza
+                            for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
+                            for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
+                            contatoreX = 0; // Azzeriamo i contatori
+                            contatoreZ = 0;
+
+                            // 2. Cambiamo stanza
                             gestoreMappa.vaiAlProssimo();
+
+                            // 3. Generiamo i nuovi nemici in base al nuovo idLivello!
+                            {
+                                int nuoviNemici = 2 + gestoreMappa.livelloCorrente->idLivello;
+                                for (int i = 0; i < nuoviNemici; i++) {
+                                    int randY, randX;
+                                    do {
+                                        randY = (rand() % 18) + 1;
+                                        randX = (rand() % 38) + 1;
+                                    } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
+
+                                    if (i % 2 == 0) {
+                                        nemiciX[contatoreX] = new Enemy(randX, randY, 'X');
+                                        contatoreX++;
+                                    } else {
+                                        nemiciZ[contatoreZ] = new Enemy2(randX, randY, 'Z');
+                                        contatoreZ++;
+                                    }
+                                }
+                            }
                             break;
+
                         case '-':
+                            // Stessa logica: Pulizia -> Cambio Stanza -> Nuova Generazione
+                            for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
+                            for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
+                            contatoreX = 0;
+                            contatoreZ = 0;
+
                             gestoreMappa.tornaAlPrecedente();
+
+                            {
+                                int nuoviNemici = 2 + gestoreMappa.livelloCorrente->idLivello;
+                                for (int i = 0; i < nuoviNemici; i++) {
+                                    int randY, randX;
+                                    do {
+                                        randY = (rand() % 18) + 1;
+                                        randX = (rand() % 38) + 1;
+                                    } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
+
+                                    if (i % 2 == 0) {
+                                        nemiciX[contatoreX] = new Enemy(randX, randY, 'X');
+                                        contatoreX++;
+                                    } else {
+                                        nemiciZ[contatoreZ] = new Enemy2(randX, randY, 'Z');
+                                        contatoreZ++;
+                                    }
+                                }
+                            }
                             break;
+
                         default:
                             // Se premo le freccette (o altri tasti), muovo il giocatore
                             giocatore.move(input, gestoreMappa.livelloCorrente);
-
                             break;
                     }
                 }
@@ -103,7 +191,14 @@ int main() {
                 contatoreFrame++;
                 // Se sono passati 5 frame (0.5 secondi), il mostro fa un passo
                 if (contatoreFrame >= 5) {
-                    nemico.move(gestoreMappa.livelloCorrente);
+                    // Movimento delle due liste separate
+                    for (int i = 0; i < contatoreX; i++) {
+                        nemiciX[i]->move(gestoreMappa.livelloCorrente);
+                    }
+                    for (int i = 0; i < contatoreZ; i++) {
+                        nemiciZ[i]->move(gestoreMappa.livelloCorrente);
+                    }
+
                     contatoreFrame = 0; // Azzero il contatore
                 }
 
@@ -111,12 +206,29 @@ int main() {
 
                 //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
-                nemico.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+
+                // Disegna i nemici aggiornati
+                for (int i = 0; i < contatoreX; i++) {
+                    nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+                }
+                for (int i = 0; i < contatoreZ; i++) {
+                    nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+                }
+
                 //Disegna il giocatore passandogli l'offset!
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
                 refresh();
             }
+
+            // Pulizia memoria
+            for (int i = 0; i < contatoreX; i++) {
+                delete nemiciX[i];
+            }
+            for (int i = 0; i < contatoreZ; i++) {
+                delete nemiciZ[i];
+            }
+
             clear();
         }
 
