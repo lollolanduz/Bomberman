@@ -68,8 +68,8 @@ int main() {
             for (int i = 0; i < numeroNemici; i++) {
                 int randY, randX;
                 do {
-                    randY = (rand() % 18) + 1;
-                    randX = (rand() % 38) + 1;
+                    randY = (rand() % (Livello::max_y - 2)) + 1;
+                    randX = (rand() % (Livello::max_x - 2)) + 1;
                 } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
 
                 if (i % 2 == 0) {
@@ -133,8 +133,8 @@ int main() {
                                 for (int i = 0; i < nuoviNemici; i++) {
                                     int randY, randX;
                                     do {
-                                        randY = (rand() % Livello::max_y) + 1;
-                                        randX = (rand() % Livello::max_x) + 1;
+                                        randY = (rand() % (Livello::max_y - 2)) + 1;
+                                        randX = (rand() % (Livello::max_x - 2)) + 1;
                                     } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
 
                                     if (i % 2 == 0) {
@@ -162,8 +162,8 @@ int main() {
                                 for (int i = 0; i < nuoviNemici; i++) {
                                     int randY, randX;
                                     do {
-                                        randY = (rand() % Livello::max_y) + 1;
-                                        randX = (rand() % Livello::max_x) + 1;
+                                        randY = (rand() % (Livello::max_y - 2)) + 1;
+                                        randX = (rand() % (Livello::max_x - 2)) + 1;
                                     } while (gestoreMappa.livelloCorrente->griglia[randY][randX] != ' ');
 
                                     if (i % 2 == 0) {
