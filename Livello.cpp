@@ -62,9 +62,6 @@ Livello::Livello(int id) {
     griglia[1][2]= 'S';
     griglia[2][1]= 'S';
 
-    // ' ' = spazio vitale per il nemico
-    griglia[5][5] = ' ';
-
     if (idLivello >= 4) {
         bool teletrasporto_piazzato = false;
 
