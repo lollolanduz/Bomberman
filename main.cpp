@@ -113,6 +113,9 @@ int main() {
                  */
                 if (input != ERR) {
                     switch (input) {
+                        case ' ': // TASTO SPAZIO
+                            giocatore.bomb_placement();
+                            break;
                         case 'q':
                             inGioco = false; // Esce dalla partita e torna al menu
                             break;
@@ -187,6 +190,89 @@ int main() {
                 // Controlla se attivare il teletrasporto
                 giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
+                //Gestione tempo bomba
+                giocatore.tickBomb(); // Fa scorrere la miccia di 1 frame
+
+                // Se sono passati 30 frame (3 secondi), la bomba esplode
+                if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
+
+                    int bX = giocatore.getBombX();
+                    int bY = giocatore.getBombY();
+
+                    //Definiamo le 5 coordinate dell'esplosione a croce (Centro, Su, Giù, Sinistra, Destra)
+                    int esplosioneX[5] = {bX, bX, bX, bX - 1, bX + 1};
+                    int esplosioneY[5] = {bY, bY - 1, bY + 1, bY, bY};
+
+                    // effetto visivo della fiammata
+                    attron(COLOR_PAIR(LAYER_2) | A_BOLD);
+                    for (int dir = 0; dir < 5; dir++) {
+                        //Disegna il fuoco '#', ma non disegnarlo sopra i muri indistruttibili 'M'
+                        if (gestoreMappa.livelloCorrente->griglia[esplosioneY[dir]][esplosioneX[dir]] != 'M') {
+                            mvaddch(gestoreMappa.livelloCorrente->start_y + esplosioneY[dir],
+                                    gestoreMappa.livelloCorrente->start_x + esplosioneX[dir], '#');
+                        }
+                    }
+                    attroff(COLOR_PAIR(LAYER_2) | A_BOLD);
+                    refresh();
+                    napms(150); //Mettiamo in pausa il gioco per 0.15 secondi per far vedere l'esplosione
+
+
+
+                    //Logica dei danni e distruzione
+                    for (int dir = 0; dir < 5; dir++) {
+                        int eX = esplosioneX[dir];
+                        int eY = esplosioneY[dir];
+
+                        //Distruzione Muri 'D'
+                        if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
+                            gestoreMappa.livelloCorrente->griglia[eY][eX] = ' '; // Il muro sparisce!
+                        }
+
+                        //Danno al Giocatore (Fuoco amico)
+                        if (giocatore.getX() == eX && giocatore.getY() == eY) {
+                            giocatore.take_damage();
+                            if (giocatore.getlife() > 0) {
+                                giocatore.reset_position();
+                            } else {
+                                // GAME OVER
+                                clear();
+                                mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
+                                refresh();
+                                napms(2000);
+                                inGioco = false;
+                            }
+                        }
+
+                        //Uccisione Nemici X
+                        for (int k = 0; k < contatoreX; k++) {
+                            if (nemiciX[k]->getX() == eX && nemiciX[k]->getY() == eY) {
+                                delete nemiciX[k]; // Uccido il nemico fisicamente
+                                // Sposto tutti gli altri in avanti per chiudere il buco nella lista
+                                for (int j = k; j < contatoreX - 1; j++) {
+                                    nemiciX[j] = nemiciX[j + 1];
+                                }
+                                contatoreX--; //Ho un nemico 'X' in meno
+                                k--; //Ricontrollo questo indice al prossimo giro
+                            }
+                        }
+
+                        //Uccisione Nemici Z
+                        for (int k = 0; k < contatoreZ; k++) {
+                            if (nemiciZ[k]->getX() == eX && nemiciZ[k]->getY() == eY) {
+                                delete nemiciZ[k]; // Uccido il nemico fisicamente
+                                // Sposto tutti gli altri in avanti
+                                for (int j = k; j < contatoreZ - 1; j++) {
+                                    nemiciZ[j] = nemiciZ[j + 1];
+                                }
+                                contatoreZ--; //Ho un nemico 'Z' in meno
+                                k--; // Ricontrollo questo indice al prossimo giro
+                            }
+                        }
+                    }
+
+                    // Alla fine di tutto, la bomba viene disinnescata e si può piazzare di nuovo
+                    giocatore.resetBomb();
+                }
                 // gestione nemico
                 contatoreFrame++;
                 // Se sono passati 5 frame (0.5 secondi), il mostro fa un passo
@@ -239,6 +325,13 @@ int main() {
 
                 //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
+
+                if (giocatore.getIsBombActive() == true) {
+                    attron(COLOR_PAIR(LAYER_3) | A_BOLD); // Usiamo il rosso per la bomba
+                    mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
+                            gestoreMappa.livelloCorrente->start_x + giocatore.getBombX(), 'O');
+                    attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
+                }
 
                 // stampa le vite sullo schermo
                 mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());

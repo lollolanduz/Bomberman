@@ -6,6 +6,10 @@
 
 Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     life = LIFE;
+    isBombActive = false; // All'inizio non ci sono bombe
+    bombX = 0;
+    bombY = 0;
+    bombTimer = 0;
 }
 
 int Player::getlife() {
@@ -19,8 +23,35 @@ void Player::take_damage() {
 }
 
 void Player::bomb_placement() {
-
+    if (isBombActive == false) {
+        isBombActive = true;
+        bombX = x;
+        bombY = y;
+        bombTimer = 0;
+    }
 }
+
+// Funzione che fa scorrere il tempo
+void Player::tickBomb() {
+    if (isBombActive == true) {
+        bombTimer++; // Aumenta di 1 ad ogni frame
+    }
+}
+
+// Funzione per spegnere la bomba
+void Player::resetBomb() {
+    isBombActive = false;
+    bombTimer = 0;
+}
+
+int Player::getBombTimer() { return bombTimer; }
+
+//Funzioni che restituiscono i valori al main
+bool Player::getIsBombActive() { return isBombActive; }
+
+int Player::getBombX() { return bombX; }
+
+int Player::getBombY() { return bombY; }
 
 void Player::collect_item() {
 
