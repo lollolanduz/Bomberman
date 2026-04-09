@@ -202,10 +202,46 @@ int main() {
                     contatoreFrame = 0; // Azzero il contatore
                 }
 
+                //inizio controllo collisioni
+                bool colpito = false;
+
+                //Controllo se una 'X' mi ha toccato
+                for (int i = 0; i < contatoreX; i++) {
+                    if (giocatore.getX() == nemiciX[i]->getX() && giocatore.getY() == nemiciX[i]->getY()) {
+                        colpito = true;
+                    }
+                }
+                //Controllo se una 'Z' mi ha toccato
+                for (int i = 0; i < contatoreZ; i++) {
+                    if (giocatore.getX() == nemiciZ[i]->getX() && giocatore.getY() == nemiciZ[i]->getY()) {
+                        colpito = true;
+                    }
+                }
+
+                //Conseguenze dello scontro
+                if (colpito == true) {
+                    giocatore.take_damage(); // Tolgo una vita
+
+                    if (giocatore.getlife() > 0) {
+                        giocatore.reset_position(); // Torna all'inizio se ha ancora vite
+                    } else {
+                        // GAME OVER: Vite finite.
+                        clear();
+                        mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
+                        refresh();
+                        napms(2000); // Aspetta 2 secondi per farti leggere la scritta
+                        inGioco = false; // Interrompe la partita e torna al Menu
+                    }
+                }
+
+
                 erase(); //ho cambiato clear() con erase() per il problema dello sfarfallio
 
                 //Disegna la mappa (Questo fa calcolare a Simone start_y e start_x)
                 gestoreMappa.livelloCorrente->disegna();
+
+                // stampa le vite sullo schermo
+                mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
 
                 // Disegna i nemici aggiornati
                 for (int i = 0; i < contatoreX; i++) {

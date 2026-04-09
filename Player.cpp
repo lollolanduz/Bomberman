@@ -59,6 +59,14 @@ void Player::move(int input, Livello *currentLevel) {
     }
 }
 
+
+void Player::reset_position() {
+    // Riportiamo il giocatore nello spazio vitale iniziale
+    x = 1;
+    y = 1;
+}
+
+
 //Per la funzione teletrasporto in livello.cpp
 void Player::check_teleport(Livello* currentLevel) {
     currentLevel->gestisciTeletrasporto(y,x);
