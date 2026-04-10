@@ -16,6 +16,19 @@ Livello::Livello(int id) {
     //Intero usato per la funzione teletrasporto
     tempodiInizio = 0;
 
+    genera_griglia_vuota();
+    genera_MuriFissi();
+    genera_MuraDistruttibili();
+    imposta_Spawn();
+    randomizza_portale();
+
+    if (idLivello >= 4) {
+        genera_teletrasporto();
+    }
+
+}
+
+void Livello::genera_griglia_vuota() {
     //Stampo lo spazio vuoto in tutta la griglia, per evitare
     //che sia formata esclusivamente di "spazzatura"
     for (int y=0; y<max_y; y++) {
@@ -23,7 +36,9 @@ Livello::Livello(int id) {
             griglia[y][x]= ' ';
         }
     }
+}
 
+void Livello::genera_MuriFissi() {
     //M sta per muro indistruttibilie
     //Ciclo for per generazione delle mura perimetrali
     for (int y=0; y < max_y; y++) {
@@ -40,7 +55,9 @@ Livello::Livello(int id) {
             griglia[y][x] = 'M';
         }
     }
+}
 
+void Livello::genera_MuraDistruttibili() {
     int wall_cap = 10 + 2*idLivello;
 
     if ( wall_cap > 70) {
@@ -56,48 +73,71 @@ Livello::Livello(int id) {
             }
         }
     }
+}
 
+void Livello::imposta_Spawn() {
     //S = spazio vitale per il giocatore
     griglia[1][1]= 'S';
     griglia[1][2]= 'S';
     griglia[2][1]= 'S';
+}
 
-    if (idLivello >= 4) {
-        bool teletrasporto_piazzato = false;
+void Livello::genera_teletrasporto() {
+    bool teletrasporto_piazzato = false;
 
-        while (!teletrasporto_piazzato) {
+    while (!teletrasporto_piazzato) {
 
-            //Coordinate casuali del primo teletrasporto
-            int rand_y = (rand() % (max_y - 2)) + 1;
-            int rand_x = (rand() % (max_x - 2)) + 1;
+        //Coordinate casuali del primo teletrasporto
+        int rand_y = (rand() % (max_y - 2)) + 1;
+        int rand_x = (rand() % (max_x - 2)) + 1;
 
-            //Coordinate del suo opposto
-            int opp_y = max_y - 1 - rand_y;
-            int opp_x = max_x - 1 - rand_x;
+        //Coordinate del suo opposto
+        int opp_y = max_y - 1 - rand_y;
+        int opp_x = max_x - 1 - rand_x;
 
             //Verifico se sono spazi vuoti
-            if (griglia[rand_y][rand_x] == ' ' && griglia[opp_y][opp_x] == ' ') {
+        if (griglia[rand_y][rand_x] == ' ' && griglia[opp_y][opp_x] == ' ') {
 
-                //Entrambi diversi dalla zona di spawn
-                if (griglia[rand_y][rand_x] != 'S' && griglia[opp_y][opp_x] != 'S') {
+            //Entrambi diversi dalla zona di spawn
+            if (griglia[rand_y][rand_x] != 'S' && griglia[opp_y][opp_x] != 'S') {
 
-                    griglia[rand_y][rand_x] = 'T';
-                    griglia[opp_y][opp_x] = 'T';
+                griglia[rand_y][rand_x] = 'T';
+                griglia[opp_y][opp_x] = 'T';
 
-                    //Serve ad uscire dal while
-                    teletrasporto_piazzato = true;
-                }
+                //Serve ad uscire dal while
+                teletrasporto_piazzato = true;
             }
         }
     }
+}
 
+void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
+    if (griglia[giocatore_y][giocatore_x] == 'T') {
+        if (tempodiInizio == 0) {
+            tempodiInizio = (int)std::time(nullptr);
+        }
+        else if (tempodiInizio > 0) {
+            int tempoAttuale = (int)std::time(nullptr);
+            if (tempoAttuale - tempodiInizio >= 3) {
+                giocatore_y = max_y - 1 - giocatore_y;
+                giocatore_x = max_x - 1 - giocatore_x;
+
+                //Per non far ripartire il timer al prossimo giro
+                tempodiInizio = -1;
+            }
+        }
+    }
+    else {
+        // Appena il giocatore fa un passo fuori dalla 'T' reimposto tutto a 0
+        tempodiInizio = 0;
+    }
 }
 
 void Livello::disegna() {
 
     box(stdscr, 0, 0);
 
-    //Coordinate del centro dello schermo
+    //Coordinate dell'inizio della matrice
     start_y = getmaxy(stdscr) / 2 - max_y / 2;
     start_x = getmaxx(stdscr) / 2 - max_x / 2;
 
@@ -121,33 +161,27 @@ void Livello::disegna() {
                 mvaddch(start_y + y, start_x + x, '0');
                 attroff(COLOR_PAIR(TELETRASPORTO));
             }
+            else if (griglia[y][x] == 'U') {
+                attron(COLOR_PAIR(PORTALE));
+                mvaddch(start_y + y, start_x + x, 'U');
+                attroff(COLOR_PAIR(PORTALE));
+            }
         }
     }
 
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
-
-
 }
 
-void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
-    if (griglia[giocatore_y][giocatore_x] == 'T') {
-        if (tempodiInizio == 0) {
-            tempodiInizio = (int)std::time(nullptr);
-        }
-        else if (tempodiInizio > 0) {
-            int tempoAttuale = (int)std::time(nullptr);
-            if (tempoAttuale - tempodiInizio >= 3) {
-                giocatore_y = max_y - 1 - giocatore_y;
-                giocatore_x = max_x - 1 - giocatore_x;
-
-                //Per non far ripartire il timer al prossimo giro
-                tempodiInizio = -1;
-            }
-        }
+void Livello::randomizza_portale() {
+    while (griglia[y_portal][x_portal] != 'D') {
+        y_portal = (rand() % (max_y - 2)) + 1;
+        x_portal = (rand() % (max_x - 2)) + 1;
     }
-    else {
-        // Appena il giocatore fa un passo fuori dalla 'T' reimposto tutto a 0
-        tempodiInizio = 0;
+}
+
+void Livello::controllaEsplosione(int y_esplosione, int x_esplosione) {
+    if (y_esplosione == y_portal && x_esplosione == x_portal) {
+        griglia[y_portal][x_portal] = 'U';
     }
 }
