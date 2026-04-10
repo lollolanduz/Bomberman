@@ -143,32 +143,31 @@ void Livello::disegna() {
 
     for (int y = 0; y < max_y; y++) {
         for (int x = 0; x < max_x; x++) {
-            if (griglia[y][x] == 'M') {
-                // A_REVERSE serve per rendere il blocco pieno e senza fessure
-                attron(COLOR_PAIR(MURO) | A_REVERSE);
-                //utilizzo ' ' poichè serve a riempire il 'pixel' nella schermata altrimenti con
-                //ACS_BLOCK ci sarebbero delle piccole fessure
-                mvaddch(start_y + y, start_x + x, ' ');
-                attroff(COLOR_PAIR(MURO) | A_REVERSE);
-            }
-            else if (griglia[y][x] == 'D') {
-                attron(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
-                mvaddch(start_y + y, start_x + x, ' ');
-                attroff(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
-            }
-            else if (griglia[y][x] == 'T') {
-                attron(COLOR_PAIR(TELETRASPORTO));
-                mvaddch(start_y + y, start_x + x, '0');
-                attroff(COLOR_PAIR(TELETRASPORTO));
-            }
-            else if (griglia[y][x] == 'U') {
-                attron(COLOR_PAIR(PORTALE));
-                mvaddch(start_y + y, start_x + x, 'U');
-                attroff(COLOR_PAIR(PORTALE));
+            char cella = griglia[y][x];
+
+            switch (cella) {
+                case 'M':
+                    attron(COLOR_PAIR(MURO) | A_REVERSE);
+                    mvaddch(start_y + y, start_x + x, ' ');
+                    attroff(COLOR_PAIR(MURO) | A_REVERSE);
+                    break;
+                case 'D':
+                    attron(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
+                    mvaddch(start_y + y, start_x + x, ' ');
+                    attroff(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
+                    break;
+                case 'T':
+                    attron(COLOR_PAIR(TELETRASPORTO));
+                    mvaddch(start_y + y, start_x + x, '0');
+                    attroff(COLOR_PAIR(TELETRASPORTO));
+                    break;
+                case 'U':
+                    attron(COLOR_PAIR(PORTALE));
+                    mvaddch(start_y + y, start_x + x, 'U');
+                    attroff(COLOR_PAIR(PORTALE));
             }
         }
     }
-
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
 }
