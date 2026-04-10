@@ -29,6 +29,8 @@ int main() {
 
     init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
 
+    init_pair(PORTALE, COLOR_CYAN, COLOR_BLACK);
+
     cbreak();
     noecho();
 
@@ -225,7 +227,10 @@ int main() {
 
                         //Distruzione Muri 'D'
                         if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
+
                             gestoreMappa.livelloCorrente->griglia[eY][eX] = ' '; // Il muro sparisce!
+
+                            gestoreMappa.livelloCorrente->controllaEsplosione(eY,eX); //Controllo se è il muro del portale
                         }
 
                         //Danno al Giocatore (Fuoco amico)

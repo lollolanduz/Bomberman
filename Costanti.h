@@ -18,4 +18,6 @@
 
 #define TELETRASPORTO 4
 
+#define PORTALE 5
+
 #endif //BOMBERMAN_COSTANTI_H
