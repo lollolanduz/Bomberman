@@ -229,8 +229,6 @@ int main() {
                         if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
 
                             gestoreMappa.livelloCorrente->griglia[eY][eX] = ' '; // Il muro sparisce!
-
-                            gestoreMappa.livelloCorrente->controllaEsplosione(eY,eX); //Controllo se è il muro del portale
                         }
 
                         //Danno al Giocatore (Fuoco amico)

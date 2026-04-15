@@ -20,8 +20,6 @@ private:
 
     void genera_teletrasporto(); //Randomizza la posizione del teletrasporto
 
-    //Momentaneo possibilmente rimosso in futuro
-    void randomizza_portale(); //Randomizza il portale di fine livello
 
 public:
     int idLivello;
@@ -42,8 +40,6 @@ public:
 
     Livello(int id);
     void disegna();
-
-    void controllaEsplosione(int y_esplosione, int x_esplosione);
 
     void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
     int tempodiInizio;

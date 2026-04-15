@@ -20,7 +20,6 @@ Livello::Livello(int id) {
     genera_MuriFissi();
     genera_MuraDistruttibili();
     imposta_Spawn();
-    randomizza_portale();
 
     if (idLivello >= 4) {
         genera_teletrasporto();
@@ -170,17 +169,4 @@ void Livello::disegna() {
     }
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
-}
-
-void Livello::randomizza_portale() {
-    while (griglia[y_portal][x_portal] != 'D') {
-        y_portal = (rand() % (max_y - 2)) + 1;
-        x_portal = (rand() % (max_x - 2)) + 1;
-    }
-}
-
-void Livello::controllaEsplosione(int y_esplosione, int x_esplosione) {
-    if (y_esplosione == y_portal && x_esplosione == x_portal) {
-        griglia[y_portal][x_portal] = 'U';
-    }
 }
