@@ -4,7 +4,22 @@
 #include "Enemy2.h"
 #include <cstdlib>
 
-Enemy2::Enemy2(int X, int Y, char S) : Entity(X, Y, S){
+Enemy2::Enemy2(char S, Livello* currentLevel) : Entity(0, 0, S) {
+    direzioneAttuale = rand() % 4;
+    bool spawn_trovato = false;
+
+    while (!spawn_trovato) {
+        int rand_y = (rand() % (Livello::max_y - 2)) + 1;
+        int rand_x = (rand() % (Livello::max_x - 2)) + 1;
+
+        if (currentLevel->griglia[rand_y][rand_x] == ' ') {
+            if (rand_x > 3 || rand_y > 3) {
+                this->y = rand_y;
+                this->x = rand_x;
+                spawn_trovato = true;
+            }
+        }
+    }
 }
 
 void Enemy2::move(Livello* currentLevel) {
@@ -16,19 +31,11 @@ void Enemy2::move(Livello* currentLevel) {
     else if (direzioneAttuale == 2) nuovaX--; // Sinistra
     else if (direzioneAttuale == 3) nuovaX++; // Destra
 
-    // Guardo la mappa
-    if (currentLevel->griglia[nuovaY][nuovaX] != 'M' && currentLevel->griglia[nuovaY][nuovaX] != 'D') {
-        // La strada è libera: il nemico fa un passo avanti confermando le coordinate.
+    if (currentLevel->griglia[nuovaY][nuovaX] != 'M' && currentLevel->griglia[nuovaY][nuovaX] != 'D' && currentLevel->griglia[nuovaY][nuovaX] != 'T' && currentLevel->griglia[nuovaY][nuovaX] != 'U') {
         x = nuovaX;
         y = nuovaY;
     }
     else {
-        // Ha sbattuto contro un muro.
-        // Il nemico resta fermo per questo turno, ma coglie l'occasione
-        // per tirare il dado e cambiare la sua memoria per il prossimo giro!
         direzioneAttuale = rand() % 4;
     }
 }
-
-
-

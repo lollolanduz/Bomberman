@@ -9,10 +9,9 @@
 
 class Enemy : public Entity {
 public:
-    Enemy(int X, int Y, char S);
+    // Passiamo il livello al costruttore
+    Enemy(char S, Livello* currentLevel);
     void move(Livello* currentLevel);
-
 };
-
 
 #endif //BOMBERMAN_ENEMY_H

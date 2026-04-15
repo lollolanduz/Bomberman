@@ -8,22 +8,20 @@
 #pragma once
 #include <pdcurses.h>
 
+// Forward declaration per evitare inclusioni circolari
+class Enemy;
+class Enemy2;
+
 class Livello {
 private:
-    void genera_griglia_vuota(); //Stampa ' ' su tutta la griglia
-
-    void genera_MuriFissi(); //Genera i muri indistruttibili
-
-    void genera_MuraDistruttibili(); //Genera i muri distruttibili
-
-    void imposta_Spawn(); //Imposta le coordinate di spawn per non morire all'istante
-
-    void genera_teletrasporto(); //Randomizza la posizione del teletrasporto
-
+    void genera_griglia_vuota();
+    void genera_MuriFissi();
+    void genera_MuraDistruttibili();
+    void imposta_Spawn();
+    void genera_teletrasporto();
 
 public:
     int idLivello;
-    //I due puntatori per lista bidirezionale
     Livello* successivo;
     Livello* precedente;
 
@@ -38,9 +36,17 @@ public:
 
     char griglia[max_y][max_x];
 
-    Livello(int id);
-    void disegna();
+    // Array dei nemici (ora appartengono al Livello!)
+    Enemy* nemiciX[25];
+    int contatoreX;
 
+    Enemy2* nemiciZ[25];
+    int contatoreZ;
+
+    Livello(int id);
+    ~Livello(); // Distruttore per pulire i nemici quando il livello viene eliminato
+
+    void disegna();
     void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
     int tempodiInizio;
 };

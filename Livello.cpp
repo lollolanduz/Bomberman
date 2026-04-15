@@ -6,6 +6,8 @@
 #include <ctime>
 #include "Livello.h"
 #include "Costanti.h"
+#include "Enemy.h"
+#include "Enemy2.h"
 
 Livello::Livello(int id) {
     idLivello = id;
@@ -24,7 +26,26 @@ Livello::Livello(int id) {
     if (idLivello >= 4) {
         genera_teletrasporto();
     }
+    // Generazione nemici
+    contatoreX = 0;
+    contatoreZ = 0;
+    int numeroNemici = 2 + idLivello;
 
+    for (int i = 0; i < numeroNemici; i++) {
+        if (i % 2 == 0) {
+            nemiciX[contatoreX] = new Enemy('X', this);
+            contatoreX++;
+        } else {
+            nemiciZ[contatoreZ] = new Enemy2('Z', this);
+            contatoreZ++;
+        }
+    }
+}
+
+
+Livello::~Livello() {
+    for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
+    for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
 }
 
 void Livello::genera_griglia_vuota() {
