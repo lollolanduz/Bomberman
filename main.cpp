@@ -126,7 +126,7 @@ int main() {
                 giocatore.check_teleport(gestoreMappa.livelloCorrente);
                 giocatore.tickBomb();
 
-                //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 = 1 secondo)
+                //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 equivale ad 1 secondo)
                 if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
                     int bX = giocatore.getBombX();
                     int bY = giocatore.getBombY();
@@ -194,7 +194,7 @@ int main() {
                 }
 
                 contatoreFrame++;
-                //Serve a gestire ogni quanto si muovono i nemici (porlo >= a 10 indica >= 1 secondo)
+                //Serve a gestire ogni quanto tempo si muovono i nemici (porlo >= a 10 indica >= 1 secondo)
                 if (contatoreFrame >= 5) {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                         gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
