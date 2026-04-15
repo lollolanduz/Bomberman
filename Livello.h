@@ -32,9 +32,6 @@ public:
     int player_save_x;
     int player_save_y;
 
-    int x_portal;
-    int y_portal;
-
     static const int max_y=20;
     static const int max_x=40;
 
@@ -52,6 +49,11 @@ public:
 
     void disegna();
     void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
+
+    //Genera portale per concludere il livello
+    void apriPortaUscita();
+    bool Portale; // Una variabile per sapere se è già aperta
+
     int tempodiInizio;
 };
 

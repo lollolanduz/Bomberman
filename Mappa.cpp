@@ -38,6 +38,48 @@ void Mappa::tornaAlPrecedente() {
     }
 }
 
+void Mappa::eliminaLivelloCorrenteEAvanti() {
+    if (livelloCorrente == nullptr) return;
+
+    Livello* daEliminare = livelloCorrente;
+
+    // 1. STACCHIAMO IL LIVELLO DALLA LISTA (Ricolleghiamo i puntatori)
+    if (daEliminare->precedente != nullptr) {
+        daEliminare->precedente->successivo = daEliminare->successivo;
+    } else {
+        // Se stiamo eliminando il primissimo elemento, la nuova testa diventa il successivo!
+        testa = daEliminare->successivo;
+    }
+
+    if (daEliminare->successivo != nullptr) {
+        daEliminare->successivo->precedente = daEliminare->precedente;
+    }
+
+    // 2. DECIDIAMO DOVE MANDARE IL GIOCATORE
+    if (daEliminare->successivo != nullptr) {
+        // Caso normale: c'è un livello dopo di questo, andiamo lì!
+        livelloCorrente = daEliminare->successivo;
+    }
+    else if (testa != nullptr) {
+        // GIOCO DI PRESTIGIO: Siamo all'ultimo livello della lista, MA la testa esiste ancora.
+        // Significa che abbiamo saltato dei livelli! Ricominciamo dall'inizio.
+        livelloCorrente = testa;
+    }
+    else {
+        // Non c'è un livello successivo e la testa è nullptr.
+        // La lista è completamente vuota. ORA abbiamo finito davvero il gioco!
+        livelloCorrente = nullptr;
+    }
+
+    // 3. Distruggiamo fisicamente il livello per liberare RAM
+    delete daEliminare;
+
+    // 4. Se il gioco non è finito, disegniamo il nuovo livello in cui siamo finiti
+    if (livelloCorrente != nullptr) {
+        livelloCorrente->disegna();
+    }
+}
+
 Mappa::~Mappa() {
     Livello* temp = testa;
 

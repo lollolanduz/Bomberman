@@ -24,4 +24,7 @@ public:
 
     void vaiAlProssimo();
     void tornaAlPrecedente();
+
+    //Elimina il livello completato
+    void eliminaLivelloCorrenteEAvanti();
 };

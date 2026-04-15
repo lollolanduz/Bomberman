@@ -24,7 +24,7 @@ int main() {
     init_pair(LAYER_4, LAYER_4, COLOR_BLACK);
     init_pair(SCELTA_MENU, COLOR_YELLOW, COLOR_BLACK);
     init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
-    init_pair(PORTALE, COLOR_CYAN, COLOR_BLACK);
+    init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
 
     cbreak();
     noecho();
@@ -99,6 +99,26 @@ int main() {
 
                         default:
                             giocatore.move(input, gestoreMappa.livelloCorrente);
+
+                            // --- CONTROLLO ENTRATA NEL PORTALE ---
+                            if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
+
+                                // Distruggiamo il livello attuale e saltiamo al prossimo!
+                                gestoreMappa.eliminaLivelloCorrenteEAvanti();
+
+                                // Controlliamo se abbiamo appena finito l'ultimo livello
+                                if (gestoreMappa.livelloCorrente == nullptr) {
+                                    clear();
+                                    mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
+                                    refresh();
+                                    napms(3000);
+                                    inGioco = false; // Torna al menu
+                                } else {
+                                    // Se ci sono ancora livelli, resettiamo il player per il nuovo livello
+                                    giocatore.reset_position();
+                                    clear();
+                                }
+                            }
                             break;
                     }
                 }
@@ -106,7 +126,8 @@ int main() {
                 giocatore.check_teleport(gestoreMappa.livelloCorrente);
                 giocatore.tickBomb();
 
-                if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
+                //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 = 1 secondo)
+                if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 10) {
                     int bX = giocatore.getBombX();
                     int bY = giocatore.getBombY();
 
@@ -173,7 +194,8 @@ int main() {
                 }
 
                 contatoreFrame++;
-                if (contatoreFrame >= 5) {
+                //Serve a gestire ogni quanto si muovono i nemici (porlo >= a 10 indica >= 1 secondo)
+                if (contatoreFrame >= 50) {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                         gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
                     }
@@ -207,6 +229,12 @@ int main() {
                         napms(2000);
                         inGioco = false;
                     }
+                }
+
+                // --- LOGICA APERTURA PORTA ---
+                // Se non ci sono più nemici di nessun tipo, ordiniamo al livello di aprire l'uscita
+                if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
+                    gestoreMappa.livelloCorrente->apriPortaUscita();
                 }
 
                 erase();

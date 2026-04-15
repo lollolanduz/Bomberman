@@ -14,6 +14,8 @@ Livello::Livello(int id) {
     successivo = nullptr;
     precedente = nullptr;
     tempodiInizio = 0;
+    //Serve a gestire il portale per concludere il livello
+    Portale=false;
 
     // Inizialmente, la posizione salvata è lo spawn (1,1)
     player_save_x = 1;
@@ -139,7 +141,7 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
         }
         else if (tempodiInizio > 0) {
             int tempoAttuale = (int)std::time(nullptr);
-            if (tempoAttuale - tempodiInizio >= 3) {
+            if (tempoAttuale - tempodiInizio >= 2) {
                 giocatore_y = max_y - 1 - giocatore_y;
                 giocatore_x = max_x - 1 - giocatore_x;
 
@@ -151,6 +153,16 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
     else {
         // Appena il giocatore fa un passo fuori dalla 'T' reimposto tutto a 0
         tempodiInizio = 0;
+    }
+}
+
+void Livello::apriPortaUscita() {
+    if (!Portale) {
+        // Scegliamo una porzione del lato destro (es. le 4 caselle centrali)
+        for (int y = (max_y/2) - 2; y <= (max_y/2) + 2; y++) {
+            griglia[y][max_x - 1] = 'U'; // 'U' come Uscita
+        }
+        Portale = true;
     }
 }
 
@@ -184,11 +196,14 @@ void Livello::disegna() {
                     break;
                 case 'U':
                     attron(COLOR_PAIR(PORTALE));
-                    mvaddch(start_y + y, start_x + x, 'U');
+                    // Sostituisci 'U' con ACS_CKBOARD o ACS_BLOCK
+                    mvaddch(start_y + y, start_x + x, ACS_BLOCK);
                     attroff(COLOR_PAIR(PORTALE));
+                    break;
             }
         }
     }
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
 }
+
