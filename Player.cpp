@@ -12,6 +12,16 @@ Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     bombTimer = 0;
 }
 
+void Player::set_position(int newX, int newY) {
+    x = newX;
+    y = newY;
+}
+
+void Player::reset_position() {
+    x = 1;
+    y = 1;
+}
+
 int Player::getlife() {
     return life;
 }
@@ -91,11 +101,6 @@ void Player::move(int input, Livello *currentLevel) {
 }
 
 
-void Player::reset_position() {
-    // Riportiamo il giocatore nello spazio vitale iniziale
-    x = 1;
-    y = 1;
-}
 
 
 //Per la funzione teletrasporto in livello.cpp

@@ -20,6 +20,9 @@ public:
 
     Player(int X, int Y, char S, int LIFE);          //costruttore
 
+    // Nuovo metodo per impostare la posizione salvata
+    void set_position(int newX, int newY);
+
     int getlife();         //funzione utile al main per sapere quante vite ha il player
 
     void take_damage();    //funzione per togliere una vita quando subisce danno

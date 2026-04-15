@@ -70,14 +70,33 @@ int main() {
                         case 'q':
                             inGioco = false;
                             break;
+
                         case '+':
+                            // 1. Salviamo la posizione attuale nel livello che stiamo lasciando
+                            gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                            gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+
+                            // 2. Cambiamo stanza
                             gestoreMappa.vaiAlProssimo();
-                            giocatore.reset_position(); // Reset sicuro!
+
+                            // 3. Carichiamo la posizione salvata del NUOVO livello
+                            giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                                  gestoreMappa.livelloCorrente->player_save_y);
                             break;
+
                         case '-':
+                            // 1. Salviamo la posizione attuale
+                            gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                            gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+
+                            // 2. Torniamo indietro
                             gestoreMappa.tornaAlPrecedente();
-                            giocatore.reset_position(); // Reset sicuro!
+
+                            // 3. Carichiamo la posizione salvata del livello precedente
+                            giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                                  gestoreMappa.livelloCorrente->player_save_y);
                             break;
+
                         default:
                             giocatore.move(input, gestoreMappa.livelloCorrente);
                             break;

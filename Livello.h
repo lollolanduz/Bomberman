@@ -28,6 +28,10 @@ public:
     int start_y;
     int start_x;
 
+    // Memoria posizione giocatore per questo livello
+    int player_save_x;
+    int player_save_y;
+
     int x_portal;
     int y_portal;
 

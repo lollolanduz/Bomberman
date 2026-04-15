@@ -11,12 +11,13 @@
 
 Livello::Livello(int id) {
     idLivello = id;
-    //Puntatori che inizialmente non puntano a nulla
     successivo = nullptr;
     precedente = nullptr;
-
-    //Intero usato per la funzione teletrasporto
     tempodiInizio = 0;
+
+    // Inizialmente, la posizione salvata è lo spawn (1,1)
+    player_save_x = 1;
+    player_save_y = 1;
 
     genera_griglia_vuota();
     genera_MuriFissi();
@@ -26,11 +27,10 @@ Livello::Livello(int id) {
     if (idLivello >= 4) {
         genera_teletrasporto();
     }
-    // Generazione nemici
+
     contatoreX = 0;
     contatoreZ = 0;
     int numeroNemici = 2 + idLivello;
-
     for (int i = 0; i < numeroNemici; i++) {
         if (i % 2 == 0) {
             nemiciX[contatoreX] = new Enemy('X', this);
@@ -42,11 +42,12 @@ Livello::Livello(int id) {
     }
 }
 
-
 Livello::~Livello() {
     for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
     for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
 }
+
+
 
 void Livello::genera_griglia_vuota() {
     //Stampo lo spazio vuoto in tutta la griglia, per evitare
