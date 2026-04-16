@@ -40,7 +40,7 @@ int main() {
         if (scelta == 0) {
             clear();
             Mappa gestoreMappa;
-            Player giocatore(1, 1, '@', 5);
+            Player giocatore(1, 1, '@', 5000);
 
             gestoreMappa.livelloCorrente->disegna();
             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -57,7 +57,8 @@ int main() {
 
             bool inGioco = true;
             timeout(100);
-            int contatoreFrame = 0;
+            int contatoreFrameX = 0;
+            int contatoreFrameZ = 0;
 
             while(inGioco) {
                 int input = getch();
@@ -193,16 +194,21 @@ int main() {
                     giocatore.resetBomb();
                 }
 
-                contatoreFrame++;
-                //Serve a gestire ogni quanto tempo si muovono i nemici (porlo >= a 10 indica >= 1 secondo)
-                if (contatoreFrame >= 25) {
+                contatoreFrameX++;
+                //Serve a gestire ogni quanto tempo si muovono i nemici (varia in base al timeout)
+                if (contatoreFrameX >= 15) {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                         gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
                     }
+                    contatoreFrameX = 0;
+                }
+
+                contatoreFrameZ++;
+                if (contatoreFrameZ >= 3) {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
                         gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
                     }
-                    contatoreFrame = 0;
+                    contatoreFrameZ = 0;
                 }
 
                 bool colpito = false;
@@ -232,7 +238,7 @@ int main() {
                 }
 
                 // --- LOGICA APERTURA PORTA ---
-                // Se non ci sono più nemici di nessun tipo, ordiniamo al livello di aprire l'uscita
+                // Se non ci sono più nemici viene generata la porta di uscita
                 if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
                     gestoreMappa.livelloCorrente->apriPortaUscita();
                 }
