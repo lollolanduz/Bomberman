@@ -40,7 +40,7 @@ int main() {
         if (scelta == 0) {
             clear();
             Mappa gestoreMappa;
-            Player giocatore(1, 1, '@', 3);
+            Player giocatore(1, 1, '@', 5);
 
             gestoreMappa.livelloCorrente->disegna();
             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
