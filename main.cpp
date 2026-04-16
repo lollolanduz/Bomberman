@@ -195,7 +195,7 @@ int main() {
 
                 contatoreFrame++;
                 //Serve a gestire ogni quanto tempo si muovono i nemici (porlo >= a 10 indica >= 1 secondo)
-                if (contatoreFrame >= 5) {
+                if (contatoreFrame >= 25) {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                         gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
                     }
