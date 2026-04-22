@@ -23,6 +23,8 @@ add_executable(Bomberman main.cpp
         Enemy.h
         Enemy2.cpp
         Enemy2.h
+        Pausa.cpp
+        Pausa.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)

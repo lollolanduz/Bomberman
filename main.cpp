@@ -6,6 +6,7 @@
 #include "Costanti.h"
 #include "Enemy.h"
 #include "Enemy2.h"
+#include "Pausa.h"
 
 int main() {
     initscr();
@@ -68,6 +69,8 @@ int main() {
                         case ' ':
                             giocatore.bomb_placement();
                             break;
+                            // da rimuovere il case q poichè aggiunto la pausa al gioco
+                            //per ora lo lascio per comodità
                         case 'q':
                             inGioco = false;
                             break;
@@ -96,6 +99,30 @@ int main() {
                             // 3. Carichiamo la posizione salvata del livello precedente
                             giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
                                                   gestoreMappa.livelloCorrente->player_save_y);
+                            break;
+                        case 't':
+                        case 'T':
+                        {
+                            Pausa menuPausa;
+                            int sceltaPausa = menuPausa.gestisciPause();
+
+                            if (sceltaPausa == 0) {
+                                //Ritorna come prima
+                                timeout(100);
+                                //Ripulisco lo schermo
+                                clear();
+                            }
+                            else if (sceltaPausa == 1) {
+                                //Ricomincia da capo (per ora resetta solo lo spawn)
+                                giocatore.reset_position();
+                                timeout(100);
+                                clear();
+                            }
+                            else if (sceltaPausa == 2) {
+                                //Torna al menù
+                                inGioco = false;
+                            }
+                        }
                             break;
 
                         default:
