@@ -32,7 +32,7 @@ public:
     int player_save_x;
     int player_save_y;
 
-    static const int max_y=21;
+    static const int max_y=24;
     static const int max_x=40;
 
     char griglia[max_y][max_x];
