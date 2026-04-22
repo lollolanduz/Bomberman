@@ -39,250 +39,18 @@ int main() {
         int scelta = menuPrincipale.gestisciInput();
 
         if (scelta == 0) {
-            clear();
-            Mappa gestoreMappa;
-            Player giocatore(1, 1, '@', 5000);
+            bool vuoleRicominciare;
 
-            gestoreMappa.livelloCorrente->disegna();
-            giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-
-            // Disegna i nemici iniziali
-            for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
-                gestoreMappa.livelloCorrente->nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-            }
-            for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
-                gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-            }
-
-            refresh();
-
-            bool inGioco = true;
-            timeout(100);
-            int contatoreFrameX = 0;
-            int contatoreFrameZ = 0;
-
-            while(inGioco) {
-                int input = getch();
-
-                if (input != ERR) {
-                    switch (input) {
-                        case ' ':
-                            giocatore.bomb_placement();
-                            break;
-                            // da rimuovere il case q poichè aggiunto la pausa al gioco
-                            //per ora lo lascio per comodità
-                        case 'q':
-                            inGioco = false;
-                            break;
-
-                        case '+':
-                            // 1. Salviamo la posizione attuale nel livello che stiamo lasciando
-                            gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
-                            gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
-
-                            // 2. Cambiamo stanza
-                            gestoreMappa.vaiAlProssimo();
-
-                            // 3. Carichiamo la posizione salvata del NUOVO livello
-                            giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
-                                                  gestoreMappa.livelloCorrente->player_save_y);
-                            break;
-
-                        case '-':
-                            // 1. Salviamo la posizione attuale
-                            gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
-                            gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
-
-                            // 2. Torniamo indietro
-                            gestoreMappa.tornaAlPrecedente();
-
-                            // 3. Carichiamo la posizione salvata del livello precedente
-                            giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
-                                                  gestoreMappa.livelloCorrente->player_save_y);
-                            break;
-                        case 't':
-                        case 'T':
-                        {
-                            Pausa menuPausa;
-                            int sceltaPausa = menuPausa.gestisciPause();
-
-                            if (sceltaPausa == 0) {
-                                //Ritorna come prima
-                                timeout(100);
-                                //Ripulisco lo schermo
-                                clear();
-                            }
-                            else if (sceltaPausa == 1) {
-                                //Ricomincia da capo (per ora resetta solo lo spawn)
-                                giocatore.reset_position();
-                                timeout(100);
-                                clear();
-                            }
-                            else if (sceltaPausa == 2) {
-                                //Torna al menù
-                                inGioco = false;
-                            }
-                        }
-                            break;
-
-                        default:
-                            giocatore.move(input, gestoreMappa.livelloCorrente);
-
-                            // --- CONTROLLO ENTRATA NEL PORTALE ---
-                            if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
-
-                                // Distruggiamo il livello attuale e saltiamo al prossimo!
-                                gestoreMappa.eliminaLivelloCorrenteEAvanti();
-
-                                // Controlliamo se abbiamo appena finito l'ultimo livello
-                                if (gestoreMappa.livelloCorrente == nullptr) {
-                                    clear();
-                                    mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
-                                    refresh();
-                                    napms(3000);
-                                    inGioco = false; // Torna al menu
-                                } else {
-                                    // Se ci sono ancora livelli, resettiamo il player per il nuovo livello
-                                    giocatore.reset_position();
-                                    clear();
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                giocatore.check_teleport(gestoreMappa.livelloCorrente);
-                giocatore.tickBomb();
-
-                //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 equivale ad 1 secondo)
-                if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
-                    int bX = giocatore.getBombX();
-                    int bY = giocatore.getBombY();
-
-                    int esplosioneX[5] = {bX, bX, bX, bX - 1, bX + 1};
-                    int esplosioneY[5] = {bY, bY - 1, bY + 1, bY, bY};
-
-                    attron(COLOR_PAIR(LAYER_2) | A_BOLD);
-                    for (int dir = 0; dir < 5; dir++) {
-                        if (gestoreMappa.livelloCorrente->griglia[esplosioneY[dir]][esplosioneX[dir]] != 'M') {
-                            mvaddch(gestoreMappa.livelloCorrente->start_y + esplosioneY[dir],
-                                    gestoreMappa.livelloCorrente->start_x + esplosioneX[dir], '#');
-                        }
-                    }
-                    attroff(COLOR_PAIR(LAYER_2) | A_BOLD);
-                    refresh();
-                    napms(150);
-
-                    for (int dir = 0; dir < 5; dir++) {
-                        int eX = esplosioneX[dir];
-                        int eY = esplosioneY[dir];
-
-                        if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
-                            gestoreMappa.livelloCorrente->griglia[eY][eX] = ' ';
-                        }
-
-                        if (giocatore.getX() == eX && giocatore.getY() == eY) {
-                            giocatore.take_damage();
-                            if (giocatore.getlife() > 0) {
-                                giocatore.reset_position();
-                            } else {
-                                clear();
-                                mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
-                                refresh();
-                                napms(2000);
-                                inGioco = false;
-                            }
-                        }
-
-                        //Uccisione Nemici X
-                        for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreX; k++) {
-                            if (gestoreMappa.livelloCorrente->nemiciX[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciX[k]->getY() == eY) {
-                                delete gestoreMappa.livelloCorrente->nemiciX[k];
-                                for (int j = k; j < gestoreMappa.livelloCorrente->contatoreX - 1; j++) {
-                                    gestoreMappa.livelloCorrente->nemiciX[j] = gestoreMappa.livelloCorrente->nemiciX[j + 1];
-                                }
-                                gestoreMappa.livelloCorrente->contatoreX--;
-                                k--;
-                            }
-                        }
-
-                        //Uccisione Nemici Z
-                        for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreZ; k++) {
-                            if (gestoreMappa.livelloCorrente->nemiciZ[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciZ[k]->getY() == eY) {
-                                delete gestoreMappa.livelloCorrente->nemiciZ[k];
-                                for (int j = k; j < gestoreMappa.livelloCorrente->contatoreZ - 1; j++) {
-                                    gestoreMappa.livelloCorrente->nemiciZ[j] = gestoreMappa.livelloCorrente->nemiciZ[j + 1];
-                                }
-                                gestoreMappa.livelloCorrente->contatoreZ--;
-                                k--;
-                            }
-                        }
-                    }
-                    giocatore.resetBomb();
-                }
-
-                contatoreFrameX++;
-                //Serve a gestire ogni quanto tempo si muovono i nemici (varia in base al timeout)
-                if (contatoreFrameX >= 15) {
-                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
-                        gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
-                    }
-                    contatoreFrameX = 0;
-                }
-
-                contatoreFrameZ++;
-                if (contatoreFrameZ >= 3) {
-                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
-                        gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
-                    }
-                    contatoreFrameZ = 0;
-                }
-
-                bool colpito = false;
-
-                for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
-                    if (giocatore.getX() == gestoreMappa.livelloCorrente->nemiciX[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemiciX[i]->getY()) {
-                        colpito = true;
-                    }
-                }
-                for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
-                    if (giocatore.getX() == gestoreMappa.livelloCorrente->nemiciZ[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemiciZ[i]->getY()) {
-                        colpito = true;
-                    }
-                }
-
-                if (colpito == true) {
-                    giocatore.take_damage();
-                    if (giocatore.getlife() > 0) {
-                        giocatore.reset_position();
-                    } else {
-                        clear();
-                        mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
-                        refresh();
-                        napms(2000);
-                        inGioco = false;
-                    }
-                }
-
-                // --- LOGICA APERTURA PORTA ---
-                // Se non ci sono più nemici viene generata la porta di uscita
-                if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
-                    gestoreMappa.livelloCorrente->apriPortaUscita();
-                }
-
-                erase();
+            do {
+                vuoleRicominciare = false;
+                clear();
+                Mappa gestoreMappa;
+                Player giocatore(1, 1, '@', 5);
 
                 gestoreMappa.livelloCorrente->disegna();
+                giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
-                if (giocatore.getIsBombActive() == true) {
-                    attron(COLOR_PAIR(LAYER_3) | A_BOLD);
-                    mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
-                            gestoreMappa.livelloCorrente->start_x + giocatore.getBombX(), 'O');
-                    attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
-                }
-
-                mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
-
+                // Disegna i nemici iniziali
                 for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                     gestoreMappa.livelloCorrente->nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 }
@@ -290,11 +58,251 @@ int main() {
                     gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 }
 
-                giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
-
                 refresh();
-            }
-            clear();
+
+                bool inGioco = true;
+                timeout(100);
+                int contatoreFrameX = 0;
+                int contatoreFrameZ = 0;
+
+                while(inGioco) {
+                    int input = getch();
+
+                    if (input != ERR) {
+                        switch (input) {
+                            case ' ':
+                                giocatore.bomb_placement();
+                                break;
+                                // da rimuovere il case q poichè aggiunto la pausa al gioco
+                                //per ora lo lascio per comodità
+                            case 'q':
+                                inGioco = false;
+                                break;
+
+                            case '+':
+                                // 1. Salviamo la posizione attuale nel livello che stiamo lasciando
+                                gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                                gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+
+                                // 2. Cambiamo stanza
+                                gestoreMappa.vaiAlProssimo();
+
+                                // 3. Carichiamo la posizione salvata del NUOVO livello
+                                giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                                      gestoreMappa.livelloCorrente->player_save_y);
+                                break;
+
+                            case '-':
+                                // 1. Salviamo la posizione attuale
+                                gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                                gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+
+                                // 2. Torniamo indietro
+                                gestoreMappa.tornaAlPrecedente();
+
+                                // 3. Carichiamo la posizione salvata del livello precedente
+                                giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                                      gestoreMappa.livelloCorrente->player_save_y);
+                                break;
+                            case 't':
+                            case 'T':
+                            {
+                                Pausa menuPausa;
+                                int sceltaPausa = menuPausa.gestisciPause();
+
+                                if (sceltaPausa == 0) {
+                                    // Continua
+                                    timeout(100);
+                                    clear();
+                                }
+                                else if (sceltaPausa == 1) {
+                                    // RICOMINCIA!
+                                    // Diciamo al ciclo principale di fare un altro giro
+                                    vuoleRicominciare = true;
+
+                                    // Spegniamo il ciclo 'inGioco' per interrompere la partita attuale
+                                    inGioco = false;
+                                }
+                                else if (sceltaPausa == 2) {
+                                    // Torna al menù principale
+                                    // inGioco = false fermerà la partita
+                                    // vuoleRicominciare è già false, quindi uscirà e tornerà al menu iniziale
+                                    inGioco = false;
+                                }
+                            }
+                                break;
+
+                            default:
+                                giocatore.move(input, gestoreMappa.livelloCorrente);
+
+                                // --- CONTROLLO ENTRATA NEL PORTALE ---
+                                if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
+
+                                    // Distruggiamo il livello attuale e saltiamo al prossimo!
+                                    gestoreMappa.eliminaLivelloCorrenteEAvanti();
+
+                                    // Controlliamo se abbiamo appena finito l'ultimo livello
+                                    if (gestoreMappa.livelloCorrente == nullptr) {
+                                        clear();
+                                        mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
+                                        refresh();
+                                        napms(3000);
+                                        inGioco = false; // Torna al menu
+                                    } else {
+                                        // Se ci sono ancora livelli, resettiamo il player per il nuovo livello
+                                        giocatore.reset_position();
+                                        clear();
+                                    }
+                                }
+                                break;
+                        }
+                    }
+
+                    giocatore.check_teleport(gestoreMappa.livelloCorrente);
+                    giocatore.tickBomb();
+
+                    //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 equivale ad 1 secondo)
+                    if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
+                        int bX = giocatore.getBombX();
+                        int bY = giocatore.getBombY();
+
+                        int esplosioneX[5] = {bX, bX, bX, bX - 1, bX + 1};
+                        int esplosioneY[5] = {bY, bY - 1, bY + 1, bY, bY};
+
+                        attron(COLOR_PAIR(LAYER_2) | A_BOLD);
+                        for (int dir = 0; dir < 5; dir++) {
+                            if (gestoreMappa.livelloCorrente->griglia[esplosioneY[dir]][esplosioneX[dir]] != 'M') {
+                                mvaddch(gestoreMappa.livelloCorrente->start_y + esplosioneY[dir],
+                                        gestoreMappa.livelloCorrente->start_x + esplosioneX[dir], '#');
+                            }
+                        }
+                        attroff(COLOR_PAIR(LAYER_2) | A_BOLD);
+                        refresh();
+                        napms(150);
+
+                        for (int dir = 0; dir < 5; dir++) {
+                            int eX = esplosioneX[dir];
+                            int eY = esplosioneY[dir];
+
+                            if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
+                                gestoreMappa.livelloCorrente->griglia[eY][eX] = ' ';
+                            }
+
+                            if (giocatore.getX() == eX && giocatore.getY() == eY) {
+                                giocatore.take_damage();
+                                if (giocatore.getlife() > 0) {
+                                    giocatore.reset_position();
+                                } else {
+                                    clear();
+                                    mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
+                                    refresh();
+                                    napms(2000);
+                                    inGioco = false;
+                                }
+                            }
+
+                            //Uccisione Nemici X
+                            for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreX; k++) {
+                                if (gestoreMappa.livelloCorrente->nemiciX[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciX[k]->getY() == eY) {
+                                    delete gestoreMappa.livelloCorrente->nemiciX[k];
+                                    for (int j = k; j < gestoreMappa.livelloCorrente->contatoreX - 1; j++) {
+                                        gestoreMappa.livelloCorrente->nemiciX[j] = gestoreMappa.livelloCorrente->nemiciX[j + 1];
+                                    }
+                                    gestoreMappa.livelloCorrente->contatoreX--;
+                                    k--;
+                                }
+                            }
+
+                            //Uccisione Nemici Z
+                            for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreZ; k++) {
+                                if (gestoreMappa.livelloCorrente->nemiciZ[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciZ[k]->getY() == eY) {
+                                    delete gestoreMappa.livelloCorrente->nemiciZ[k];
+                                    for (int j = k; j < gestoreMappa.livelloCorrente->contatoreZ - 1; j++) {
+                                        gestoreMappa.livelloCorrente->nemiciZ[j] = gestoreMappa.livelloCorrente->nemiciZ[j + 1];
+                                    }
+                                    gestoreMappa.livelloCorrente->contatoreZ--;
+                                    k--;
+                                }
+                            }
+                        }
+                        giocatore.resetBomb();
+                    }
+
+                    contatoreFrameX++;
+                    //Serve a gestire ogni quanto tempo si muovono i nemici (varia in base al timeout)
+                    if (contatoreFrameX >= 15) {
+                        for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
+                            gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
+                        }
+                        contatoreFrameX = 0;
+                    }
+
+                    contatoreFrameZ++;
+                    if (contatoreFrameZ >= 3) {
+                        for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
+                            gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
+                        }
+                        contatoreFrameZ = 0;
+                    }
+
+                    bool colpito = false;
+
+                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
+                        if (giocatore.getX() == gestoreMappa.livelloCorrente->nemiciX[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemiciX[i]->getY()) {
+                            colpito = true;
+                        }
+                    }
+                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
+                        if (giocatore.getX() == gestoreMappa.livelloCorrente->nemiciZ[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemiciZ[i]->getY()) {
+                            colpito = true;
+                        }
+                    }
+
+                    if (colpito == true) {
+                        giocatore.take_damage();
+                        if (giocatore.getlife() > 0) {
+                            giocatore.reset_position();
+                        } else {
+                            clear();
+                            mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R");
+                            refresh();
+                            napms(2000);
+                            inGioco = false;
+                        }
+                    }
+
+                    // --- LOGICA APERTURA PORTA ---
+                    // Se non ci sono più nemici viene generata la porta di uscita
+                    if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
+                        gestoreMappa.livelloCorrente->apriPortaUscita();
+                    }
+
+                    erase();
+
+                    gestoreMappa.livelloCorrente->disegna();
+
+                    if (giocatore.getIsBombActive() == true) {
+                        attron(COLOR_PAIR(LAYER_3) | A_BOLD);
+                        mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
+                                gestoreMappa.livelloCorrente->start_x + giocatore.getBombX(), 'O');
+                        attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
+                    }
+
+                    mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
+
+                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
+                        gestoreMappa.livelloCorrente->nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+                    }
+                    for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
+                        gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+                    }
+
+                    giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+
+                    refresh();
+                }
+                clear();
+            } while (vuoleRicominciare);
         }
         else if (scelta == 1) {
             clear();
@@ -307,6 +315,7 @@ int main() {
         else if (scelta == 2) {
             chiudiTutto = true;
         }
+
     }
 
     endwin();
