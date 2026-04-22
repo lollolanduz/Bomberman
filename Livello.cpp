@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
 #include "Livello.h"
 #include "Costanti.h"
 #include "Enemy.h"
@@ -73,15 +74,27 @@ void Livello::genera_MuriFissi() {
     }
 
     //Mura indistruttibili nella mappa (a scacchiera)
-    for (int y=4; y< max_y; y=y+4) {
-        for (int x=4; x < max_x; x=x+4) {
-            griglia[y][x] = 'M';
+    if (idLivello <= 3) {
+        for (int y=1; y< max_y; y++) {
+            for (int x=1; x < max_x; x++) {
+                if ( y%4 == 0 && x%4==0) {
+                    griglia[y][x] = 'M';
+                }
+            }
+        }
+    } else if (idLivello >=4) {
+        for (int y=1; y< max_y; y++) {
+            for (int x=1; x < max_x; x++) {
+                if (y%3 == 0 && x%3==0) {
+                    griglia[y][x] = 'M';
+                }
+            }
         }
     }
 }
 
 void Livello::genera_MuraDistruttibili() {
-    int wall_cap = 10 + 2*idLivello;
+    int wall_cap = 10 + 4*idLivello;
 
     if ( wall_cap > 70) {
         wall_cap = 70;
@@ -203,7 +216,13 @@ void Livello::disegna() {
             }
         }
     }
+
+    //Per rendere la scritta centrale per qualsiasi lunghezza di max_x
+    char stringa_n_livello[40]= "BOMBERMAN ASCII - LIVELLO";
+    int lunghezza_stringa = strlen(stringa_n_livello);
+    int stampa = (max_x - lunghezza_stringa)/2;
+
     //Stampa del livello in cui è il giocatore
-    mvprintw(start_y - 2, start_x + 5, " BOMBERMAN ASCII - LIVELLO %d ", idLivello);
+    mvprintw(start_y - 2, start_x + stampa, "%s %d", stringa_n_livello, idLivello);
 }
 
