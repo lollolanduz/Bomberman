@@ -48,6 +48,12 @@ public:
     void tickBomb();       // Per far scorrere il tempo
 
     void resetBomb();      // Per far sparire la bomba dopo l'esplosione
+
+
+
+    //Aggiunto Blinking
+    //Successivamente utile per anche l'immortalità
+    void draw(int offsetY, int offsetX, bool isBlinking = false);
 };
 
 

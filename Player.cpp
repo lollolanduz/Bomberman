@@ -3,6 +3,7 @@
 //
 
 #include "Player.h"
+#include "Costanti.h"
 
 Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     life = LIFE;
@@ -102,14 +103,22 @@ void Player::move(int input, Livello *currentLevel) {
 
 
 
+//Utile per l'immortalità
+void Player::draw(int offsetY, int offsetX, bool isBlinking) {
+    if (isBlinking) {
+        // Usiamo il colore del teletrasporto E il lampeggio
+        attron(A_BLINK | A_BOLD);
+    }
+
+    mvaddch(y + offsetY, x + offsetX, symbol);
+
+    if (isBlinking) {
+        attroff(A_BLINK | A_BOLD);
+    }
+}
+
 
 //Per la funzione teletrasporto in livello.cpp
 void Player::check_teleport(Livello* currentLevel) {
     currentLevel->gestisciTeletrasporto(y,x);
 }
-
-
-
-
-
-

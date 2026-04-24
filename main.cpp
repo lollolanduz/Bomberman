@@ -16,8 +16,8 @@ int main() {
     init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, 28, COLOR_BLACK);
 
-    init_color(LAYER_4, 500, 0, 0);
     init_color(LAYER_2, 1000, 500, 0);
+    init_color(LAYER_4, 500, 0, 0);
 
     init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(LAYER_2, LAYER_2 , COLOR_BLACK);
@@ -281,6 +281,35 @@ int main() {
 
                     gestoreMappa.livelloCorrente->disegna();
 
+                    // --- LOGICA DEL TELETRASPORTO E LAMPEGGIO ---
+
+                    // 1. Controllo se i piedi sono sulla 'T'
+                    bool sulTeletrasporto = (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'T');
+
+                    // 2. Controllo se NON sono appena atterrato (cooldown)
+                    // Se tempodiInizio è -1, significa che ho appena fatto il salto, quindi NON devo lampeggiare!
+                    bool possoLampeggiare = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
+
+                    // 3. Decido se disegnare il giocatore in questo preciso frame
+                    bool disegnaGiocatore = true;
+
+                    if (possoLampeggiare) {
+                        // Trucco del lampeggio manuale:
+                        // Uso contatoreFrameX (che scorre veloce) per accendere e spegnere la visibilità.
+                        // (es: se il numero diviso 4 dà resto 0 o 1 lo disegno, altrimenti lo nascondo)
+                        if (contatoreFrameX % 4 < 2) {
+                            disegnaGiocatore = false;
+                        }
+                    }
+
+                    // 4. Disegno il giocatore SOLO SE ha il permesso
+                    if (disegnaGiocatore) {
+                        // NOTA BENE: Passiamo SEMPRE false alla funzione draw,
+                        // perché non usiamo più l'A_BLINK di ncurses!
+                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
+                    }
+
+                    refresh();
                     if (giocatore.getIsBombActive() == true) {
                         attron(COLOR_PAIR(LAYER_3) | A_BOLD);
                         mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
@@ -296,8 +325,6 @@ int main() {
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
                         gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                     }
-
-                    giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
                     refresh();
                 }
