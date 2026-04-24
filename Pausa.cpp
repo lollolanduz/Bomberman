@@ -38,14 +38,13 @@ void Pausa::disegnaPause() {
     for (int i = 0; i < 3; i++) {
         int riga_y = 6 + (i * 2);
 
-        // FISSIAMO la colonna di partenza a 4 per TUTTE le opzioni.
-        // Così le frecce saranno perfettamente allineate verticalmente.
+        //Inizializza la colonna di partenza per tutte le stringhe
+        //Così che siano allineate
         int start_col = 4;
 
         if (i == scelta_pausa) {
             wattron(finestra, A_REVERSE);
-            // Il trucco %-13s riempie di spazi vuoti le parole più corte,
-            // creando un blocco evidenziato sempre largo uguale!
+            //%-13s serve a riempire di spazi vuoti così da creare rettangoli di ugual misura
             mvwprintw(finestra, riga_y, start_col, " ► %-13s ", opzioni_pausa[i]);
             wattroff(finestra, A_REVERSE);
         }

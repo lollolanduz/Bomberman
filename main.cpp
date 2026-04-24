@@ -45,7 +45,7 @@ int main() {
                 vuoleRicominciare = false;
                 clear();
                 Mappa gestoreMappa;
-                Player giocatore(1, 1, '@', 5);
+                Player giocatore(1, 1, '@', 5000);
 
                 gestoreMappa.livelloCorrente->disegna();
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -93,14 +93,14 @@ int main() {
                                 break;
 
                             case '-':
-                                // 1. Salviamo la posizione attuale
+                                //Per salvare la posizione del player
                                 gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
                                 gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
 
-                                // 2. Torniamo indietro
+                                //Per tornare al livello precedente
                                 gestoreMappa.tornaAlPrecedente();
 
-                                // 3. Carichiamo la posizione salvata del livello precedente
+                                //Carichiamo la posizione salvata del livello precedente
                                 giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
                                                       gestoreMappa.livelloCorrente->player_save_y);
                                 break;
@@ -116,18 +116,15 @@ int main() {
                                     clear();
                                 }
                                 else if (sceltaPausa == 1) {
-                                    // RICOMINCIA!
-                                    // Diciamo al ciclo principale di fare un altro giro
+                                    //Fa eseguire un altro ciclo (riesegue il do)
                                     vuoleRicominciare = true;
 
-                                    // Spegniamo il ciclo 'inGioco' per interrompere la partita attuale
+                                    //Interrompe la partita attuale
                                     inGioco = false;
                                 }
                                 else if (sceltaPausa == 2) {
-                                    // Torna al menù principale
-                                    // inGioco = false fermerà la partita
-                                    // vuoleRicominciare è già false, quindi uscirà e tornerà al menu iniziale
-                                    inGioco = false;
+                                    //vuoleRicominciare è già false quindi torna al menu senza problemi
+                                    inGioco = false; //Blocca il ciclo while
                                 }
                             }
                                 break;
@@ -138,10 +135,10 @@ int main() {
                                 // --- CONTROLLO ENTRATA NEL PORTALE ---
                                 if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
 
-                                    // Distruggiamo il livello attuale e saltiamo al prossimo!
+                                    //Distrugge il livello attuale e passa al prossimo
                                     gestoreMappa.eliminaLivelloCorrenteEAvanti();
 
-                                    // Controlliamo se abbiamo appena finito l'ultimo livello
+                                    //Controllo se l'ultimo livello è stato completato
                                     if (gestoreMappa.livelloCorrente == nullptr) {
                                         clear();
                                         mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
@@ -150,6 +147,8 @@ int main() {
                                         inGioco = false; // Torna al menu
                                     } else {
                                         // Se ci sono ancora livelli, resettiamo il player per il nuovo livello
+                                        /*Sistemare il reset position (non voglio che resetta la posizione
+                                        in un livello in cui io abbia già messo mano*/
                                         giocatore.reset_position();
                                         clear();
                                     }
@@ -162,7 +161,8 @@ int main() {
                     giocatore.tickBomb();
 
                     //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 equivale ad 1 secondo)
-                    if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 30) {
+                    //Varia a seconda del timeout
+                    if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 25) {
                         int bX = giocatore.getBombX();
                         int bY = giocatore.getBombY();
 
