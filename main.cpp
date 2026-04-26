@@ -1,5 +1,6 @@
 #include <pdcurses.h>
 #include <cstdlib>
+#include <ctime>
 #include "Mappa.h"
 #include "Menu.h"
 #include "Player.h"
@@ -107,11 +108,24 @@ int main() {
                             case 't':
                             case 'T':
                             {
+                                //registro qui l'inizio della pausa
+                                time_t tempo_inizio_pausa = std::time(nullptr);
+
                                 Pausa menuPausa;
                                 int sceltaPausa = menuPausa.gestisciPause();
 
+                                //La pausa è finita: calcolo quanto è durata la pausa (delta)
+                                time_t tempo_fine_pausa = std::time(nullptr);
+                                int durata_pausa = tempo_fine_pausa - tempo_inizio_pausa;
+
                                 if (sceltaPausa == 0) {
-                                    // Continua
+                                    //Se il giocatore stava per teletrasportarsi (quindi tempodiInizio diverso da -1)
+                                    if (gestoreMappa.livelloCorrente->tempodiInizio != -1) {
+                                        //"Spostiamo" il tempo in cui siam "saliti" sul teletrasporto
+                                        //del delta calcolato precedentemente
+                                        gestoreMappa.livelloCorrente->tempodiInizio += durata_pausa;
+                                    }
+
                                     timeout(100);
                                     clear();
                                 }
@@ -283,14 +297,14 @@ int main() {
 
                     // --- LOGICA DEL TELETRASPORTO E LAMPEGGIO ---
 
-                    // 1. Controllo se i piedi sono sulla 'T'
+                    //Controllo se i piedi sono sulla 'T'
                     bool sulTeletrasporto = (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'T');
 
-                    // 2. Controllo se NON sono appena atterrato (cooldown)
-                    // Se tempodiInizio è -1, significa che ho appena fatto il salto, quindi NON devo lampeggiare!
+                    //Controllo se son stato teletrasportato
+                    //TempodiInizio=-1 vuol dire che ho eseguito il teletrasporto
                     bool possoLampeggiare = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
 
-                    // 3. Decido se disegnare il giocatore in questo preciso frame
+                    //Decido se disegnare il giocatore in questo preciso frame
                     bool disegnaGiocatore = true;
 
                     if (possoLampeggiare) {
