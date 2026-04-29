@@ -62,7 +62,7 @@ int main() {
                 refresh();
 
                 bool inGioco = true;
-                timeout(100);
+                timeout(mps);
                 int contatoreFrameX = 0;
                 int contatoreFrameZ = 0;
 
@@ -126,7 +126,7 @@ int main() {
                                         gestoreMappa.livelloCorrente->tempodiInizio += durata_pausa;
                                     }
 
-                                    timeout(100);
+                                    timeout(mps);
                                     clear();
                                 }
                                 else if (sceltaPausa == 1) {
@@ -160,11 +160,13 @@ int main() {
                                         napms(3000);
                                         inGioco = false; // Torna al menu
                                     } else {
-                                        // Se ci sono ancora livelli, resettiamo il player per il nuovo livello
-                                        /*Sistemare il reset position (non voglio che resetta la posizione
-                                        in un livello in cui io abbia già messo mano*/
-                                        giocatore.reset_position();
+                                        //Dopo aver finito un livello mi genera il player seguendo le coordinate in cui è
+                                        //stato lasciato precedentemente
+                                        giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                                     gestoreMappa.livelloCorrente->player_save_y);
                                         clear();
+                                        gestoreMappa.livelloCorrente->disegna();
+                                        refresh();
                                     }
                                 }
                                 break;
