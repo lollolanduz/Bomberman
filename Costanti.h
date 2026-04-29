@@ -20,4 +20,7 @@
 
 #define PORTALE 5
 
+
+static const int mps=100;
+
 #endif //BOMBERMAN_COSTANTI_H
