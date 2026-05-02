@@ -94,7 +94,7 @@ void Livello::genera_MuriFissi() {
 }
 
 void Livello::genera_MuraDistruttibili() {
-    int wall_cap = 10 + 2*idLivello;
+    int wall_cap = 10 + 10*idLivello;
 
     if ( wall_cap > 70) {
         wall_cap = 70;
@@ -139,6 +139,34 @@ void Livello::genera_teletrasporto() {
 
                 griglia[rand_y][rand_x] = 'T';
                 griglia[opp_y][opp_x] = 'T';
+
+                //Creare la safe zone per il teletrasporto
+                if (griglia[rand_y+1][rand_x] == 'D') {
+                    griglia[rand_y+1][rand_x] = ' ';
+                }
+                if (griglia[rand_y-1][rand_x] == 'D') {
+                    griglia[rand_y-1][rand_x] = ' ';
+                }
+                if (griglia[rand_y][rand_x+1] == 'D') {
+                    griglia[rand_y][rand_x+1] = ' ';
+                }
+                if (griglia[rand_y][rand_x-1] == 'D') {
+                    griglia[rand_y][rand_x-1] = ' ';
+                }
+
+                //Creazione safe zone per l'opposto
+                if (griglia[opp_y+1][opp_x] == 'D') {
+                    griglia[opp_y+1][opp_x] = ' ';
+                }
+                if (griglia[opp_y-1][opp_x] == 'D') {
+                    griglia[opp_y-1][opp_x] = ' ';
+                }
+                if (griglia[opp_y][opp_x+1] == 'D') {
+                    griglia[opp_y][opp_x+1] = ' ';
+                }
+                if (griglia[opp_y][opp_x-1] == 'D') {
+                    griglia[opp_y][opp_x-1] = ' ';
+                }
 
                 //Serve ad uscire dal while
                 teletrasporto_piazzato = true;
