@@ -46,7 +46,7 @@ int main() {
                 vuoleRicominciare = false;
                 clear();
                 Mappa gestoreMappa;
-                Player giocatore(1, 1, '@', 5000);
+                Player giocatore(1, 1, 'P', 5000);
 
                 gestoreMappa.livelloCorrente->disegna();
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -297,35 +297,7 @@ int main() {
 
                     gestoreMappa.livelloCorrente->disegna();
 
-                    // --- LOGICA DEL TELETRASPORTO E LAMPEGGIO ---
-
-                    //Controllo se i piedi sono sulla 'T'
-                    bool sulTeletrasporto = (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'T');
-
-                    //Controllo se son stato teletrasportato
-                    //TempodiInizio=-1 vuol dire che ho eseguito il teletrasporto
-                    bool possoLampeggiare = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
-
-                    //Decido se disegnare il giocatore in questo preciso frame
-                    bool disegnaGiocatore = true;
-
-                    if (possoLampeggiare) {
-                        // Trucco del lampeggio manuale:
-                        // Uso contatoreFrameX (che scorre veloce) per accendere e spegnere la visibilità.
-                        // (es: se il numero diviso 4 dà resto 0 o 1 lo disegno, altrimenti lo nascondo)
-                        if (contatoreFrameX % 4 < 2) {
-                            disegnaGiocatore = false;
-                        }
-                    }
-
-                    // 4. Disegno il giocatore SOLO SE ha il permesso
-                    if (disegnaGiocatore) {
-                        // NOTA BENE: Passiamo SEMPRE false alla funzione draw,
-                        // perché non usiamo più l'A_BLINK di ncurses!
-                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
-                    }
-
-                    refresh();
+                    //Disegno della bomba
                     if (giocatore.getIsBombActive() == true) {
                         attron(COLOR_PAIR(LAYER_3) | A_BOLD);
                         mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
@@ -333,13 +305,30 @@ int main() {
                         attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
                     }
 
+                    // Disegno la UI
                     mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
 
+                    //Disegno dei Nemici
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                         gestoreMappa.livelloCorrente->nemiciX[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                     }
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
                         gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
+                    }
+
+                    //LOGICA E DISEGNO DEL GIOCATORE
+                    bool sulTeletrasporto = (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'T');
+                    bool possoLampeggiare = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
+                    bool disegnaGiocatore = true;
+
+                    if (possoLampeggiare) {
+                        if (contatoreFrameX % 4 < 2) {
+                            disegnaGiocatore = false;
+                        }
+                    }
+
+                    if (disegnaGiocatore) {
+                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
                     }
 
                     refresh();
