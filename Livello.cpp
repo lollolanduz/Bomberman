@@ -94,7 +94,7 @@ void Livello::genera_MuriFissi() {
 }
 
 void Livello::genera_MuraDistruttibili() {
-    int wall_cap = 10 + 10*idLivello;
+    int wall_cap = 10 + 2*idLivello;
 
     if ( wall_cap > 70) {
         wall_cap = 70;
