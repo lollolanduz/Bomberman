@@ -28,14 +28,15 @@ public:
     int start_y;
     int start_x;
 
-    // Memoria posizione giocatore per questo livello
-    int player_save_x;
-    int player_save_y;
-
+    //Grandezza Matrice
     static const int max_y=24;
     static const int max_x=40;
 
     char griglia[max_y][max_x];
+
+    // Memoria posizione giocatore per questo livello
+    int player_save_x;
+    int player_save_y;
 
     // Array dei nemici (ora appartengono al Livello!)
     Enemy* nemiciX[25];
