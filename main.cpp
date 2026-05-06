@@ -72,7 +72,13 @@ int main() {
                     if (input != ERR) {
                         switch (input) {
                             case ' ':
-                                giocatore.bomb_placement();
+                                // Se in QUESTO livello non ci sono bombe, ne piazzo una
+                                if (gestoreMappa.livelloCorrente->isBombActive == false) {
+                                    gestoreMappa.livelloCorrente->isBombActive = true;
+                                    gestoreMappa.livelloCorrente->bombX = giocatore.getX();
+                                    gestoreMappa.livelloCorrente->bombY = giocatore.getY();
+                                    gestoreMappa.livelloCorrente->bombTimer = 0;
+                                }
                                 break;
                                 // da rimuovere il case q poichè aggiunto la pausa al gioco
                                 //per ora lo lascio per comodità
@@ -174,13 +180,15 @@ int main() {
                     }
 
                     giocatore.check_teleport(gestoreMappa.livelloCorrente);
-                    giocatore.tickBomb();
+                    if (gestoreMappa.livelloCorrente->isBombActive == true) {
+                        gestoreMappa.livelloCorrente->bombTimer++;
+                    }
 
                     //Giocatore.getBombTimer tempo dello scoppio della bomba (ogni 10 equivale ad 1 secondo)
                     //Varia a seconda del timeout
-                    if (giocatore.getIsBombActive() == true && giocatore.getBombTimer() >= 25) {
-                        int bX = giocatore.getBombX();
-                        int bY = giocatore.getBombY();
+                    if (gestoreMappa.livelloCorrente->isBombActive == true && gestoreMappa.livelloCorrente->bombTimer >= 25) {
+                        int bX = gestoreMappa.livelloCorrente->bombX;
+                        int bY = gestoreMappa.livelloCorrente->bombY;
 
                         int esplosioneX[5] = {bX, bX, bX, bX - 1, bX + 1};
                         int esplosioneY[5] = {bY, bY - 1, bY + 1, bY, bY};
@@ -241,7 +249,8 @@ int main() {
                                 }
                             }
                         }
-                        giocatore.resetBomb();
+                        gestoreMappa.livelloCorrente->isBombActive = false;
+                        gestoreMappa.livelloCorrente->bombTimer = 0;
                     }
 
                     contatoreFrameX++;
@@ -298,10 +307,10 @@ int main() {
                     gestoreMappa.livelloCorrente->disegna();
 
                     //Disegno della bomba
-                    if (giocatore.getIsBombActive() == true) {
+                    if (gestoreMappa.livelloCorrente->isBombActive == true) {
                         attron(COLOR_PAIR(LAYER_3) | A_BOLD);
-                        mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getBombY(),
-                                gestoreMappa.livelloCorrente->start_x + giocatore.getBombX(), 'O');
+                        mvaddch(gestoreMappa.livelloCorrente->start_y + gestoreMappa.livelloCorrente->bombY,
+                                gestoreMappa.livelloCorrente->start_x + gestoreMappa.livelloCorrente->bombX, 'O');
                         attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
                     }
 
