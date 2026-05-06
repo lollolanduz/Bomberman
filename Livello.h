@@ -38,6 +38,12 @@ public:
     int player_save_x;
     int player_save_y;
 
+    // --- VARIABILI DELLA BOMBA ---
+    bool isBombActive;
+    int bombX;
+    int bombY;
+    int bombTimer;
+
     // Array dei nemici (ora appartengono al Livello!)
     Enemy* nemiciX[25];
     int contatoreX;

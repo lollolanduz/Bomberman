@@ -22,6 +22,9 @@ Livello::Livello(int id) {
     player_save_x = 1;
     player_save_y = 1;
 
+    isBombActive = false;
+    bombTimer = 0;
+
     genera_griglia_vuota();
     genera_MuriFissi();
     genera_MuraDistruttibili();
