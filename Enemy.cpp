@@ -4,9 +4,12 @@
 
 #include "Enemy.h"
 #include <cstdlib>
+#include "Costanti.h"
 
 Enemy::Enemy(char S, Livello* currentLevel) : Entity(0, 0, S) {
+    lastDir = -1;
     bool spawn_trovato = false;
+
 
     // Il nemico cerca da solo una posizione valida sulla mappa
     while (!spawn_trovato) {
@@ -25,31 +28,48 @@ Enemy::Enemy(char S, Livello* currentLevel) : Entity(0, 0, S) {
 }
 
 void Enemy::move(Livello *currentLevel) {
-    // Array per memorizzare le direzioni valide (0: su, 1: giù, 2: sinistra, 3: destra)
-    int validDirs[4];
-    int validCount = 0;
-
-    // Incrementi per Y e X in base alla direzione
     int dy[] = {-1, 1, 0, 0};
     int dx[] = {0, 0, -1, 1};
+    int opposto[] = {1, 0, 3, 2}; // L'opposto di Su(0) è Giù(1) etc...
 
-    //controlla le 4 celle adiacenti
+    int stradeValide[4];
+    int countValide = 0;
+    int backDir = (lastDir != -1) ? opposto[lastDir] : -1;
+
     for(int i = 0; i < 4; i++) {
-        int checkY = y + dy[i];
-        int checkX = x + dx[i];
-        char ostacolo = currentLevel->griglia[checkY][checkX];
+        int cY = y + dy[i];
+        int cX = x + dx[i];
+        char ostacolo = currentLevel->griglia[cY][cX];
 
         if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U') {
-            validDirs[validCount] = i; // Salva la direzione se è libera
-            validCount++;
+            // Se ho più scelte, non tornare indietro
+            stradeValide[countValide++] = i;
         }
     }
 
-    // Se c'è almeno una strada libera sceglie a caso tra quelle disponibili
-    if(validCount > 0) {
-        int scelta = rand() % validCount;
-        int dirScelta = validDirs[scelta];
-        y += dy[dirScelta];
-        x += dx[dirScelta];
+    if (countValide > 0) {
+        // Se c'è più di una strada e una è quella da cui vengo, la scarto
+        int sceltaFinale = -1;
+        if (countValide > 1 && backDir != -1) {
+            int stradeSenzaRitorno[4];
+            int countSenzaRitorno = 0;
+            for(int i=0; i<countValide; i++) {
+                if(stradeValide[i] != backDir) stradeSenzaRitorno[countSenzaRitorno++] = stradeValide[i];
+            }
+            sceltaFinale = stradeSenzaRitorno[rand() % countSenzaRitorno];
+        } else {
+            sceltaFinale = stradeValide[rand() % countValide];
+        }
+
+        lastDir = sceltaFinale;
+        y += dy[lastDir];
+        x += dx[lastDir];
     }
+}
+
+void Enemy::draw(int offsetY, int offsetX) {
+    attron(COLOR_PAIR(COLORE_X) | A_BOLD);
+    mvaddch(y + offsetY, x + offsetX, symbol);
+    attroff(COLOR_PAIR(COLORE_X) | A_BOLD);
+
 }

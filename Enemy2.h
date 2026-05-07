@@ -7,12 +7,13 @@
 #include "Entity.h"
 #include "Livello.h"
 
-class Enemy2 : public Entity{
+class Enemy2 : public Entity {
 protected:
     int direzioneAttuale;
 public:
     Enemy2(char S, Livello* currentLevel);
     void move(Livello* currentLevel);
+    void draw(int offsetY, int offsetX) override;
 };
 
 #endif //BOMBERMAN_ENEMY2_H

@@ -3,6 +3,7 @@
 //
 #include "Enemy2.h"
 #include <cstdlib>
+#include "Costanti.h"
 
 Enemy2::Enemy2(char S, Livello* currentLevel) : Entity(0, 0, S) {
     direzioneAttuale = rand() % 4;
@@ -59,4 +60,10 @@ void Enemy2::move(Livello* currentLevel) {
             x += dx[direzioneAttuale];
         }
     }
+}
+
+void Enemy2::draw(int offsetY, int offsetX) {
+    attron(COLOR_PAIR(COLORE_Z) | A_BOLD);
+    mvaddch(y + offsetY, x + offsetX, symbol);
+    attroff(COLOR_PAIR(COLORE_Z) | A_BOLD);
 }

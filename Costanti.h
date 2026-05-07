@@ -14,6 +14,9 @@
 #define LAYER_3 103
 #define LAYER_4 104
 
+#define COLORE_X 6
+#define COLORE_Z 7
+
 #define SCELTA_MENU 3
 
 #define TELETRASPORTO 4

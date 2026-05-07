@@ -20,6 +20,9 @@ int main() {
     init_color(LAYER_2, 1000, 500, 0);
     init_color(LAYER_4, 500, 0, 0);
 
+    init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(COLORE_Z, COLOR_CYAN, COLOR_BLACK);
+
     init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(LAYER_2, LAYER_2 , COLOR_BLACK);
     init_pair(LAYER_3, COLOR_RED, COLOR_BLACK);
@@ -257,7 +260,7 @@ int main() {
 
                     contatoreFrameX++;
                     //Serve a gestire ogni quanto tempo si muovono i nemici (varia in base al timeout)
-                    if (contatoreFrameX >= 15) {
+                    if (contatoreFrameX >= 7) {
                         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
                             gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
                         }

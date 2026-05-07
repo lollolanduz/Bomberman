@@ -8,10 +8,12 @@
 #include "Livello.h"
 
 class Enemy : public Entity {
+protected:
+    int lastDir; // Memoria dell'ultima direzione
 public:
-    // Passiamo il livello al costruttore
     Enemy(char S, Livello* currentLevel);
     void move(Livello* currentLevel);
+    void draw(int offsetY, int offsetX) override;
 };
 
 #endif //BOMBERMAN_ENEMY_H
