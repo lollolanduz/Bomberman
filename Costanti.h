@@ -14,14 +14,17 @@
 #define LAYER_3 103
 #define LAYER_4 104
 
-#define COLORE_X 6
-#define COLORE_Z 7
-
 #define SCELTA_MENU 3
 
 #define TELETRASPORTO 4
 
 #define PORTALE 5
+
+#define COLORE_X 6
+#define COLORE_Z 7
+
+#define COLORE_BOMBA 8
+#define COLORE_ESPLOSIONE 9
 
 
 static const int mps=100;

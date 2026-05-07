@@ -14,11 +14,16 @@ int main() {
     start_color();
     PDC_set_blink(TRUE);
 
-    init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
-    init_pair(MURO_DISTRUTTIBILE, 28, COLOR_BLACK);
+    init_color(MURO_DISTRUTTIBILE, 0, 460,0);
 
     init_color(LAYER_2, 1000, 500, 0);
     init_color(LAYER_4, 500, 0, 0);
+
+    init_color(COLORE_BOMBA, 800, 0, 0);
+    init_color(COLORE_ESPLOSIONE, 686, 0,0);
+
+    init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
+    init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
 
     init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(COLORE_Z, COLOR_CYAN, COLOR_BLACK);
@@ -27,9 +32,15 @@ int main() {
     init_pair(LAYER_2, LAYER_2 , COLOR_BLACK);
     init_pair(LAYER_3, COLOR_RED, COLOR_BLACK);
     init_pair(LAYER_4, LAYER_4, COLOR_BLACK);
+
     init_pair(SCELTA_MENU, COLOR_YELLOW, COLOR_BLACK);
+
     init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
+
     init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
+
+    init_pair(COLORE_BOMBA, COLORE_BOMBA, COLOR_BLACK);
+    init_pair(COLORE_ESPLOSIONE, COLORE_ESPLOSIONE, COLOR_BLACK);
 
     cbreak();
     noecho();
@@ -198,14 +209,14 @@ int main() {
                         int esplosioneX[5] = {bX, bX, bX, bX - 1, bX + 1};
                         int esplosioneY[5] = {bY, bY - 1, bY + 1, bY, bY};
 
-                        attron(COLOR_PAIR(LAYER_2) | A_BOLD);
+                        attron(COLOR_PAIR(COLORE_ESPLOSIONE) | A_BOLD);
                         for (int dir = 0; dir < 5; dir++) {
                             if (gestoreMappa.livelloCorrente->griglia[esplosioneY[dir]][esplosioneX[dir]] != 'M') {
                                 mvaddch(gestoreMappa.livelloCorrente->start_y + esplosioneY[dir],
                                         gestoreMappa.livelloCorrente->start_x + esplosioneX[dir], '#');
                             }
                         }
-                        attroff(COLOR_PAIR(LAYER_2) | A_BOLD);
+                        attroff(COLOR_PAIR(COLORE_ESPLOSIONE) | A_BOLD);
                         refresh();
                         napms(150);
 
@@ -313,10 +324,10 @@ int main() {
 
                     //Disegno della bomba
                     if (gestoreMappa.livelloCorrente->isBombActive == true) {
-                        attron(COLOR_PAIR(LAYER_3) | A_BOLD);
+                        attron(COLOR_PAIR(COLORE_BOMBA) | A_BOLD);
                         mvaddch(gestoreMappa.livelloCorrente->start_y + gestoreMappa.livelloCorrente->bombY,
                                 gestoreMappa.livelloCorrente->start_x + gestoreMappa.livelloCorrente->bombX, 'O');
-                        attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
+                        attroff(COLOR_PAIR(COLORE_BOMBA) | A_BOLD);
                     }
 
                     // Disegno la UI
@@ -350,7 +361,7 @@ int main() {
                     }
 
                     if (disegnaGiocatore) {
-                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, possoLampeggiareTele);
+                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
                     }
                     refresh();
                 }
