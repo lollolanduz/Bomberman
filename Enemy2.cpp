@@ -23,19 +23,40 @@ Enemy2::Enemy2(char S, Livello* currentLevel) : Entity(0, 0, S) {
 }
 
 void Enemy2::move(Livello* currentLevel) {
-    int nuovaX = x;
-    int nuovaY = y;
+    int dy[] = {-1, 1, 0, 0};
+    int dx[] = {0, 0, -1, 1};
 
-    if (direzioneAttuale == 0) nuovaY--;      // Su
-    else if (direzioneAttuale == 1) nuovaY++; // Giù
-    else if (direzioneAttuale == 2) nuovaX--; // Sinistra
-    else if (direzioneAttuale == 3) nuovaX++; // Destra
+    int nuovaY = y + dy[direzioneAttuale];
+    int nuovaX = x + dx[direzioneAttuale];
+    char ostacoloCorrente = currentLevel->griglia[nuovaY][nuovaX];
 
-    if (currentLevel->griglia[nuovaY][nuovaX] != 'M' && currentLevel->griglia[nuovaY][nuovaX] != 'D' && currentLevel->griglia[nuovaY][nuovaX] != 'T' && currentLevel->griglia[nuovaY][nuovaX] != 'U') {
-        x = nuovaX;
+    // Se la sua strada è libera, continua ad andare dritto
+    if (ostacoloCorrente != 'M' && ostacoloCorrente != 'D' && ostacoloCorrente != 'T' && ostacoloCorrente != 'U') {
         y = nuovaY;
+        x = nuovaX;
     }
     else {
-        direzioneAttuale = rand() % 4;
+        // Se sbatte accende il radar per cercare una nuova via
+        int validDirs[4];
+        int validCount = 0;
+
+        for(int i = 0; i < 4; i++) {
+            int checkY = y + dy[i];
+            int checkX = x + dx[i];
+            char ostacolo = currentLevel->griglia[checkY][checkX];
+
+            if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U') {
+                validDirs[validCount] = i;
+                validCount++;
+            }
+        }
+
+        // Sceglie la nuova strada e fa subito il passo per non fermarsi
+        if(validCount > 0) {
+            int scelta = rand() % validCount;
+            direzioneAttuale = validDirs[scelta];
+            y += dy[direzioneAttuale];
+            x += dx[direzioneAttuale];
+        }
     }
 }

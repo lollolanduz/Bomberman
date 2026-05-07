@@ -7,6 +7,8 @@
 
 Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     life = LIFE;
+    isInvincible = false;
+    invincibilityTimer = 0;
 
 }
 
@@ -25,8 +27,10 @@ int Player::getlife() {
 }
 
 void Player::take_damage() {
-    if (life > 0) {
+    if (life > 0 && !isInvincible) {
         life = life - 1;
+        isInvincible = true;
+        invincibilityTimer = 30; // 3 secondi di scudo
     }
 }
 
@@ -83,4 +87,19 @@ void Player::draw(int offsetY, int offsetX, bool isBlinking) {
 //Per la funzione teletrasporto in livello.cpp
 void Player::check_teleport(Livello* currentLevel) {
     currentLevel->gestisciTeletrasporto(y,x);
+}
+
+
+// Funzioni dell'immortalità
+bool Player::getIsInvincible() {
+    return isInvincible;
+}
+
+void Player::tickInvincibility() {
+    if (isInvincible) {
+        invincibilityTimer--;
+        if (invincibilityTimer <= 0) {
+            isInvincible = false; // Torna mortale
+        }
+    }
 }

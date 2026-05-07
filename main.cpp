@@ -180,6 +180,8 @@ int main() {
                     }
 
                     giocatore.check_teleport(gestoreMappa.livelloCorrente);
+                    giocatore.tickInvincibility();
+
                     if (gestoreMappa.livelloCorrente->isBombActive == true) {
                         gestoreMappa.livelloCorrente->bombTimer++;
                     }
@@ -212,7 +214,7 @@ int main() {
                                 gestoreMappa.livelloCorrente->griglia[eY][eX] = ' ';
                             }
 
-                            if (giocatore.getX() == eX && giocatore.getY() == eY) {
+                            if (giocatore.getX() == eX && giocatore.getY() == eY && !giocatore.getIsInvincible()) {
                                 giocatore.take_damage();
                                 if (giocatore.getlife() > 0) {
                                     giocatore.reset_position();
@@ -283,7 +285,7 @@ int main() {
                         }
                     }
 
-                    if (colpito == true) {
+                    if (colpito == true && !giocatore.getIsInvincible()) {
                         giocatore.take_damage();
                         if (giocatore.getlife() > 0) {
                             giocatore.reset_position();
@@ -325,21 +327,28 @@ int main() {
                         gestoreMappa.livelloCorrente->nemiciZ[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                     }
 
-                    //LOGICA E DISEGNO DEL GIOCATORE
+                    // --- LOGICA E DISEGNO DEL GIOCATORE ---
                     bool sulTeletrasporto = (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'T');
-                    bool possoLampeggiare = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
+                    bool possoLampeggiareTele = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
                     bool disegnaGiocatore = true;
 
-                    if (possoLampeggiare) {
+                    // Lampeggio Teletrasporto (più lento)
+                    if (possoLampeggiareTele) {
                         if (contatoreFrameX % 4 < 2) {
                             disegnaGiocatore = false;
                         }
                     }
 
-                    if (disegnaGiocatore) {
-                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
+                    // lampeggio Invincibilità (più veloce: scompare un frame sì e uno no)
+                    if (giocatore.getIsInvincible()) {
+                        if (contatoreFrameX % 2 == 0) {
+                            disegnaGiocatore = false;
+                        }
                     }
 
+                    if (disegnaGiocatore) {
+                        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, possoLampeggiareTele);
+                    }
                     refresh();
                 }
                 clear();

@@ -11,10 +11,13 @@
 class Player : public Entity {
 protected:
     int life;               //numero di vite
+    bool isInvincible;      // Flag immortalità
+    int invincibilityTimer; // Timer immortalità
 
 public:
 
     Player(int X, int Y, char S, int LIFE);          //costruttore
+
 
     // Nuovo metodo per impostare la posizione salvata
     void set_position(int newX, int newY);
@@ -29,6 +32,9 @@ public:
 
     void move(int input, Livello* currentLevel );
 
+    bool getIsInvincible();
+
+    void tickInvincibility();
 
 
     void check_teleport(Livello* currentLevel); //Controlla se attivare la funzione teletrasporto
