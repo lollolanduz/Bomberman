@@ -30,6 +30,8 @@
 #define ITEM_RARO 11
 #define ITEM_EPICO 12
 
+#define ITEM_RARO_ATTIVO 13
+
 static const int mps=100;
 
 #endif //BOMBERMAN_COSTANTI_H
