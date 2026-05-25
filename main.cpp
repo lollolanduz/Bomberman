@@ -40,6 +40,8 @@ int main() {
 
     init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
 
+    init_pair(99, COLOR_BLACK, COLOR_YELLOW);
+
     init_pair(COLORE_BOMBA, COLORE_BOMBA, COLOR_BLACK);
     init_pair(COLORE_ESPLOSIONE, COLORE_ESPLOSIONE, COLOR_BLACK);
 
@@ -176,6 +178,7 @@ while(inGioco) {
 
 
     giocatore.tickInvincibility();
+    giocatore.tickRadiusTimer();
     giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
     // 2. LOGICA DI GIOCO (Gira SEMPRE, indipendentemente dall'input)
@@ -420,7 +423,16 @@ while(inGioco) {
     }
 
     if (disegnaGiocatore) {
-        giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
+        if (giocatore.isRadiusBoosted()) {
+            // Se ha il bonus attivo, lo disegnamo con lo sfondo giallo (coppia 99)
+            attron(COLOR_PAIR(99) | A_BOLD);
+            mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getY(),
+                    gestoreMappa.livelloCorrente->start_x + giocatore.getX(), 'P');
+            attroff(COLOR_PAIR(99) | A_BOLD);
+        } else {
+            // Altrimenti lo disegna normalmente con i suoi colori classici
+            giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
+        }
     }
     refresh();
 

@@ -15,6 +15,7 @@ protected:
     int invincibilityTimer; // Timer immortalità
     int raggioBomba;
     int maxBombe;
+    int radiusTimer; // Timer per il raggio potenziato
 
 public:
 
@@ -48,6 +49,9 @@ public:
     //Aggiunto Blinking
     //Successivamente utile per anche l'immortalità
     void draw(int offsetY, int offsetX, bool isBlinking = false);
+
+    void tickRadiusTimer();
+    bool isRadiusBoosted();
 };
 
 

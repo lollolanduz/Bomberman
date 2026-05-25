@@ -11,6 +11,7 @@ Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     invincibilityTimer = 0;
     raggioBomba = 1;
     maxBombe = 1;
+    radiusTimer = 0;
 }
 
 void Player::set_position(int newX, int newY) {
@@ -118,13 +119,8 @@ void Player::collect_item(char tipoCasella) {
             //score += 100; (se hai una variabile score)
             break;
         case 'R':
-            if (raggioBomba < 5) {
-                raggioBomba++; // Aumenta il raggio se è inferiore a 5
-            } else {
-                // Se hai già il raggio a 5, ottieni il MINI-SCUDO!
-                isInvincible = true;
-                invincibilityTimer = 1000; // 30 frame = circa 3 secondi di immortalità e lampeggio
-            }
+            radiusTimer = 100;
+            break;
         case 'E':
             life++; // Aggiunge una vita!
             break;
@@ -132,9 +128,22 @@ void Player::collect_item(char tipoCasella) {
 }
 
 int Player::getRaggioBomba() {
-    return raggioBomba;
+    if (radiusTimer > 0) {
+        return 2; // Raggio potenziato (4 caselle) nei 10 secondi
+    }
+    return 1; // Raggio classico quando il tempo è scaduto
 }
 
 int Player::getMaxBombe() {
     return maxBombe;
+}
+
+void Player::tickRadiusTimer() {
+    if (radiusTimer > 0) {
+        radiusTimer--;
+    }
+}
+
+bool Player::isRadiusBoosted() {
+    return radiusTimer > 0;
 }
