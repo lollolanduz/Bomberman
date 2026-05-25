@@ -60,6 +60,7 @@ public:
     EnemyIntelligente* nemiciI[10];
     int contatoreI;
 
+    //Array Item
     Item* itemsATerra[50];
     int contatoreItems;
 

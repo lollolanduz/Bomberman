@@ -222,7 +222,7 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
 
 void Livello::apriPortaUscita() {
     if (!Portale) {
-        // Scegliamo una porzione del lato destro (es. le 4 caselle centrali)
+        //Genera il portale di distruzione del livello sul bordo a destra
         for (int y = (max_y/2) - 2; y <= (max_y/2) + 2; y++) {
             griglia[y][max_x - 1] = 'U'; // 'U' come Uscita
         }
@@ -264,7 +264,7 @@ void Livello::disegna() {
                     attroff(COLOR_PAIR(PORTALE));
                     break;
                 case 'C':
-                    attron(COLOR_PAIR(ITEM_COMUNE)); // Ricordati di definire questi colori nel main o in Costanti.h
+                    attron(COLOR_PAIR(ITEM_COMUNE));
                     mvaddch(start_y + y, start_x + x, 'C');
                     attroff(COLOR_PAIR(ITEM_COMUNE));
                     break;
@@ -274,7 +274,8 @@ void Livello::disegna() {
                     attroff(COLOR_PAIR(ITEM_RARO));
                     break;
                 case 'E':
-                    attron(COLOR_PAIR(ITEM_EPICO) | A_BLINK); // Il drop epico lampeggia!
+                    //Drop epico lampeggia
+                    attron(COLOR_PAIR(ITEM_EPICO) | A_BLINK);
                     mvaddch(start_y + y, start_x + x, 'E');
                     attroff(COLOR_PAIR(ITEM_EPICO) | A_BLINK);
                     break;
@@ -292,7 +293,7 @@ void Livello::disegna() {
 }
 
 void Livello::generaDrop(int y, int x) {
-    // Creiamo l'oggetto dinamicamente per mantenerlo in memoria
+    //Creiamo l'oggetto dinamicamente per mantenerlo in memoria
     Item* drop = new Item(x, y);
 
     if (drop->getTipo() != TipoItem::NESSUNO) {
@@ -303,7 +304,7 @@ void Livello::generaDrop(int y, int x) {
             itemsATerra[contatoreItems] = drop;
             contatoreItems++;
         } else {
-            delete drop; // Sicurezza: se ci sono già 50 item, non lo salviamo
+            delete drop; //Sicurezza: se ci sono già 50 item, non lo salviamo
         }
     } else {
         griglia[y][x] = ' ';
