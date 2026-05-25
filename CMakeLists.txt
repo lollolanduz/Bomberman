@@ -25,6 +25,10 @@ add_executable(Bomberman main.cpp
         Enemy2.h
         Pausa.cpp
         Pausa.h
+        Item.cpp
+        Item.h
+        EnemyIntelligente.cpp
+        EnemyIntelligente.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)

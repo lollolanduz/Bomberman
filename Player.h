@@ -13,6 +13,8 @@ protected:
     int life;               //numero di vite
     bool isInvincible;      // Flag immortalità
     int invincibilityTimer; // Timer immortalità
+    int raggioBomba;
+    int maxBombe;
 
 public:
 
@@ -22,13 +24,17 @@ public:
     // Nuovo metodo per impostare la posizione salvata
     void set_position(int newX, int newY);
 
-    int getlife();         //funzione utile al main per sapere quante vite ha il player
+    int getlife();//funzione utile al main per sapere quante vite ha il player
+
+    int getRaggioBomba();
+
+    int getMaxBombe();
 
     void take_damage();    //funzione per togliere una vita quando subisce danno
 
     void reset_position(); // Riporta il giocatore al punto di spawn
 
-    void collect_item();    //funzione per collezionare oggetti
+    void collect_item(char tipoCasella);    //funzione per collezionare oggetti
 
     void move(int input, Livello* currentLevel );
 

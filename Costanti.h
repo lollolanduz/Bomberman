@@ -26,6 +26,9 @@
 #define COLORE_BOMBA 8
 #define COLORE_ESPLOSIONE 9
 
+#define ITEM_COMUNE 10
+#define ITEM_RARO 11
+#define ITEM_EPICO 12
 
 static const int mps=100;
 

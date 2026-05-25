@@ -9,9 +9,12 @@
 #include "Costanti.h"
 #include "Enemy.h"
 #include "Enemy2.h"
+#include "EnemyIntelligente.h"
+
 
 Livello::Livello(int id) {
     idLivello = id;
+    contatoreItems = 0;
     successivo = nullptr;
     precedente = nullptr;
     tempodiInizio = 0;
@@ -22,8 +25,11 @@ Livello::Livello(int id) {
     player_save_x = 1;
     player_save_y = 1;
 
-    isBombActive = false;
-    bombTimer = 0;
+    for (int i = 0; i < 10; i++) {
+        isBombActive[i] = false;
+        bombTimer[i] = 0;
+        bombRadius[i] = 1;
+    }
 
     genera_griglia_vuota();
     genera_MuriFissi();
@@ -36,6 +42,8 @@ Livello::Livello(int id) {
 
     contatoreX = 0;
     contatoreZ = 0;
+    contatoreI = 0;
+
     int numeroNemici = 2 + idLivello;
     for (int i = 0; i < numeroNemici; i++) {
         if (i % 2 == 0) {
@@ -46,11 +54,23 @@ Livello::Livello(int id) {
             contatoreZ++;
         }
     }
+
+    if (idLivello >= 4) {
+        // Al livello 4 ne appare 1, al livello 5 ne appaiono 2, ecc.
+        int numIntelligenti = idLivello - 3;
+        for (int i = 0; i < numIntelligenti; i++) {
+            nemiciI[contatoreI] = new EnemyIntelligente('i', this);
+            contatoreI++;
+        }
+    }
+
 }
 
 Livello::~Livello() {
     for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
     for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
+    for (int i = 0; i < contatoreItems; i++) delete itemsATerra[i];
+    for (int i = 0; i < contatoreI; i++) delete nemiciI[i];
 }
 
 
@@ -211,7 +231,6 @@ void Livello::apriPortaUscita() {
 }
 
 void Livello::disegna() {
-
     box(stdscr, 0, 0);
 
     //Coordinate dell'inizio della matrice
@@ -244,6 +263,21 @@ void Livello::disegna() {
                     mvaddch(start_y + y, start_x + x, ACS_BLOCK);
                     attroff(COLOR_PAIR(PORTALE));
                     break;
+                case 'C':
+                    attron(COLOR_PAIR(ITEM_COMUNE)); // Ricordati di definire questi colori nel main o in Costanti.h
+                    mvaddch(start_y + y, start_x + x, 'C');
+                    attroff(COLOR_PAIR(ITEM_COMUNE));
+                    break;
+                case 'R':
+                    attron(COLOR_PAIR(ITEM_RARO));
+                    mvaddch(start_y + y, start_x + x, 'R');
+                    attroff(COLOR_PAIR(ITEM_RARO));
+                    break;
+                case 'E':
+                    attron(COLOR_PAIR(ITEM_EPICO) | A_BLINK); // Il drop epico lampeggia!
+                    mvaddch(start_y + y, start_x + x, 'E');
+                    attroff(COLOR_PAIR(ITEM_EPICO) | A_BLINK);
+                    break;
             }
         }
     }
@@ -256,4 +290,25 @@ void Livello::disegna() {
     //Stampa del livello in cui è il giocatore
     mvprintw(start_y - 2, start_x + stampa, "%s %d", stringa_n_livello, idLivello);
 }
+
+void Livello::generaDrop(int y, int x) {
+    // Creiamo l'oggetto dinamicamente per mantenerlo in memoria
+    Item* drop = new Item(x, y);
+
+    if (drop->getTipo() != TipoItem::NESSUNO) {
+        griglia[y][x] = drop->getSymbol();
+
+        // Salviamo l'item nell'array per potergli togliere la vita in seguito
+        if (contatoreItems < 50) {
+            itemsATerra[contatoreItems] = drop;
+            contatoreItems++;
+        } else {
+            delete drop; // Sicurezza: se ci sono già 50 item, non lo salviamo
+        }
+    } else {
+        griglia[y][x] = ' ';
+        delete drop;
+    }
+}
+
 

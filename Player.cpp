@@ -9,7 +9,8 @@ Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     life = LIFE;
     isInvincible = false;
     invincibilityTimer = 0;
-
+    raggioBomba = 1;
+    maxBombe = 1;
 }
 
 void Player::set_position(int newX, int newY) {
@@ -38,8 +39,7 @@ void Player::move(int input, Livello *currentLevel) {
     int nuovaX = x;
     int nuovaY = y;
 
-
-    //con KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT si possono usare anche le freccette direzionali della tastiera
+    // 1. Calcolo la direzione
     if (input == 'w' || input == KEY_UP) {
         nuovaY--; // vado su
     }
@@ -53,17 +53,25 @@ void Player::move(int input, Livello *currentLevel) {
         nuovaX++; // vado a destra
     }
     else {
-        //se ha premuto un tasto a caso, non faccio nulla e fermo la funzione
+        //se ha premuto un tasto a caso, non faccio nulla
         return;
     }
 
-    //guardo dentro la mappa
+    // 2. Controllo l'ostacolo NELLA NUOVA POSIZIONE
     char ostacolo = currentLevel->griglia[nuovaY][nuovaX];
 
-    //se la casella non è un muro solido ('M') e non è un muro da rompere ('D')
+    // Se la casella non è un muro solido ('M') e non è un muro da rompere ('D')
     if (ostacolo != 'M' && ostacolo != 'D') {
+        // Mi sposto fisicamente
         x = nuovaX;
         y = nuovaY;
+
+        // 3. ORA che mi sono spostato, controllo se sono finito su un ITEM
+        char casella = currentLevel->griglia[y][x];
+        if (casella == 'C' || casella == 'R' || casella == 'E') {
+            collect_item(casella); // Raccoglie l'item
+            currentLevel->griglia[y][x] = ' '; // Rimuove l'item dalla griglia
+        }
     }
 }
 
@@ -102,4 +110,31 @@ void Player::tickInvincibility() {
             isInvincible = false; // Torna mortale
         }
     }
+}
+
+void Player::collect_item(char tipoCasella) {
+    switch(tipoCasella) {
+        case 'C':
+            //score += 100; (se hai una variabile score)
+            break;
+        case 'R':
+            if (raggioBomba < 5) {
+                raggioBomba++; // Aumenta il raggio se è inferiore a 5
+            } else {
+                // Se hai già il raggio a 5, ottieni il MINI-SCUDO!
+                isInvincible = true;
+                invincibilityTimer = 1000; // 30 frame = circa 3 secondi di immortalità e lampeggio
+            }
+        case 'E':
+            life++; // Aggiunge una vita!
+            break;
+    }
+}
+
+int Player::getRaggioBomba() {
+    return raggioBomba;
+}
+
+int Player::getMaxBombe() {
+    return maxBombe;
 }

@@ -7,10 +7,13 @@
 
 #pragma once
 #include <pdcurses.h>
+#include "item.h"
 
 // Forward declaration per evitare inclusioni circolari
 class Enemy;
 class Enemy2;
+class EnemyIntelligente;
+
 
 class Livello {
 private:
@@ -21,6 +24,8 @@ private:
     void genera_teletrasporto();
 
 public:
+
+
     int idLivello;
     Livello* successivo;
     Livello* precedente;
@@ -39,10 +44,11 @@ public:
     int player_save_y;
 
     // --- VARIABILI DELLA BOMBA ---
-    bool isBombActive;
-    int bombX;
-    int bombY;
-    int bombTimer;
+    bool isBombActive[10];
+    int bombX[10];
+    int bombY[10];
+    int bombTimer[10];
+    int bombRadius[10];
 
     // Array dei nemici (ora appartengono al Livello!)
     Enemy* nemiciX[25];
@@ -51,11 +57,19 @@ public:
     Enemy2* nemiciZ[25];
     int contatoreZ;
 
+    EnemyIntelligente* nemiciI[10];
+    int contatoreI;
+
+    Item* itemsATerra[50];
+    int contatoreItems;
+
     Livello(int id);
     ~Livello(); // Distruttore per pulire i nemici quando il livello viene eliminato
 
     void disegna();
     void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
+    void generaDrop(int y, int x);
+
 
     //Genera portale per concludere il livello
     void apriPortaUscita();
