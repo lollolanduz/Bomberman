@@ -146,8 +146,7 @@ while(inGioco) {
 
                 case 't':
                 case 'T':
-                            {
-
+                {
                     time_t tempo_inizio_pausa = std::time(nullptr);
 
                     Pausa menuPausa;
@@ -163,35 +162,15 @@ while(inGioco) {
                     }
                     else if (sceltaPausa == 1) {
                         vuoleRicominciare = true;
-                                    inGioco = false;
-                                }
-                                else if (sceltaPausa == 2) {
-                                    inGioco = false;
-                                }
-                            }
+                        inGioco = false;
+                    }
+                    else if (sceltaPausa == 2) {
+                        inGioco = false;
+                    }
+                }
                                 break;
             default:
                 giocatore.move(input, gestoreMappa.livelloCorrente);
-
-                // --- CONTROLLO ENTRATA NEL PORTALE (Reinserito!) ---
-                if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
-
-                    gestoreMappa.eliminaLivelloCorrenteEAvanti();
-
-                    if (gestoreMappa.livelloCorrente == nullptr) {
-                        clear();
-                        mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
-                        refresh();
-                        napms(3000);
-                        inGioco = false;
-                    } else {
-                        giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
-                                               gestoreMappa.livelloCorrente->player_save_y);
-                        clear();
-                        gestoreMappa.livelloCorrente->disegna();
-                        refresh();
-                    }
-                }
                 break;
         } // Fine switch
     } // Fine if(input != ERR)
@@ -286,7 +265,7 @@ while(inGioco) {
     }
 
     contatoreFrameX++;
-    if (contatoreFrameX >= 500) {
+    if (contatoreFrameX >= 7) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
             gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -294,7 +273,7 @@ while(inGioco) {
     }
 
     contatoreFrameZ++;
-    if (contatoreFrameZ >= 500) {
+    if (contatoreFrameZ >= 3) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
             gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -305,7 +284,7 @@ while(inGioco) {
     contatoreFrameI++;
     if (contatoreFrameI >= 5) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreI; i++) {
-            // GLI PASSIAMO LE COORDINATE DEL GIOCATORE!
+            //Passo le coordinate del giocatore al nemico
             gestoreMappa.livelloCorrente->nemiciI[i]->move(giocatore.getX(), giocatore.getY());
         }
         contatoreFrameI = 0;
@@ -370,18 +349,17 @@ while(inGioco) {
         }
     }
 
-    // Ora il portale si apre SOLO se TUTTI i nemici (X, Z e I) sono morti
-    if (gestoreMappa.livelloCorrente->contatoreX == 0 &&
-        gestoreMappa.livelloCorrente->contatoreZ == 0 &&
-        gestoreMappa.livelloCorrente->contatoreI == 0) {
-
+    if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
         gestoreMappa.livelloCorrente->apriPortaUscita();
-        }
+    }
 
     erase();
     gestoreMappa.livelloCorrente->disegna();
 
     mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
+
+    // Stampa la scritta di Pausa sotto la mappa
+    mvprintw(gestoreMappa.livelloCorrente->start_y + Livello::max_y, gestoreMappa.livelloCorrente->start_x, "Premi 'T' per la Pausa");
 
 
 // --- DISEGNO GRAFICO BOMBA "CINEMATOGRAFICA" ---
@@ -464,7 +442,7 @@ while(inGioco) {
 
 clear();
 } while (vuoleRicominciare);
-} // <--- Fine if(scelta == 0)
+} //Fine if(scelta == 0)
         else if (scelta == 1) {
             clear();
             mvprintw(10, 10, "Schermata Classifica in costruzione! Premi un tasto per tornare indietro...");
@@ -477,7 +455,7 @@ clear();
             chiudiTutto = true;
         }
 
-    } // <--- Fine while(!chiudiTutto)
+    } //Fine ciclo while(!chiudiTutto)
 
     endwin();
     return 0;
