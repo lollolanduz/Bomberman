@@ -171,6 +171,26 @@ while(inGioco) {
                                 break;
             default:
                 giocatore.move(input, gestoreMappa.livelloCorrente);
+
+                // --- CONTROLLO ENTRATA NEL PORTALE (Reinserito!) ---
+                if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
+
+                    gestoreMappa.eliminaLivelloCorrenteEAvanti();
+
+                    if (gestoreMappa.livelloCorrente == nullptr) {
+                        clear();
+                        mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
+                        refresh();
+                        napms(3000);
+                        inGioco = false;
+                    } else {
+                        giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
+                                               gestoreMappa.livelloCorrente->player_save_y);
+                        clear();
+                        gestoreMappa.livelloCorrente->disegna();
+                        refresh();
+                    }
+                }
                 break;
         } // Fine switch
     } // Fine if(input != ERR)
@@ -349,9 +369,13 @@ while(inGioco) {
         }
     }
 
-    if (gestoreMappa.livelloCorrente->contatoreX == 0 && gestoreMappa.livelloCorrente->contatoreZ == 0) {
+    // Ora il portale si apre SOLO se TUTTI i nemici (X, Z e I) sono morti
+    if (gestoreMappa.livelloCorrente->contatoreX == 0 &&
+        gestoreMappa.livelloCorrente->contatoreZ == 0 &&
+        gestoreMappa.livelloCorrente->contatoreI == 0) {
+
         gestoreMappa.livelloCorrente->apriPortaUscita();
-    }
+        }
 
     erase();
     gestoreMappa.livelloCorrente->disegna();
