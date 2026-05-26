@@ -290,23 +290,35 @@ case '+': {
                         if (giocatore.getlife() > 0) giocatore.reset_position();
                         else { clear(); mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R"); refresh(); napms(2000); inGioco = false; }
                     }
+
+                    // UCCISIONE NEMICI X
                     for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreX; k++) {
                         if (gestoreMappa.livelloCorrente->nemiciX[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciX[k]->getY() == eY) {
-                            gestoreMappa.livelloCorrente->generaDrop(eY, eX); delete gestoreMappa.livelloCorrente->nemiciX[k];
+                            giocatore.addPunteggio(100); // <--- +100 PUNTI!
+                            gestoreMappa.livelloCorrente->generaDrop(eY, eX);
+                            delete gestoreMappa.livelloCorrente->nemiciX[k];
                             for (int j = k; j < gestoreMappa.livelloCorrente->contatoreX - 1; j++) gestoreMappa.livelloCorrente->nemiciX[j] = gestoreMappa.livelloCorrente->nemiciX[j + 1];
                             gestoreMappa.livelloCorrente->contatoreX--; k--;
                         }
                     }
+
+                    // UCCISIONE NEMICI Z
                     for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreZ; k++) {
                         if (gestoreMappa.livelloCorrente->nemiciZ[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciZ[k]->getY() == eY) {
-                            gestoreMappa.livelloCorrente->generaDrop(eY, eX); delete gestoreMappa.livelloCorrente->nemiciZ[k];
+                            giocatore.addPunteggio(150); // <--- +150 PUNTI!
+                            gestoreMappa.livelloCorrente->generaDrop(eY, eX);
+                            delete gestoreMappa.livelloCorrente->nemiciZ[k];
                             for (int j = k; j < gestoreMappa.livelloCorrente->contatoreZ - 1; j++) gestoreMappa.livelloCorrente->nemiciZ[j] = gestoreMappa.livelloCorrente->nemiciZ[j + 1];
                             gestoreMappa.livelloCorrente->contatoreZ--; k--;
                         }
                     }
+
+                    // UCCISIONE NEMICI INTELLIGENTI I
                     for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreI; k++) {
                         if (gestoreMappa.livelloCorrente->nemiciI[k]->getX() == eX && gestoreMappa.livelloCorrente->nemiciI[k]->getY() == eY) {
-                            gestoreMappa.livelloCorrente->generaDrop(eY, eX); delete gestoreMappa.livelloCorrente->nemiciI[k];
+                            giocatore.addPunteggio(300); // <--- +300 PUNTI!
+                            gestoreMappa.livelloCorrente->generaDrop(eY, eX);
+                            delete gestoreMappa.livelloCorrente->nemiciI[k];
                             for (int j = k; j < gestoreMappa.livelloCorrente->contatoreI - 1; j++) gestoreMappa.livelloCorrente->nemiciI[j] = gestoreMappa.livelloCorrente->nemiciI[j + 1];
                             gestoreMappa.livelloCorrente->contatoreI--; k--;
                         }

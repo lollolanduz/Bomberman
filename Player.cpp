@@ -117,7 +117,7 @@ void Player::tickInvincibility() {
 void Player::collect_item(char tipoCasella) {
     switch(tipoCasella) {
         case 'C':
-            //score += 100; (se hai una variabile score)
+            addPunteggio(50);
             break;
         case 'R':
             radiusTimer = 100;
