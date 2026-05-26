@@ -64,6 +64,10 @@ public:
     Item* itemsATerra[50];
     int contatoreItems;
 
+    long tempoLivello;
+
+    int getTempoMaxLivello(); // Restituisce il tempo massimo in secondi
+
     Livello(int id);
     ~Livello(); // Distruttore per pulire i nemici quando il livello viene eliminato
 

@@ -40,7 +40,7 @@ int main() {
 
     init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
 
-    init_pair(ITEM_RARO_ATTIVO, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(99, COLOR_BLACK, COLOR_YELLOW);
 
     init_pair(COLORE_BOMBA, COLORE_BOMBA, COLOR_BLACK);
     init_pair(COLORE_ESPLOSIONE, COLORE_ESPLOSIONE, COLOR_BLACK);
@@ -84,6 +84,7 @@ int main() {
                 int contatoreFrameZ = 0;
                 int contatoreFrameI = 0;
 
+gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
 
 while(inGioco) {
     int input = getch();
@@ -120,72 +121,86 @@ while(inGioco) {
 
                 break;
 
-                case '+':
+case '+': {
+                    time_t ora = std::time(nullptr);
+                    if (gestoreMappa.livelloCorrente->tempoLivello > 1000000) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora - gestoreMappa.livelloCorrente->tempoLivello;
+                    }
+                    gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                    gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+                    gestoreMappa.vaiAlProssimo();
 
-                gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                    if (gestoreMappa.livelloCorrente->tempoLivello == -1) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora;
+                    } else if (gestoreMappa.livelloCorrente->tempoLivello < 1000000) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora - gestoreMappa.livelloCorrente->tempoLivello;
+                    }
+                    giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
+                    break;
+                }
 
-                gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+                case '-': {
+                    time_t ora = std::time(nullptr);
+                    if (gestoreMappa.livelloCorrente->tempoLivello > 1000000) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora - gestoreMappa.livelloCorrente->tempoLivello;
+                    }
+                    gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
+                    gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
+                    gestoreMappa.tornaAlPrecedente();
 
-                gestoreMappa.vaiAlProssimo();
-
-                giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
-
-                break;
-
-                case '-':
-
-                gestoreMappa.livelloCorrente->player_save_x = giocatore.getX();
-
-                gestoreMappa.livelloCorrente->player_save_y = giocatore.getY();
-
-                gestoreMappa.tornaAlPrecedente();
-
-                giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
-
-                break;
+                    if (gestoreMappa.livelloCorrente->tempoLivello == -1) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora;
+                    } else if (gestoreMappa.livelloCorrente->tempoLivello < 1000000) {
+                        gestoreMappa.livelloCorrente->tempoLivello = ora - gestoreMappa.livelloCorrente->tempoLivello;
+                    }
+                    giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
+                    break;
+                }
 
                 case 't':
-                case 'T':
-                {
+                case 'T': {
                     time_t tempo_inizio_pausa = std::time(nullptr);
-
                     Pausa menuPausa;
                     int sceltaPausa = menuPausa.gestisciPause();
                     time_t tempo_fine_pausa = std::time(nullptr);
                     int durata_pausa = tempo_fine_pausa - tempo_inizio_pausa;
                     if (sceltaPausa == 0) {
+                        if (gestoreMappa.livelloCorrente->tempoLivello > 1000000) {
+                            gestoreMappa.livelloCorrente->tempoLivello += durata_pausa;
+                        }
                         if (gestoreMappa.livelloCorrente->tempodiInizio != -1) {
                             gestoreMappa.livelloCorrente->tempodiInizio += durata_pausa;
                         }
                         timeout(mps);
                         clear();
                     }
-                    else if (sceltaPausa == 1) {
-                        vuoleRicominciare = true;
-                        inGioco = false;
-                    }
-                    else if (sceltaPausa == 2) {
-                        inGioco = false;
-                    }
+                    else if (sceltaPausa == 1) { vuoleRicominciare = true; inGioco = false; }
+                    else if (sceltaPausa == 2) { inGioco = false; }
+                    break;
                 }
-                                break;
             default:
                 giocatore.move(input, gestoreMappa.livelloCorrente);
 
-                // --- CONTROLLO ENTRATA NEL PORTALE (Reinserito!) ---
+                // --- CONTROLLO ENTRATA NEL PORTALE ---
                 if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
+                    int tMassimo = gestoreMappa.livelloCorrente->getTempoMaxLivello();
+                    int tPassato = std::time(nullptr) - gestoreMappa.livelloCorrente->tempoLivello;
+                    int tRimanente = tMassimo - tPassato;
+
+                    if (tRimanente > 0) giocatore.addPunteggio(tRimanente * 10);
 
                     gestoreMappa.eliminaLivelloCorrenteEAvanti();
 
                     if (gestoreMappa.livelloCorrente == nullptr) {
                         clear();
                         mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
+                        mvprintw(12, 20, "PUNTEGGIO FINALE: %d", giocatore.getPunteggio());
                         refresh();
                         napms(3000);
                         inGioco = false;
                     } else {
-                        giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x,
-                                               gestoreMappa.livelloCorrente->player_save_y);
+                        gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
+                        giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
                         clear();
                         gestoreMappa.livelloCorrente->disegna();
                         refresh();
@@ -195,6 +210,26 @@ while(inGioco) {
         } // Fine switch
     } // Fine if(input != ERR)
 
+    // --- GESTIONE CONTO ALLA ROVESCIA ---
+    time_t oraAttuale = std::time(nullptr);
+
+    if (gestoreMappa.livelloCorrente->tempoLivello == -1) {
+        gestoreMappa.livelloCorrente->tempoLivello = oraAttuale;
+    }
+
+    int tempoMassimo = gestoreMappa.livelloCorrente->getTempoMaxLivello();
+    int tempoPassato = oraAttuale - gestoreMappa.livelloCorrente->tempoLivello;
+    int tempoRimanente = tempoMassimo - tempoPassato;
+
+    if (tempoRimanente <= 0) {
+        clear();
+        mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 7, "TEMPO SCADUTO!");
+        mvprintw(Livello::max_y / 2 + 1, Livello::max_x / 2 - 5, "GAME OVER");
+        refresh();
+        napms(3000);
+        inGioco = false;
+        break;
+    }
 
     giocatore.tickInvincibility();
     giocatore.tickRadiusTimer();
@@ -285,7 +320,7 @@ while(inGioco) {
     }
 
     contatoreFrameX++;
-    if (contatoreFrameX >= 7) {
+    if (contatoreFrameX >= 500) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
             gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -293,7 +328,7 @@ while(inGioco) {
     }
 
     contatoreFrameZ++;
-    if (contatoreFrameZ >= 3) {
+    if (contatoreFrameZ >= 500) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
             gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -304,7 +339,7 @@ while(inGioco) {
     contatoreFrameI++;
     if (contatoreFrameI >= 5) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreI; i++) {
-            //Passo le coordinate del giocatore al nemico
+            // GLI PASSIAMO LE COORDINATE DEL GIOCATORE!
             gestoreMappa.livelloCorrente->nemiciI[i]->move(giocatore.getX(), giocatore.getY());
         }
         contatoreFrameI = 0;
@@ -380,10 +415,12 @@ while(inGioco) {
     erase();
     gestoreMappa.livelloCorrente->disegna();
 
-    mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d", giocatore.getlife());
+    int visualizzaMinuti = (tempoRimanente > 0) ? tempoRimanente / 60 : 0;
+    int visualizzaSecondi = (tempoRimanente > 0) ? tempoRimanente % 60 : 0;
 
-    // Stampa la scritta di Pausa sotto la mappa
-    mvprintw(gestoreMappa.livelloCorrente->start_y + Livello::max_y, gestoreMappa.livelloCorrente->start_x, "Premi 'T' per la Pausa");
+    mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1,
+             "Vite: %d  |  Tempo: %02d:%02d  |  Punti: %d",
+             giocatore.getlife(), visualizzaMinuti, visualizzaSecondi, giocatore.getPunteggio());
 
 
 // --- DISEGNO GRAFICO BOMBA "CINEMATOGRAFICA" ---
@@ -450,11 +487,11 @@ while(inGioco) {
 
     if (disegnaGiocatore) {
         if (giocatore.isRadiusBoosted()) {
-            // Se ha il bonus attivo, lo disegnamo con lo sfondo giallo (ITEM_RARO_ATTIVO)
-            attron(COLOR_PAIR(ITEM_RARO_ATTIVO) | A_BOLD);
+            // Se ha il bonus attivo, lo disegnamo con lo sfondo giallo (coppia 99)
+            attron(COLOR_PAIR(99) | A_BOLD);
             mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getY(),
                     gestoreMappa.livelloCorrente->start_x + giocatore.getX(), 'P');
-            attroff(COLOR_PAIR(ITEM_RARO_ATTIVO) | A_BOLD);
+            attroff(COLOR_PAIR(99) | A_BOLD);
         } else {
             // Altrimenti lo disegna normalmente con i suoi colori classici
             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
@@ -466,7 +503,7 @@ while(inGioco) {
 
 clear();
 } while (vuoleRicominciare);
-} //Fine if(scelta == 0)
+} // <--- Fine if(scelta == 0)
         else if (scelta == 1) {
             clear();
             mvprintw(10, 10, "Schermata Classifica in costruzione! Premi un tasto per tornare indietro...");
@@ -479,7 +516,7 @@ clear();
             chiudiTutto = true;
         }
 
-    } //Fine ciclo while(!chiudiTutto)
+    } // <--- Fine while(!chiudiTutto)
 
     endwin();
     return 0;

@@ -12,6 +12,7 @@ Player::Player(int X, int Y, char S, int LIFE) : Entity(X, Y, S) {
     raggioBomba = 1;
     maxBombe = 1;
     radiusTimer = 0;
+    punteggio = 0;
 }
 
 void Player::set_position(int newX, int newY) {
@@ -146,4 +147,12 @@ void Player::tickRadiusTimer() {
 
 bool Player::isRadiusBoosted() {
     return radiusTimer > 0;
+}
+
+void Player::addPunteggio(int punti) {
+    punteggio += punti;
+}
+
+int Player::getPunteggio() {
+    return punteggio;
 }

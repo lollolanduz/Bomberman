@@ -17,7 +17,11 @@ Livello::Livello(int id) {
     contatoreItems = 0;
     successivo = nullptr;
     precedente = nullptr;
-    tempodiInizio = 0;
+
+    tempodiInizio = -1;
+    tempoLivello = -1;
+
+
     //Serve a gestire il portale per concludere il livello
     Portale=false;
 
@@ -310,6 +314,10 @@ void Livello::generaDrop(int y, int x) {
         griglia[y][x] = ' ';
         delete drop;
     }
+}
+
+int Livello::getTempoMaxLivello() {
+    return 150 + (idLivello * 30);
 }
 
 

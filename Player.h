@@ -16,6 +16,7 @@ protected:
     int raggioBomba;
     int maxBombe;
     int radiusTimer; // Timer per il raggio potenziato
+    int punteggio;
 
 public:
 
@@ -52,6 +53,9 @@ public:
 
     void tickRadiusTimer();
     bool isRadiusBoosted();
+
+    void addPunteggio(int punti);
+    int getPunteggio();
 };
 
 
