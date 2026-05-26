@@ -181,22 +181,65 @@ case '+': {
             default:
                 giocatore.move(input, gestoreMappa.livelloCorrente);
 
-                // --- CONTROLLO ENTRATA NEL PORTALE ---
+// --- CONTROLLO ENTRATA NEL PORTALE (CON ANIMAZIONE ARCADE) ---
                 if (gestoreMappa.livelloCorrente->griglia[giocatore.getY()][giocatore.getX()] == 'U') {
+
                     int tMassimo = gestoreMappa.livelloCorrente->getTempoMaxLivello();
                     int tPassato = std::time(nullptr) - gestoreMappa.livelloCorrente->tempoLivello;
                     int tRimanente = tMassimo - tPassato;
 
-                    if (tRimanente > 0) giocatore.addPunteggio(tRimanente * 10);
+                    if (tRimanente > 0) {
+                        clear(); // Puliamo la mappa dallo schermo
 
+                        // 1. Disegniamo l'intestazione
+                        attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+                        mvprintw(Livello::max_y / 2 - 4, Livello::max_x / 2 - 10, "====================");
+                        mvprintw(Livello::max_y / 2 - 3, Livello::max_x / 2 - 9, " LIVELLO SUPERATO ");
+                        mvprintw(Livello::max_y / 2 - 2, Livello::max_x / 2 - 10, "====================");
+                        attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+
+                        // 2. Il Ciclo di "Svuotamento" del Tempo
+                        while (tRimanente > 0) {
+                            tRimanente--; // Togliamo 1 secondo
+                            giocatore.addPunteggio(10); // Aggiungiamo 10 punti
+
+                            int visualizzaMinuti = tRimanente / 60;
+                            int visualizzaSecondi = tRimanente % 60;
+
+                            // Stampa il tempo che scende in Ciano
+                            attron(COLOR_PAIR(COLORE_Z) | A_BOLD);
+                            mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 12, "Tempo Rimasto : %02d:%02d", visualizzaMinuti, visualizzaSecondi);
+                            attroff(COLOR_PAIR(COLORE_Z) | A_BOLD);
+
+                            // Stampa il punteggio che sale in Giallo
+                            attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+                            mvprintw(Livello::max_y / 2 + 2, Livello::max_x / 2 - 12, "Punteggio Totale: %05d", giocatore.getPunteggio());
+                            attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+
+                            refresh();
+                            // Una piccolissima pausa di 30 millisecondi per rendere l'animazione fluida ma veloce!
+                            napms(30);
+                        }
+
+                        // 3. Piccola pausa trionfale prima di cambiare mappa
+                        attron(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
+                        mvprintw(Livello::max_y / 2 + 5, Livello::max_x / 2 - 7, " PERFETTO! ");
+                        attroff(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
+                        refresh();
+                        napms(1500); // Aspetta 1.5 secondi per farti godere il punteggio
+                    }
+
+                    // 4. Procediamo con il cambio di livello
                     gestoreMappa.eliminaLivelloCorrenteEAvanti();
 
                     if (gestoreMappa.livelloCorrente == nullptr) {
                         clear();
+                        attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
                         mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
-                        mvprintw(12, 20, "PUNTEGGIO FINALE: %d", giocatore.getPunteggio());
+                        mvprintw(12, 20, "PUNTEGGIO FINALE: %05d", giocatore.getPunteggio());
+                        attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
                         refresh();
-                        napms(3000);
+                        napms(4000);
                         inGioco = false;
                     } else {
                         gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
