@@ -286,7 +286,7 @@ case '+': {
 
             gestoreMappa.livelloCorrente->bombTimer[b]++; // Il timer avanza per questa bomba
 
-            if (gestoreMappa.livelloCorrente->bombTimer[b] >= 25) {
+            if (gestoreMappa.livelloCorrente->bombTimer[b] >= TEMPO_ESPLOSIONE_BOMBA) {
                 int bX = gestoreMappa.livelloCorrente->bombX[b];
                 int bY = gestoreMappa.livelloCorrente->bombY[b];
                 int raggio = gestoreMappa.livelloCorrente->bombRadius[b];
@@ -375,7 +375,7 @@ case '+': {
     }
 
     contatoreFrameX++;
-    if (contatoreFrameX >= 500) {
+    if (contatoreFrameX >= FRAME_NEMICO_X) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreX; i++) {
             gestoreMappa.livelloCorrente->nemiciX[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -383,7 +383,7 @@ case '+': {
     }
 
     contatoreFrameZ++;
-    if (contatoreFrameZ >= 500) {
+    if (contatoreFrameZ >= FRAME_NEMICO_Z) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreZ; i++) {
             gestoreMappa.livelloCorrente->nemiciZ[i]->move(gestoreMappa.livelloCorrente);
         }
@@ -392,9 +392,8 @@ case '+': {
 
     // MOVIMENTO NEMICO INTELLIGENTE
     contatoreFrameI++;
-    if (contatoreFrameI >= 5) {
+    if (contatoreFrameI >= FRAME_NEMICO_I) {
         for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreI; i++) {
-            // GLI PASSIAMO LE COORDINATE DEL GIOCATORE!
             gestoreMappa.livelloCorrente->nemiciI[i]->move(giocatore.getX(), giocatore.getY());
         }
         contatoreFrameI = 0;
@@ -487,7 +486,7 @@ case '+': {
 
             // FASE 2: Palpitante (Timer da 15 a 19)
             // Lampeggia piano: accesa per 4 frame, spenta per 4
-            if (t >= 15 && t < 20) {
+            if (t >= INIZIO_BOMBA_PALPITANTE && t < INIZIO_BOMBA_PANICO) {
                 if (t % 8 < 4) {
                     disegnaBomba = false;
                 }
@@ -495,7 +494,7 @@ case '+': {
 
             // FASE 3: Panico total-lampeggio (Timer da 20 a 24)
             // Lampeggia velocissimo: accesa per 1 frame, spenta per 1
-            if (t >= 20 && t < 25) {
+            if (t >= INIZIO_BOMBA_PANICO && t < TEMPO_ESPLOSIONE_BOMBA) {
                 if (t % 2 == 0) {
                     disegnaBomba = false;
                 }
