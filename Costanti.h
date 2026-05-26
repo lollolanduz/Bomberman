@@ -6,7 +6,9 @@
 #define BOMBERMAN_COSTANTI_H
 
 #define MURO 1
-#define MURO_DISTRUTTIBILE 2
+#define MURO_DURO 2
+
+#define MURO_DISTRUTTIBILE 3
 
 //Colori titolo BOMBERMAN
 #define LAYER_1 101
@@ -14,23 +16,23 @@
 #define LAYER_3 103
 #define LAYER_4 104
 
-#define SCELTA_MENU 3
+#define SCELTA_MENU 4
 
-#define TELETRASPORTO 4
+#define TELETRASPORTO 5
 
-#define PORTALE 5
+#define PORTALE 6
 
-#define COLORE_X 6
-#define COLORE_Z 7
+#define COLORE_X 7
+#define COLORE_Z 8
 
-#define COLORE_BOMBA 8
-#define COLORE_ESPLOSIONE 9
+#define COLORE_BOMBA 9
+#define COLORE_ESPLOSIONE 10
 
-#define ITEM_COMUNE 10
-#define ITEM_RARO 11
-#define ITEM_EPICO 12
+#define ITEM_COMUNE 11
+#define ITEM_RARO 12
+#define ITEM_EPICO 13
 
-#define ITEM_RARO_ATTIVO 13
+#define ITEM_RARO_ATTIVO 14
 
 static const int mps=100;
 

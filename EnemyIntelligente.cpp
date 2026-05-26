@@ -55,7 +55,7 @@ void EnemyIntelligente::move(int playerX, int playerY) {
         nextX += (diffX > 0) ? 1 : -1;
 
         // Se c'è un muro sull'asse X, prova ad aggirarlo muovendosi sull'asse Y
-        if (livelloCorrente->griglia[y][nextX] == 'M' || livelloCorrente->griglia[y][nextX] == 'D') {
+        if (livelloCorrente->griglia[y][nextX] == 'M' || livelloCorrente->griglia[y][nextX] == 'D' || livelloCorrente->griglia[y][nextX] == 'H') {
             nextX = x; // Annulla mossa X
             nextY += (diffY > 0) ? 1 : -1; // Prova mossa Y
         }
@@ -63,7 +63,7 @@ void EnemyIntelligente::move(int playerX, int playerY) {
         nextY += (diffY > 0) ? 1 : -1;
 
         // Se c'è un muro sull'asse Y, prova ad aggirarlo muovendosi sull'asse X
-        if (livelloCorrente->griglia[nextY][x] == 'M' || livelloCorrente->griglia[nextY][x] == 'D') {
+        if (livelloCorrente->griglia[nextY][x] == 'M' || livelloCorrente->griglia[nextY][x] == 'D' || livelloCorrente->griglia[nextY][x] == 'H' ) {
             nextY = y; // Annulla mossa Y
             nextX += (diffX > 0) ? 1 : -1; // Prova mossa X
         }

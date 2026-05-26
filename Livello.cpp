@@ -124,16 +124,30 @@ void Livello::genera_MuriFissi() {
 void Livello::genera_MuraDistruttibili() {
     int wall_cap = 10 + 2*idLivello;
 
-    if ( wall_cap > 70) {
+    if (wall_cap > 70) {
         wall_cap = 70;
     }
 
-    //D = Distruttibile
+    //Calcolo probabilità delle mura DURE
+    // L1 e L2: 0% | L3: 10% | L4: 20% | L5: 30%
+    int prob_muro_duro = 0;
+    if (idLivello >= 3) {
+        prob_muro_duro = (idLivello - 2) * 10;
+    }
+
+    //D = Distruttibile Normale, H = Distruttibile Rinforzato
     for (int y=1; y < max_y - 1; y++) {
         for (int x=1; x < max_x - 1; x++) {
             int wall_rate= rand() % 100;
             if (wall_rate < wall_cap && griglia[y][x] != 'M') {
-                griglia[y][x] = 'D';
+
+                //Randomizziamo le mura (sia dure che non)
+                int hard_rate = rand() % 100;
+                if (hard_rate < prob_muro_duro) {
+                    griglia[y][x] = 'H'; // Muro Duro!
+                } else {
+                    griglia[y][x] = 'D'; // Muro Normale!
+                }
             }
         }
     }
@@ -179,30 +193,30 @@ void Livello::genera_teletrasporto() {
                 griglia[opp_y][opp_x] = 'T';
 
                 //Creare la safe zone per il teletrasporto
-                if (griglia[rand_y+1][rand_x] == 'D') {
+                if (griglia[rand_y+1][rand_x] == 'D' || griglia[rand_y+1][rand_x] == 'H') {
                     griglia[rand_y+1][rand_x] = ' ';
                 }
-                if (griglia[rand_y-1][rand_x] == 'D') {
+                if (griglia[rand_y-1][rand_x] == 'D' || griglia[rand_y-1][rand_x] == 'H') {
                     griglia[rand_y-1][rand_x] = ' ';
                 }
-                if (griglia[rand_y][rand_x+1] == 'D') {
+                if (griglia[rand_y][rand_x+1] == 'D' || griglia[rand_y][rand_x+1] == 'H') {
                     griglia[rand_y][rand_x+1] = ' ';
                 }
-                if (griglia[rand_y][rand_x-1] == 'D') {
+                if (griglia[rand_y][rand_x-1] == 'D' || griglia[rand_y][rand_x-1] == 'H') {
                     griglia[rand_y][rand_x-1] = ' ';
                 }
 
                 //Creazione safe zone per l'opposto
-                if (griglia[opp_y+1][opp_x] == 'D') {
+                if (griglia[opp_y+1][opp_x] == 'D' || griglia[opp_y+1][opp_x] == 'H') {
                     griglia[opp_y+1][opp_x] = ' ';
                 }
-                if (griglia[opp_y-1][opp_x] == 'D') {
+                if (griglia[opp_y-1][opp_x] == 'D' || griglia[opp_y-1][opp_x] == 'H') {
                     griglia[opp_y-1][opp_x] = ' ';
                 }
-                if (griglia[opp_y][opp_x+1] == 'D') {
+                if (griglia[opp_y][opp_x+1] == 'D' || griglia[opp_y][opp_x+1] == 'H') {
                     griglia[opp_y][opp_x+1] = ' ';
                 }
-                if (griglia[opp_y][opp_x-1] == 'D') {
+                if (griglia[opp_y][opp_x-1] == 'D' || griglia[opp_y][opp_x-1] == 'H') {
                     griglia[opp_y][opp_x-1] = ' ';
                 }
 
@@ -266,6 +280,11 @@ void Livello::disegna() {
                     attron(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
                     mvaddch(start_y + y, start_x + x, ' ');
                     attroff(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
+                    break;
+                case 'H': // IL NUOVO MURO DURO VERDE SCURO
+                    attron(COLOR_PAIR(MURO_DURO) | A_REVERSE);
+                    mvaddch(start_y + y, start_x + x, ' ');
+                    attroff(COLOR_PAIR(MURO_DURO) | A_REVERSE);
                     break;
                 case 'T':
                     attron(COLOR_PAIR(TELETRASPORTO));

@@ -63,7 +63,7 @@ void Player::move(int input, Livello *currentLevel) {
     char ostacolo = currentLevel->griglia[nuovaY][nuovaX];
 
     // Se la casella non è un muro solido ('M') e non è un muro da rompere ('D')
-    if (ostacolo != 'M' && ostacolo != 'D') {
+    if (ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'H') {
         // Mi sposto fisicamente
         x = nuovaX;
         y = nuovaY;

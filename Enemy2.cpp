@@ -32,7 +32,7 @@ void Enemy2::move(Livello* currentLevel) {
     char ostacoloCorrente = currentLevel->griglia[nuovaY][nuovaX];
 
     // Se la sua strada è libera, continua ad andare dritto
-    if (ostacoloCorrente != 'M' && ostacoloCorrente != 'D' && ostacoloCorrente != 'T' && ostacoloCorrente != 'U') {
+    if (ostacoloCorrente != 'M' && ostacoloCorrente != 'D' && ostacoloCorrente != 'T' && ostacoloCorrente != 'U' && ostacoloCorrente != 'H') {
         y = nuovaY;
         x = nuovaX;
     }

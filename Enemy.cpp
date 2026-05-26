@@ -41,7 +41,7 @@ void Enemy::move(Livello *currentLevel) {
         int cX = x + dx[i];
         char ostacolo = currentLevel->griglia[cY][cX];
 
-        if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U') {
+        if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U' && ostacolo != 'H') {
             // Se ho più scelte, non tornare indietro
             stradeValide[countValide++] = i;
         }

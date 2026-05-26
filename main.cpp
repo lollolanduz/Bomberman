@@ -20,10 +20,13 @@ int main() {
     init_color(LAYER_2, 1000, 500, 0);
     init_color(LAYER_4, 500, 0, 0);
 
+    init_color(MURO_DURO, 0, 200, 0);
+
     init_color(COLORE_BOMBA, 800, 0, 0);
     init_color(COLORE_ESPLOSIONE, 686, 0,0);
 
     init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
+    init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
 
     init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
@@ -326,7 +329,14 @@ case '+': {
                     int eX = esplosioneX[i];
                     int eY = esplosioneY[i];
 
-                    if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') gestoreMappa.livelloCorrente->generaDrop(eY, eX);
+                    if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'H') {
+                        //Se il muro è DURO allora diventa normale
+                        gestoreMappa.livelloCorrente->griglia[eY][eX] = 'D';
+                    }
+                    else if (gestoreMappa.livelloCorrente->griglia[eY][eX] == 'D') {
+                        //Diventa spazio percorribile
+                        gestoreMappa.livelloCorrente->generaDrop(eY, eX);
+                    }
 
                     if (giocatore.getX() == eX && giocatore.getY() == eY && !giocatore.getIsInvincible()) {
                         giocatore.take_damage();
