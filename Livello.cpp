@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
+#include <cmath>
 #include "Livello.h"
 #include "Costanti.h"
 #include "Enemy.h"
@@ -157,6 +158,16 @@ void Livello::genera_teletrasporto() {
         //Coordinate del suo opposto
         int opp_y = max_y - 1 - rand_y;
         int opp_x = max_x - 1 - rand_x;
+
+        // --- LA GUARDIA (Calcolo Distanza) ---
+        // Calcoliamo quanti "passi" separano i due teletrasporti
+        int distanza = std::abs(rand_x - opp_x) + std::abs(rand_y - opp_y);
+
+        // Se sono a meno di 15 passi di distanza, saltiamo il resto del codice
+        // e il ciclo while ricomincerà istantaneamente a cercare nuove coordinate!
+        if (distanza < 25) {
+            continue;
+        }
 
             //Verifico se sono spazi vuoti
         if (griglia[rand_y][rand_x] == ' ' && griglia[opp_y][opp_x] == ' ') {
