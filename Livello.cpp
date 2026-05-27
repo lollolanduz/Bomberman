@@ -72,7 +72,7 @@ Livello::Livello(int id) {
                 temp_y = (rand() % (max_y - 2)) + 1;
             } while (griglia[temp_y][temp_x] != ' ');
 
-            nemici[contatoreNemici] = new EnemyIntelligente(temp_x, temp_y, 'i', 3);
+            nemici[contatoreNemici] = new EnemyIntelligente(temp_x, temp_y, 'i', COLORE_I);
             contatoreNemici++;
         }
     }

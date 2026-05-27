@@ -30,12 +30,15 @@ void Game::inizializzaGrafica() {
     init_color(COLORE_BOMBA, 800, 0, 0);
     init_color(COLORE_ESPLOSIONE, 686, 0, 0);
 
+    init_pair(COLORE_BASE, COLOR_WHITE, COLOR_BLACK);
+
     init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
 
     init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(COLORE_Z, COLOR_CYAN, COLOR_BLACK);
+    init_pair(COLORE_I, COLOR_RED, COLOR_BLACK);
 
     init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(LAYER_2, LAYER_2, COLOR_BLACK);

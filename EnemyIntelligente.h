@@ -78,13 +78,13 @@ public:
     // Aggiungi questo metodo dentro la classe EnemyIntelligente in EnemyIntelligente.h
     void draw(int offsetY, int offsetX) override {
         if (isSveglio) {
-            attron(COLOR_PAIR(LAYER_3) | A_BOLD); // Rosso (o il colore che usavi prima)
+            attron(COLOR_PAIR(COLORE_I) | A_BOLD); // Rosso (o il colore che usavi prima)
             mvaddch(y + offsetY, x + offsetX, symbol);
-            attroff(COLOR_PAIR(LAYER_3) | A_BOLD);
+            attroff(COLOR_PAIR(COLORE_I) | A_BOLD);
         } else {
-            attron(COLOR_PAIR(MURO)); // Bianco (o il colore base)
+            attron(COLOR_PAIR(COLORE_BASE)); // Bianco (o il colore base)
             mvaddch(y + offsetY, x + offsetX, symbol);
-            attroff(COLOR_PAIR(MURO));
+            attroff(COLOR_PAIR(COLORE_BASE));
         }
     }
 };

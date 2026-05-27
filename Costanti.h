@@ -5,6 +5,8 @@
 #ifndef BOMBERMAN_COSTANTI_H
 #define BOMBERMAN_COSTANTI_H
 
+#define COLORE_BASE 0
+
 #define MURO 1
 #define MURO_DURO 2
 
@@ -24,15 +26,16 @@
 
 #define COLORE_X 7
 #define COLORE_Z 8
+#define COLORE_I 9
 
-#define COLORE_BOMBA 9
-#define COLORE_ESPLOSIONE 10
+#define COLORE_BOMBA 10
+#define COLORE_ESPLOSIONE 11
 
-#define ITEM_COMUNE 11
-#define ITEM_RARO 12
-#define ITEM_EPICO 13
+#define ITEM_COMUNE 12
+#define ITEM_RARO 13
+#define ITEM_EPICO 14
 
-#define ITEM_RARO_ATTIVO 14
+#define ITEM_RARO_ATTIVO 15
 
 static const int mps=100;
 
