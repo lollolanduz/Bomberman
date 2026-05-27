@@ -8,10 +8,8 @@
 #include <cmath>
 #include "Livello.h"
 #include "Costanti.h"
-#include "Enemy.h"
-#include "Enemy2.h"
 #include "EnemyIntelligente.h"
-
+#include "EnemyRandom.h"
 
 Livello::Livello(int id) {
     idLivello = id;
@@ -22,9 +20,8 @@ Livello::Livello(int id) {
     tempodiInizio = -1;
     tempoLivello = -1;
 
-
     //Serve a gestire il portale per concludere il livello
-    Portale=false;
+    Portale = false;
 
     // Inizialmente, la posizione salvata è lo spawn (1,1)
     player_save_x = 1;
@@ -45,37 +42,49 @@ Livello::Livello(int id) {
         genera_teletrasporto();
     }
 
-    contatoreX = 0;
-    contatoreZ = 0;
-    contatoreI = 0;
+    // --- GENERAZIONE POLIMORFICA DEI NEMICI ---
+    contatoreNemici = 0;
 
     int numeroNemici = 2 + idLivello;
     for (int i = 0; i < numeroNemici; i++) {
+        int temp_x, temp_y;
+        // Trova una casella vuota casuale per il nemico
+        do {
+            temp_x = (rand() % (max_x - 2)) + 1;
+            temp_y = (rand() % (max_y - 2)) + 1;
+        } while (griglia[temp_y][temp_x] != ' ');
+
         if (i % 2 == 0) {
-            nemiciX[contatoreX] = new Enemy('X', this);
-            contatoreX++;
+            nemici[contatoreNemici] = new EnemyRandom(temp_x, temp_y, 'X', 100, FRAME_NEMICO_X, COLORE_X);
         } else {
-            nemiciZ[contatoreZ] = new Enemy2('Z', this);
-            contatoreZ++;
+            nemici[contatoreNemici] = new EnemyRandom(temp_x, temp_y, 'Z', 150, FRAME_NEMICO_Z, COLORE_Z);
         }
+        contatoreNemici++;
     }
 
+    // Generazione del nemico Intelligente
     if (idLivello >= 4) {
-        // Al livello 4 ne appare 1, al livello 5 ne appaiono 2, ecc.
         int numIntelligenti = idLivello - 3;
         for (int i = 0; i < numIntelligenti; i++) {
-            nemiciI[contatoreI] = new EnemyIntelligente('i', this);
-            contatoreI++;
+            int temp_x, temp_y;
+            do {
+                temp_x = (rand() % (max_x - 2)) + 1;
+                temp_y = (rand() % (max_y - 2)) + 1;
+            } while (griglia[temp_y][temp_x] != ' ');
+
+            nemici[contatoreNemici] = new EnemyIntelligente(temp_x, temp_y, 'i', 3);
+            contatoreNemici++;
         }
     }
-
 }
-
 Livello::~Livello() {
-    for (int i = 0; i < contatoreX; i++) delete nemiciX[i];
-    for (int i = 0; i < contatoreZ; i++) delete nemiciZ[i];
-    for (int i = 0; i < contatoreItems; i++) delete itemsATerra[i];
-    for (int i = 0; i < contatoreI; i++) delete nemiciI[i];
+    // Distrugge tutti i nemici in un colpo solo, indipendentemente dal tipo!
+    for (int i = 0; i < contatoreNemici; i++) {
+        delete nemici[i];
+    }
+    for (int i = 0; i < contatoreItems; i++) {
+        delete itemsATerra[i];
+    }
 }
 
 

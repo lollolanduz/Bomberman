@@ -8,6 +8,7 @@
 #pragma once
 #include <pdcurses.h>
 #include "item.h"
+#include "Entity.h"
 
 // Forward declaration per evitare inclusioni circolari
 class Enemy;
@@ -51,14 +52,8 @@ public:
     int bombRadius[10];
 
     // Array dei nemici (ora appartengono al Livello!)
-    Enemy* nemiciX[25];
-    int contatoreX;
-
-    Enemy2* nemiciZ[25];
-    int contatoreZ;
-
-    EnemyIntelligente* nemiciI[10];
-    int contatoreI;
+    Entity* nemici[300];
+    int contatoreNemici;
 
     //Array Item
     Item* itemsATerra[50];

@@ -19,16 +19,15 @@ add_executable(Bomberman main.cpp
         Player.cpp
         Player.h
         Costanti.h
-        Enemy.cpp
-        Enemy.h
-        Enemy2.cpp
-        Enemy2.h
         Pausa.cpp
         Pausa.h
         Item.cpp
         Item.h
-        EnemyIntelligente.cpp
         EnemyIntelligente.h
+        Game.cpp
+        Game.h
+        EnemyRandom.cpp
+        EnemyRandom.h
 )
 
 target_link_libraries(Bomberman PRIVATE pdcurses)

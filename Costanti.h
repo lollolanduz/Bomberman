@@ -44,7 +44,7 @@ const int INIZIO_BOMBA_PANICO = 20;
 // --- VELOCITA' DEI NEMICI (frame da aspettare prima di muoversi) ---
 // Più il numero è basso, più il nemico è veloce
 const int FRAME_NEMICO_X = 7;
-const int FRAME_NEMICO_Z = 3;
-const int FRAME_NEMICO_I = 5;
+const int FRAME_NEMICO_Z = 5;
+const int FRAME_NEMICO_I = 3;
 
 #endif //BOMBERMAN_COSTANTI_H
