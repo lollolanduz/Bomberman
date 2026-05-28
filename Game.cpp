@@ -109,7 +109,7 @@ void Game::run() {
                                             gestoreMappa.livelloCorrente->bombX[i] = giocatore.getX();
                                             gestoreMappa.livelloCorrente->bombY[i] = giocatore.getY();
                                             gestoreMappa.livelloCorrente->bombTimer[i] = 0;
-                                            gestoreMappa.livelloCorrente->bombRadius[i] = giocatore.getRaggioBomba();
+                                            gestoreMappa.livelloCorrente->bombRadius[i] = giocatore.getRaggioBomba(gestoreMappa.livelloCorrente);
                                             break;
                                         }
                                     }
@@ -239,7 +239,11 @@ void Game::run() {
                     }
 
                     giocatore.tickInvincibility();
-                    giocatore.tickRadiusTimer();
+
+                    if (gestoreMappa.livelloCorrente->playerRadiusTimer > 0) {
+                        gestoreMappa.livelloCorrente->playerRadiusTimer--;
+                    }
+
                     giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
                     // --- LOGICA DELLE BOMBE (ESPLOSIONE) ---
@@ -388,7 +392,7 @@ void Game::run() {
                     if (giocatore.getIsInvincible() && contatoreFrameX % 2 == 0) disegnaGiocatore = false;
 
                     if (disegnaGiocatore) {
-                        if (giocatore.isRadiusBoosted()) {
+                        if (giocatore.isRadiusBoosted(gestoreMappa.livelloCorrente)) {
                             attron(COLOR_PAIR(99) | A_BOLD);
                             mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getY(), gestoreMappa.livelloCorrente->start_x + giocatore.getX(), 'P');
                             attroff(COLOR_PAIR(99) | A_BOLD);

@@ -33,6 +33,8 @@ Livello::Livello(int id) {
         bombRadius[i] = 1;
     }
 
+    playerRadiusTimer = 0;
+
     genera_griglia_vuota();
     genera_MuriFissi();
     genera_MuraDistruttibili();

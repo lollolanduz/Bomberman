@@ -22,51 +22,60 @@ public:
         frameCounter++;
 
         if (frameCounter >= FRAME_NEMICO_I) {
-
-            // 1. Calcolo la Distanza di Manhattan dal giocatore
             int distanza = std::abs(x - playerX) + std::abs(y - playerY);
 
-            // 2. Logica di "Aggro" (Risveglio)
             if (distanza <= 6) {
                 isSveglio = true;
-                symbol = 'I'; // MAIUSCOLA quando ti insegue
+                symbol = 'I';
             } else {
                 isSveglio = false;
-                symbol = 'i'; // minuscola quando dorme
+                symbol = 'i';
             }
 
             if (!isSveglio) {
                 frameCounter = 0;
-                return; // Se dorme, sta fermo
+                return;
             }
 
-            // 3. Logica di Inseguimento
             int diffX = playerX - x;
             int diffY = playerY - y;
-
             int nextX = x;
             int nextY = y;
 
             if (std::abs(diffX) > std::abs(diffY)) {
                 nextX += (diffX > 0) ? 1 : -1;
-                if (livello->griglia[y][nextX] == 'M' || livello->griglia[y][nextX] == 'D' || livello->griglia[y][nextX] == 'H') {
+
+                // Controllo Bombe per asse X
+                bool bombaX = false;
+                for(int b=0; b<10; b++) if(livello->isBombActive[b] && livello->bombX[b] == nextX && livello->bombY[b] == y) bombaX = true;
+
+                if (livello->griglia[y][nextX] == 'M' || livello->griglia[y][nextX] == 'D' || livello->griglia[y][nextX] == 'H' || bombaX) {
                     nextX = x;
                     nextY += (diffY > 0) ? 1 : -1;
                 }
             } else {
                 nextY += (diffY > 0) ? 1 : -1;
-                if (livello->griglia[nextY][x] == 'M' || livello->griglia[nextY][x] == 'D' || livello->griglia[nextY][x] == 'H' ) {
+
+                // Controllo Bombe per asse Y
+                bool bombaY = false;
+                for(int b=0; b<10; b++) if(livello->isBombActive[b] && livello->bombX[b] == x && livello->bombY[b] == nextY) bombaY = true;
+
+                if (livello->griglia[nextY][x] == 'M' || livello->griglia[nextY][x] == 'D' || livello->griglia[nextY][x] == 'H' || bombaY) {
                     nextY = y;
                     nextX += (diffX > 0) ? 1 : -1;
                 }
             }
 
             char ostacolo = livello->griglia[nextY][nextX];
-            if (ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'H' && ostacolo != 'T' && ostacolo != 'U') {
+
+            // Controllo Finale Misto (Griglia + Bomba)
+            bool ostacoloBomba = false;
+            for(int b=0; b<10; b++) if(livello->isBombActive[b] && livello->bombX[b] == nextX && livello->bombY[b] == nextY) ostacoloBomba = true;
+
+            if (ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'H' && ostacolo != 'T' && ostacolo != 'U' && !ostacoloBomba) {
                 x = nextX;
                 y = nextY;
             }
-
             frameCounter = 0;
         }
     }

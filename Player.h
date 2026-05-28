@@ -28,7 +28,7 @@ public:
 
     int getlife();//funzione utile al main per sapere quante vite ha il player
 
-    int getRaggioBomba();
+    int getRaggioBomba(Livello* currentLevel);
 
     int getMaxBombe();
 
@@ -36,7 +36,7 @@ public:
 
     void reset_position(); // Riporta il giocatore al punto di spawn
 
-    void collect_item(char tipoCasella);    //funzione per collezionare oggetti
+    void collect_item(char tipoCasella, Livello* currentLevel);    //funzione per collezionare oggetti
 
     void move(int input, Livello* currentLevel );
 
@@ -51,8 +51,7 @@ public:
     //Successivamente utile per anche l'immortalità
     void draw(int offsetY, int offsetX, bool isBlinking = false);
 
-    void tickRadiusTimer();
-    bool isRadiusBoosted();
+    bool isRadiusBoosted(Livello* currentLevel);
 
     void addPunteggio(int punti);
     int getPunteggio();

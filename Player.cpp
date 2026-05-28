@@ -71,8 +71,8 @@ void Player::move(int input, Livello *currentLevel) {
         // 3. ORA che mi sono spostato, controllo se sono finito su un ITEM
         char casella = currentLevel->griglia[y][x];
         if (casella == 'C' || casella == 'R' || casella == 'E') {
-            collect_item(casella); // Raccoglie l'item
-            currentLevel->griglia[y][x] = ' '; // Rimuove l'item dalla griglia
+            collect_item(casella, currentLevel); // <-- Passiamo currentLevel
+            currentLevel->griglia[y][x] = ' ';
         }
     }
 }
@@ -114,39 +114,34 @@ void Player::tickInvincibility() {
     }
 }
 
-void Player::collect_item(char tipoCasella) {
+void Player::collect_item(char tipoCasella, Livello* currentLevel) {
     switch(tipoCasella) {
         case 'C':
             addPunteggio(50);
             break;
         case 'R':
-            radiusTimer = 100;
+            currentLevel->playerRadiusTimer = 100; //Il potenziamento va al livelloi in cui si trova
             break;
         case 'E':
-            life++; // Aggiunge una vita!
+            life++;
             break;
     }
 }
 
-int Player::getRaggioBomba() {
-    if (radiusTimer > 0) {
-        return 2; // Raggio potenziato (4 caselle) nei 10 secondi
+int Player::getRaggioBomba(Livello* currentLevel) {
+    if (currentLevel->playerRadiusTimer > 0) {
+        return 2;
     }
-    return 1; // Raggio classico quando il tempo è scaduto
+    return 1;
 }
 
 int Player::getMaxBombe() {
     return maxBombe;
 }
 
-void Player::tickRadiusTimer() {
-    if (radiusTimer > 0) {
-        radiusTimer--;
-    }
-}
 
-bool Player::isRadiusBoosted() {
-    return radiusTimer > 0;
+bool Player::isRadiusBoosted(Livello* currentLevel) {
+    return currentLevel->playerRadiusTimer > 0;
 }
 
 void Player::addPunteggio(int punti) {

@@ -26,11 +26,9 @@ public:
         frameCounter++;
 
         if (frameCounter >= velocita) {
-
-            // --- LA TUA LOGICA DI MOVIMENTO ANTI-RITORNO ---
             int dy[] = {-1, 1, 0, 0};
             int dx[] = {0, 0, -1, 1};
-            int opposto[] = {1, 0, 3, 2}; // L'opposto di Su(0) è Giù(1) etc...
+            int opposto[] = {1, 0, 3, 2};
 
             int stradeValide[4];
             int countValide = 0;
@@ -40,17 +38,23 @@ public:
                 int cY = y + dy[i];
                 int cX = x + dx[i];
 
-                // Usiamo livello->griglia invece di currentLevel
                 char ostacolo = livello->griglia[cY][cX];
 
-                if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U' && ostacolo != 'H') {
-                    // Se ho più scelte, non tornare indietro
+                // --- CONTROLLO SE C'È UNA BOMBA ---
+                bool cE_unaBomba = false;
+                for (int b = 0; b < 10; b++) {
+                    if (livello->isBombActive[b] && livello->bombX[b] == cX && livello->bombY[b] == cY) {
+                        cE_unaBomba = true;
+                        break;
+                    }
+                }
+
+                if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U' && ostacolo != 'H' && !cE_unaBomba) {
                     stradeValide[countValide++] = i;
                 }
             }
 
             if (countValide > 0) {
-                // Se c'è più di una strada e una è quella da cui vengo, la scarto
                 int sceltaFinale = -1;
                 if (countValide > 1 && backDir != -1) {
                     int stradeSenzaRitorno[4];
@@ -67,7 +71,6 @@ public:
                 y += dy[lastDir];
                 x += dx[lastDir];
             }
-
             frameCounter = 0;
         }
     }

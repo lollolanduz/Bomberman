@@ -46,6 +46,9 @@ public:
 
     // --- VARIABILI DELLA BOMBA ---
     bool isBombActive[10];
+
+    int playerRadiusTimer;
+
     int bombX[10];
     int bombY[10];
     int bombTimer[10];
