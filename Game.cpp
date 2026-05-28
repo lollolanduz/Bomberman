@@ -421,24 +421,32 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     }
 
     mvprintw(12, 25, "PUNTEGGIO FINALE: %05d", punteggio);
-    mvprintw(15, 20, "Inserisci le tue iniziali (3 lettere): ");
+    mvprintw(15, 10, "Inserisci il tuo nome (max 10 lettere, premi INVIO per finire): ");
     attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
     refresh();
 
-    char nome[4];
-    nome[0] = ' '; nome[1] = ' '; nome[2] = ' '; nome[3] = '\0';
+    char nome[11];
+    for(int i = 0; i < 11; i++) nome[i] = '\0'; // Svuota l'array
 
     int cursore = 0;
 
-    while (cursore < 3) {
+    flushinp();
+    timeout(-1); // Blocca il gioco per farti scrivere con calma
+
+    while (cursore < 10) {
         int ch = getch();
+
+        // Se preme INVIO e ha scritto almeno una lettera, confermiamo!
+        if ((ch == '\n' || ch == '\r' || ch == KEY_ENTER) && cursore > 0) {
+            break;
+        }
 
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
             if (ch >= 'a' && ch <= 'z') ch -= 32;
             nome[cursore] = ch;
 
             attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-            mvaddch(15, 59 + cursore, ch);
+            mvaddch(16, 25 + cursore, ch); // Scrive il nome alla riga 16
             attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
             refresh();
 
