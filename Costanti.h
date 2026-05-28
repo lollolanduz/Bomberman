@@ -40,14 +40,14 @@
 static const int mps=100;
 
 // --- TIMING DELLE BOMBE (in frame) ---
-const int TEMPO_ESPLOSIONE_BOMBA = 25;
-const int INIZIO_BOMBA_PALPITANTE = 15;
-const int INIZIO_BOMBA_PANICO = 20;
+const int TEMPO_ESPLOSIONE_BOMBA = 18;
+const int INIZIO_BOMBA_PALPITANTE = 14;
+const int INIZIO_BOMBA_PANICO = 10;
 
 // --- VELOCITA' DEI NEMICI (frame da aspettare prima di muoversi) ---
 // Più il numero è basso, più il nemico è veloce
-const int FRAME_NEMICO_X = 7;
-const int FRAME_NEMICO_Z = 5;
+const int FRAME_NEMICO_X = 10;
+const int FRAME_NEMICO_Z = 7;
 const int FRAME_NEMICO_I = 3;
 
 #endif //BOMBERMAN_COSTANTI_H
