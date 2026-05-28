@@ -7,7 +7,7 @@
 
 #define COLORE_BASE 0
 
-#define MURO 1
+#define MURO_INDISTRUTTIBILE 1
 #define MURO_DURO 2
 
 #define MURO_DISTRUTTIBILE 3

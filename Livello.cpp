@@ -281,9 +281,9 @@ void Livello::disegna() {
 
             switch (cella) {
                 case 'M':
-                    attron(COLOR_PAIR(MURO) | A_REVERSE);
+                    attron(COLOR_PAIR(MURO_INDISTRUTTIBILE) | A_REVERSE);
                     mvaddch(start_y + y, start_x + x, ' ');
-                    attroff(COLOR_PAIR(MURO) | A_REVERSE);
+                    attroff(COLOR_PAIR(MURO_INDISTRUTTIBILE) | A_REVERSE);
                     break;
                 case 'D':
                     attron(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);

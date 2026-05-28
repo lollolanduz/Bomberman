@@ -32,7 +32,7 @@ void Game::inizializzaGrafica() {
 
     init_pair(COLORE_BASE, COLOR_WHITE, COLOR_BLACK);
 
-    init_pair(MURO, COLOR_WHITE, COLOR_BLACK);
+    init_pair(MURO_INDISTRUTTIBILE, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
 
