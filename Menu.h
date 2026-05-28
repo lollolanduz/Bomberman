@@ -19,6 +19,8 @@ private:
 public:
     Menu();
     int gestisciInput();
+
+    void mostraClassifica();
 };
 
 #endif // BOMBERMAN_MENU_H

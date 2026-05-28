@@ -6,6 +6,8 @@ class Game {
 private:
     void inizializzaGrafica(); // Nasconderemo qui tutta la configurazione dei colori e di pdcurses
 
+    void gestisciFinePartita(bool vittoria, int punteggio);
+
 public:
     Game();  // Il costruttore avvierà la grafica
     ~Game(); // Il distruttore chiuderà lo schermo alla fine

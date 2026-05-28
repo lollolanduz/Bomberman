@@ -9,6 +9,8 @@
 #include "EnemyRandom.h"
 #include "EnemyIntelligente.h"
 #include "Pausa.h"
+#include <fstream>
+
 
 Game::Game() {
     inizializzaGrafica();
@@ -73,7 +75,7 @@ void Game::run() {
                 vuoleRicominciare = false;
                 clear();
                 Mappa gestoreMappa;
-                Player giocatore(1, 1, 'P', 5000);
+                Player giocatore(1, 1, 'P', 1);
 
                 gestoreMappa.livelloCorrente->disegna();
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -202,13 +204,7 @@ void Game::run() {
                                     gestoreMappa.eliminaLivelloCorrenteEAvanti();
 
                                     if (gestoreMappa.livelloCorrente == nullptr) {
-                                        clear();
-                                        attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-                                        mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
-                                        mvprintw(12, 20, "PUNTEGGIO FINALE: %05d", giocatore.getPunteggio());
-                                        attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-                                        refresh();
-                                        napms(4000);
+                                        gestisciFinePartita(true, giocatore.getPunteggio());
                                         inGioco = false;
                                     } else {
                                         gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
@@ -229,11 +225,7 @@ void Game::run() {
                     int tempoRimanente = tempoMassimo - tempoPassato;
 
                     if (tempoRimanente <= 0) {
-                        clear();
-                        mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 7, "TEMPO SCADUTO!");
-                        mvprintw(Livello::max_y / 2 + 1, Livello::max_x / 2 - 5, "GAME OVER");
-                        refresh();
-                        napms(3000);
+                        gestisciFinePartita(false, giocatore.getPunteggio()); // <--- USA LA FUNZIONE QUI
                         inGioco = false;
                         break;
                     }
@@ -294,7 +286,8 @@ void Game::run() {
                                     if (giocatore.getX() == eX && giocatore.getY() == eY && !giocatore.getIsInvincible()) {
                                         giocatore.take_damage();
                                         if (giocatore.getlife() > 0) giocatore.reset_position();
-                                        else { clear(); mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R"); refresh(); napms(2000); inGioco = false; }
+                                        else { gestisciFinePartita(false, giocatore.getPunteggio());
+                                            inGioco = false; }
                                     }
 
                                     // --- UCCISIONE POLIMORFICA DEI NEMICI ---
@@ -350,7 +343,8 @@ void Game::run() {
                     if (colpito && !giocatore.getIsInvincible()) {
                         giocatore.take_damage();
                         if (giocatore.getlife() > 0) giocatore.reset_position();
-                        else { clear(); mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 5, "G A M E   O V E R"); refresh(); napms(2000); inGioco = false; }
+                        else { gestisciFinePartita(false, giocatore.getPunteggio());
+                            inGioco = false;}
                     }
 
                     // PORTALE SI APRE SE NON CI SONO NEMICI
@@ -407,15 +401,61 @@ void Game::run() {
             } while (vuoleRicominciare);
         }
         else if (scelta == 1) {
-            clear();
-            mvprintw(10, 10, "Schermata Classifica in costruzione! Premi un tasto per tornare indietro...");
-            refresh();
-            timeout(-1);
-            getch();
-            clear();
+            menuPrincipale.mostraClassifica();
         }
         else if (scelta == 2) {
             chiudiTutto = true;
         }
     }
+}
+
+
+void Game::gestisciFinePartita(bool vittoria, int punteggio) {
+    clear();
+    attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+
+    if (vittoria) {
+        mvprintw(10, 20, "HAI VINTO! TUTTI I LIVELLI COMPLETATI!");
+    } else {
+        mvprintw(10, 28, "G A M E   O V E R");
+    }
+
+    mvprintw(12, 25, "PUNTEGGIO FINALE: %05d", punteggio);
+    mvprintw(15, 20, "Inserisci le tue iniziali (3 lettere): ");
+    attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+    refresh();
+
+    char nome[4];
+    nome[0] = ' '; nome[1] = ' '; nome[2] = ' '; nome[3] = '\0';
+
+    int cursore = 0;
+
+    while (cursore < 3) {
+        int ch = getch();
+
+        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+            if (ch >= 'a' && ch <= 'z') ch -= 32;
+            nome[cursore] = ch;
+
+            attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+            mvaddch(15, 59 + cursore, ch);
+            attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+            refresh();
+
+            cursore++;
+        }
+    }
+
+    napms(500);
+
+    std::ofstream fileClassifica("classifica.txt", std::ios::app);
+    if (fileClassifica.is_open()) {
+        fileClassifica << nome << " " << punteggio << "\n";
+        fileClassifica.close();
+    }
+
+    clear();
+    mvprintw(15, 25, "Salvataggio completato!");
+    refresh();
+    napms(1500);
 }
