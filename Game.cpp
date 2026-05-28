@@ -75,7 +75,7 @@ void Game::run() {
                 vuoleRicominciare = false;
                 clear();
                 Mappa gestoreMappa;
-                Player giocatore(1, 1, 'P', 1);
+                Player giocatore(1, 1, 'P', 5);
 
                 gestoreMappa.livelloCorrente->disegna();
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -174,10 +174,17 @@ void Game::run() {
 
                                     if (tRimanente > 0) {
                                         clear();
+
+                                        // 1. Calcolo il centro esatto dello schermo del terminale
+                                        int centerY = getmaxy(stdscr) / 2;
+                                        int centerX = getmaxx(stdscr) / 2;
+
                                         attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-                                        mvprintw(Livello::max_y / 2 - 4, Livello::max_x / 2 - 10, "====================");
-                                        mvprintw(Livello::max_y / 2 - 3, Livello::max_x / 2 - 9, " LIVELLO SUPERATO ");
-                                        mvprintw(Livello::max_y / 2 - 2, Livello::max_x / 2 - 10, "====================");
+                                        // La stringa di = è lunga 20, quindi tolgo 10 da centerX
+                                        mvprintw(centerY - 4, centerX - 10, "====================");
+                                        // La stringa è lunga 18, tolgo 9
+                                        mvprintw(centerY - 3, centerX - 9,  " LIVELLO SUPERATO ");
+                                        mvprintw(centerY - 2, centerX - 10, "====================");
                                         attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
 
                                         while (tRimanente > 0) {
@@ -185,18 +192,24 @@ void Game::run() {
                                             giocatore.addPunteggio(10);
                                             int visualizzaMinuti = tRimanente / 60;
                                             int visualizzaSecondi = tRimanente % 60;
+
                                             attron(COLOR_PAIR(COLORE_Z) | A_BOLD);
-                                            mvprintw(Livello::max_y / 2, Livello::max_x / 2 - 12, "Tempo Rimasto : %02d:%02d", visualizzaMinuti, visualizzaSecondi);
+                                            mvprintw(centerY, centerX - 11, "Tempo Rimasto : %02d:%02d", visualizzaMinuti, visualizzaSecondi);
                                             attroff(COLOR_PAIR(COLORE_Z) | A_BOLD);
+
                                             attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-                                            mvprintw(Livello::max_y / 2 + 2, Livello::max_x / 2 - 12, "Punteggio Totale: %05d", giocatore.getPunteggio());
+                                            mvprintw(centerY + 2, centerX - 11, "Punteggio Totale: %05d", giocatore.getPunteggio());
                                             attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+
                                             refresh();
                                             napms(30);
                                         }
+
                                         attron(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
-                                        mvprintw(Livello::max_y / 2 + 5, Livello::max_x / 2 - 7, " PERFETTO! ");
+                                        // " PERFETTO! " è lunga 11, tolgo circa 5
+                                        mvprintw(centerY + 5, centerX - 5, " PERFETTO! ");
                                         attroff(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
+
                                         refresh();
                                         napms(1500);
                                     }
