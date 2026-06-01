@@ -26,7 +26,6 @@ private:
 
 public:
 
-
     int idLivello;
     Livello* successivo;
     Livello* precedente;
@@ -39,6 +38,9 @@ public:
     static const int max_x=40;
 
     char griglia[max_y][max_x];
+
+    // 1=Normale, 2=Frenesia, 3=Mura Dure, 4=Nessun item
+    int mutatore;
 
     // Memoria posizione giocatore per questo livello
     int player_save_x;
@@ -69,7 +71,7 @@ public:
     Livello(int id);
     ~Livello(); // Distruttore per pulire i nemici quando il livello viene eliminato
 
-    void disegna();
+    void disegna(int playerX = -1, int playerY = -1);
     void gestisciTeletrasporto(int &giocatore_y, int &giocatore_x);
     void generaDrop(int y, int x);
 

@@ -10,7 +10,7 @@
 #include "EnemyIntelligente.h"
 #include "Pausa.h"
 #include <fstream>
-
+#include <cmath>
 
 Game::Game() {
     inizializzaGrafica();
@@ -33,25 +33,20 @@ void Game::inizializzaGrafica() {
     init_color(COLORE_ESPLOSIONE, 686, 0, 0);
 
     init_pair(COLORE_BASE, COLOR_WHITE, COLOR_BLACK);
-
     init_pair(MURO_INDISTRUTTIBILE, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
-
     init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(COLORE_Z, COLOR_CYAN, COLOR_BLACK);
     init_pair(COLORE_I, COLOR_RED, COLOR_BLACK);
-
     init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(LAYER_2, LAYER_2, COLOR_BLACK);
     init_pair(LAYER_3, COLOR_RED, COLOR_BLACK);
     init_pair(LAYER_4, LAYER_4, COLOR_BLACK);
-
     init_pair(SCELTA_MENU, COLOR_YELLOW, COLOR_BLACK);
     init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
     init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
     init_pair(99, COLOR_BLACK, COLOR_YELLOW);
-
     init_pair(COLORE_BOMBA, COLORE_BOMBA, COLOR_BLACK);
     init_pair(COLORE_ESPLOSIONE, COLORE_ESPLOSIONE, COLOR_BLACK);
 
@@ -77,11 +72,15 @@ void Game::run() {
                 Mappa gestoreMappa;
                 Player giocatore(1, 1, 'P', 5);
 
-                gestoreMappa.livelloCorrente->disegna();
+                gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
-                // --- DISEGNO NEMICI UNIFICATO ---
                 for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
+                    int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
+                    int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
+                    if (gestoreMappa.livelloCorrente->mutatore == 2) {
+                        if (std::abs(nX - giocatore.getX()) > 3 || std::abs(nY - giocatore.getY()) > 3) continue;
+                    }
                     gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 }
 
@@ -89,7 +88,7 @@ void Game::run() {
 
                 bool inGioco = true;
                 timeout(mps);
-                int contatoreFrameX = 0; // Utilizzato solo per l'animazione lampeggio giocatore!
+                int contatoreFrameX = 0;
 
                 gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
 
@@ -174,15 +173,11 @@ void Game::run() {
 
                                     if (tRimanente > 0) {
                                         clear();
-
-                                        // 1. Calcolo il centro esatto dello schermo del terminale
                                         int centerY = getmaxy(stdscr) / 2;
                                         int centerX = getmaxx(stdscr) / 2;
 
                                         attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-                                        // La stringa di = è lunga 20, quindi tolgo 10 da centerX
                                         mvprintw(centerY - 4, centerX - 10, "====================");
-                                        // La stringa è lunga 18, tolgo 9
                                         mvprintw(centerY - 3, centerX - 9,  " LIVELLO SUPERATO ");
                                         mvprintw(centerY - 2, centerX - 10, "====================");
                                         attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
@@ -206,7 +201,6 @@ void Game::run() {
                                         }
 
                                         attron(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
-                                        // " PERFETTO! " è lunga 11, tolgo circa 5
                                         mvprintw(centerY + 5, centerX - 5, " PERFETTO! ");
                                         attroff(COLOR_PAIR(PORTALE) | A_BLINK | A_BOLD);
 
@@ -223,7 +217,7 @@ void Game::run() {
                                         gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
                                         giocatore.set_position(gestoreMappa.livelloCorrente->player_save_x, gestoreMappa.livelloCorrente->player_save_y);
                                         clear();
-                                        gestoreMappa.livelloCorrente->disegna();
+                                        gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
                                         refresh();
                                     }
                                 }
@@ -238,20 +232,17 @@ void Game::run() {
                     int tempoRimanente = tempoMassimo - tempoPassato;
 
                     if (tempoRimanente <= 0) {
-                        gestisciFinePartita(false, giocatore.getPunteggio()); // <--- USA LA FUNZIONE QUI
+                        gestisciFinePartita(false, giocatore.getPunteggio());
                         inGioco = false;
                         break;
                     }
 
                     giocatore.tickInvincibility();
-
                     if (gestoreMappa.livelloCorrente->playerRadiusTimer > 0) {
                         gestoreMappa.livelloCorrente->playerRadiusTimer--;
                     }
-
                     giocatore.check_teleport(gestoreMappa.livelloCorrente);
 
-                    // --- LOGICA DELLE BOMBE (ESPLOSIONE) ---
                     for (int b = 0; b < 10; b++) {
                         if (gestoreMappa.livelloCorrente->isBombActive[b]) {
                             gestoreMappa.livelloCorrente->bombTimer[b]++;
@@ -303,7 +294,6 @@ void Game::run() {
                                             inGioco = false; }
                                     }
 
-                                    // --- UCCISIONE POLIMORFICA DEI NEMICI ---
                                     for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreNemici; k++) {
                                         if (gestoreMappa.livelloCorrente->nemici[k]->getX() == eX && gestoreMappa.livelloCorrente->nemici[k]->getY() == eY) {
                                             giocatore.addPunteggio(gestoreMappa.livelloCorrente->nemici[k]->getPunti());
@@ -323,14 +313,12 @@ void Game::run() {
                         }
                     }
 
-                    contatoreFrameX++; // Serve per il lampeggio della grafica
+                    contatoreFrameX++;
 
-                    // --- MOVIMENTO POLIMORFICO ---
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                         gestoreMappa.livelloCorrente->nemici[i]->move(gestoreMappa.livelloCorrente, giocatore.getX(), giocatore.getY());
                     }
 
-                    // --- TIMER DEGLI ITEM ---
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreItems; i++) {
                         gestoreMappa.livelloCorrente->itemsATerra[i]->timerVita--;
                         if (gestoreMappa.livelloCorrente->itemsATerra[i]->timerVita <= 0) {
@@ -344,7 +332,6 @@ void Game::run() {
                         }
                     }
 
-                    // --- COLLISIONI POLIMORFICHE DEL PLAYER ---
                     bool colpito = false;
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                         if (giocatore.getX() == gestoreMappa.livelloCorrente->nemici[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemici[i]->getY()) {
@@ -360,13 +347,13 @@ void Game::run() {
                             inGioco = false;}
                     }
 
-                    // PORTALE SI APRE SE NON CI SONO NEMICI
                     if (gestoreMappa.livelloCorrente->contatoreNemici == 0) {
                         gestoreMappa.livelloCorrente->apriPortaUscita();
                     }
 
                     erase();
-                    gestoreMappa.livelloCorrente->disegna();
+                    // Passiamo le coordinate al disegno per applicare il Blackout!
+                    gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
 
                     int visualizzaMinuti = (tempoRimanente > 0) ? tempoRimanente / 60 : 0;
                     int visualizzaSecondi = (tempoRimanente > 0) ? tempoRimanente % 60 : 0;
@@ -376,8 +363,17 @@ void Game::run() {
                         if (gestoreMappa.livelloCorrente->isBombActive[b]) {
                             bool disegnaBomba = true;
                             int t = gestoreMappa.livelloCorrente->bombTimer[b];
+
+                            // Se siamo nel Blackout, nascondiamo la bomba se è troppo lontana!
+                            if (gestoreMappa.livelloCorrente->mutatore == 2) {
+                                int distX = std::abs(gestoreMappa.livelloCorrente->bombX[b] - giocatore.getX());
+                                int distY = std::abs(gestoreMappa.livelloCorrente->bombY[b] - giocatore.getY());
+                                if (distX > 3 || distY > 3) disegnaBomba = false;
+                            }
+
                             if (t >= INIZIO_BOMBA_PALPITANTE && t < INIZIO_BOMBA_PANICO) if (t % 8 < 4) disegnaBomba = false;
                             if (t >= INIZIO_BOMBA_PANICO && t < TEMPO_ESPLOSIONE_BOMBA) if (t % 2 == 0) disegnaBomba = false;
+
                             if (disegnaBomba) {
                                 attron(COLOR_PAIR(COLORE_BOMBA) | A_BOLD);
                                 mvaddch(gestoreMappa.livelloCorrente->start_y + gestoreMappa.livelloCorrente->bombY[b], gestoreMappa.livelloCorrente->start_x + gestoreMappa.livelloCorrente->bombX[b], 'O');
@@ -386,8 +382,13 @@ void Game::run() {
                         }
                     }
 
-                    // Disegno finale polimorfico
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
+                        // Se siamo nel Blackout, nascondiamo i nemici distanti!
+                        if (gestoreMappa.livelloCorrente->mutatore == 2) {
+                            int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
+                            int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
+                            if (std::abs(nX - giocatore.getX()) > 3 || std::abs(nY - giocatore.getY()) > 3) continue;
+                        }
                         gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                     }
 
@@ -439,17 +440,16 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     refresh();
 
     char nome[11];
-    for(int i = 0; i < 11; i++) nome[i] = '\0'; // Svuota l'array
+    for(int i = 0; i < 11; i++) nome[i] = '\0';
 
     int cursore = 0;
 
     flushinp();
-    timeout(-1); // Blocca il gioco per farti scrivere con calma
+    timeout(-1);
 
     while (cursore < 10) {
         int ch = getch();
 
-        // Se preme INVIO e ha scritto almeno una lettera, confermiamo!
         if ((ch == '\n' || ch == '\r' || ch == KEY_ENTER) && cursore > 0) {
             break;
         }
@@ -459,7 +459,7 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
             nome[cursore] = ch;
 
             attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-            mvaddch(16, 25 + cursore, ch); // Scrive il nome alla riga 16
+            mvaddch(16, 25 + cursore, ch);
             attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
             refresh();
 

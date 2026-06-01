@@ -35,6 +35,42 @@ Livello::Livello(int id) {
 
     playerRadiusTimer = 0;
 
+    //Gestione del mutatore tramite matrice
+    //Ogni riga indica un livello
+    //Colonne indicano il tipo (col1 = normale, col2 = frenesia, col3 = Mura Dure, col4 = nessun drop)
+    //Il numero indica la percentuale (somma = 100%)
+    int probabilita[5][4] = {
+        {80, 10,  5,  5},  // Livello 1
+        {75, 15,  5,  5},  // Livello 2
+        {70, 15, 10,  5},  // Livello 3
+        {60, 20, 15,  5},  // Livello 4
+        {50, 20, 15, 15}   // Livello 5
+    };
+
+    //guardia per assicurarsi di non sforare l'array
+    int indiceLiv;
+    if (idLivello > 5) {
+        indiceLiv = 4;
+    } else {
+        indiceLiv = idLivello - 1;
+    }
+
+    int randVal = rand() % 100; // Tira un dado da 0 a 99
+
+    // Probabilità Pesata:
+    if (randVal < probabilita[indiceLiv][0]) {
+        mutatore = 1; // Normale
+    }
+    else if (randVal < probabilita[indiceLiv][0] + probabilita[indiceLiv][1]) {
+        mutatore = 2; // Frenesia
+    }
+    else if (randVal < probabilita[indiceLiv][0] + probabilita[indiceLiv][1] + probabilita[indiceLiv][2]) {
+        mutatore = 3; // Mura Dure (Zona Blindata)
+    }
+    else {
+        mutatore = 4; // Carestia (Nessun Drop)
+    }
+
     genera_griglia_vuota();
     genera_MuriFissi();
     genera_MuraDistruttibili();
@@ -151,13 +187,17 @@ void Livello::genera_MuraDistruttibili() {
         for (int x=1; x < max_x - 1; x++) {
             int wall_rate= rand() % 100;
             if (wall_rate < wall_cap && griglia[y][x] != 'M') {
-
-                //Randomizziamo le mura (sia dure che non)
-                int hard_rate = rand() % 100;
-                if (hard_rate < prob_muro_duro) {
-                    griglia[y][x] = 'H'; // Muro Duro!
+                //mutatore mura dure
+                if (mutatore == 3) {
+                    griglia[y][x] = 'H';
                 } else {
-                    griglia[y][x] = 'D'; // Muro Normale!
+                    // Altrimenti logica classica
+                    int hard_rate = rand() % 100;
+                    if (hard_rate < prob_muro_duro) {
+                        griglia[y][x] = 'H';
+                    } else {
+                        griglia[y][x] = 'D';
+                    }
                 }
             }
         }
@@ -270,15 +310,28 @@ void Livello::apriPortaUscita() {
     }
 }
 
-void Livello::disegna() {
+void Livello::disegna(int playerX, int playerY) {
     box(stdscr, 0, 0);
 
-    //Coordinate dell'inizio della matrice
     start_y = getmaxy(stdscr) / 2 - max_y / 2;
     start_x = getmaxx(stdscr) / 2 - max_x / 2;
 
     for (int y = 0; y < max_y; y++) {
         for (int x = 0; x < max_x; x++) {
+
+            // --- LA MAGIA DEL BLACKOUT (Fog of War) ---
+            if (mutatore == 2 && playerX != -1 && playerY != -1) {
+                // Calcoliamo la distanza dal giocatore
+                int distX = std::abs(x - playerX);
+                int distY = std::abs(y - playerY);
+
+                // Raggio visivo 10x10 attorno al player = quadrato 7x7 visibile
+                if (distX > 10 || distY > 10) {
+                    mvaddch(start_y + y, start_x + x, ' '); // Stampa il buio assoluto!
+                    continue; // Salta il resto del disegno per questa casella
+                }
+            }
+
             char cella = griglia[y][x];
 
             switch (cella) {
@@ -292,7 +345,7 @@ void Livello::disegna() {
                     mvaddch(start_y + y, start_x + x, ' ');
                     attroff(COLOR_PAIR(MURO_DISTRUTTIBILE) | A_REVERSE);
                     break;
-                case 'H': // IL NUOVO MURO DURO VERDE SCURO
+                case 'H':
                     attron(COLOR_PAIR(MURO_DURO) | A_REVERSE);
                     mvaddch(start_y + y, start_x + x, ' ');
                     attroff(COLOR_PAIR(MURO_DURO) | A_REVERSE);
@@ -304,7 +357,6 @@ void Livello::disegna() {
                     break;
                 case 'U':
                     attron(COLOR_PAIR(PORTALE));
-                    // Sostituisci 'U' con ACS_CKBOARD o ACS_BLOCK
                     mvaddch(start_y + y, start_x + x, ACS_BLOCK);
                     attroff(COLOR_PAIR(PORTALE));
                     break;
@@ -319,7 +371,6 @@ void Livello::disegna() {
                     attroff(COLOR_PAIR(ITEM_RARO));
                     break;
                 case 'E':
-                    //Drop epico lampeggia
                     attron(COLOR_PAIR(ITEM_EPICO) | A_BLINK);
                     mvaddch(start_y + y, start_x + x, 'E');
                     attroff(COLOR_PAIR(ITEM_EPICO) | A_BLINK);
@@ -328,16 +379,47 @@ void Livello::disegna() {
         }
     }
 
-    //Per rendere la scritta centrale per qualsiasi lunghezza di max_x
-    char stringa_n_livello[40]= "BOMBERMAN ASCII - LIVELLO";
-    int lunghezza_stringa = strlen(stringa_n_livello);
+    // --- L'ANNUNCIO DINAMICO DEL MUTATORE (TUTTO COLORE BASE) ---
+    char nomeMutatore[30] = "";
+
+    // Usiamo sempre e solo il COLORE_BASE per tutti!
+    int coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
+
+    if (mutatore == 2) {
+        strcpy(nomeMutatore, "- [ BLACKOUT ]");
+        // L'A_REVERSE inverte i colori (es. testo nero su sfondo bianco), è infallibile!
+        coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
+    }
+    else if (mutatore == 3) {
+        strcpy(nomeMutatore, "- [ ZONA BLINDATA ]");
+        coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
+    }
+    else if (mutatore == 4) {
+        strcpy(nomeMutatore, "- [ CARESTIA ]");
+        coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
+    }
+
+    char stringa_titolo[80];
+    if (mutatore == 1) {
+        sprintf(stringa_titolo, "BOMBERMAN ASCII - LIVELLO %d", idLivello);
+    } else {
+        sprintf(stringa_titolo, "BOMBERMAN ASCII - LIVELLO %d %s", idLivello, nomeMutatore);
+    }
+
+    int lunghezza_stringa = strlen(stringa_titolo);
     int stampa = (max_x - lunghezza_stringa)/2;
 
-    //Stampa del livello in cui è il giocatore
-    mvprintw(start_y - 2, start_x + stampa, "%s %d", stringa_n_livello, idLivello);
+    attron(coloreTitolo);
+    mvprintw(start_y - 2, start_x + stampa, "%s", stringa_titolo);
+    attroff(coloreTitolo);
 }
 
 void Livello::generaDrop(int y, int x) {
+    //niente item per tutto il livello
+    if (mutatore == 4) {
+        griglia[y][x] = ' ';
+        return;
+    }
     //Creiamo l'oggetto dinamicamente per mantenerlo in memoria
     Item* drop = new Item(x, y);
 
