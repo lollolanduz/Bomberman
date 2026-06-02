@@ -50,4 +50,7 @@ const int FRAME_NEMICO_X = 10;
 const int FRAME_NEMICO_Z = 7;
 const int FRAME_NEMICO_I = 3;
 
+//variabile per blackout
+const int DIAMETRO_VISIVO=8;
+
 #endif //BOMBERMAN_COSTANTI_H
