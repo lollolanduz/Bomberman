@@ -35,19 +35,17 @@ Livello::Livello(int id) {
 
     playerRadiusTimer = 0;
 
-    //Gestione del mutatore tramite matrice
-    //Ogni riga indica un livello
-    //Colonne indicano il tipo (col1 = normale, col2 = frenesia, col3 = Mura Dure, col4 = nessun drop)
-    //Il numero indica la percentuale (somma = 100%)
+    // MAtrice mutatori
+    // Colonne: {Normale (1), Mura Dure (2), Carestia (3), Blackout (4)}
     int probabilita[5][4] = {
-        {80, 10,  5,  5},  // Livello 1
-        {75, 15,  5,  5},  // Livello 2
-        {70, 15, 10,  5},  // Livello 3
-        {60, 20, 15,  5},  // Livello 4
-        {50, 20, 15, 15}   // Livello 5
+        {85, 15,  0,  0},  // Livello 1 (facile)
+        {75, 15, 10,  0},  // Livello 2 (facile)
+        {60, 20, 15,  5},  // Livello 3 (medio)
+        {50, 20, 15, 15},  // Livello 4 (difficile)
+        {40, 20, 20, 20}   // Livello 5 (caos)
     };
 
-    //guardia per assicurarsi di non sforare l'array
+    //Guardia per assicurarsi di non sforare l'array
     int indiceLiv;
     if (idLivello > 5) {
         indiceLiv = 4;
@@ -55,20 +53,21 @@ Livello::Livello(int id) {
         indiceLiv = idLivello - 1;
     }
 
-    int randVal = rand() % 100; // Tira un dado da 0 a 99
+    //Tiro un dado da 0 a 99
+    int randVal = rand() % 100;
 
-    // Probabilità Pesata:
+    // Probabilità Pesata dei mutatori
     if (randVal < probabilita[indiceLiv][0]) {
         mutatore = 1; // Normale
     }
     else if (randVal < probabilita[indiceLiv][0] + probabilita[indiceLiv][1]) {
-        mutatore = 2; // Frenesia
+        mutatore = 2; // Mura Dure (Zona Blindata)
     }
     else if (randVal < probabilita[indiceLiv][0] + probabilita[indiceLiv][1] + probabilita[indiceLiv][2]) {
-        mutatore = 3; // Mura Dure (Zona Blindata)
+        mutatore = 3; // Carestia (Nessun Drop)
     }
     else {
-        mutatore = 4; // Carestia (Nessun Drop)
+        mutatore = 4; // Blackout
     }
 
     genera_griglia_vuota();
@@ -100,7 +99,7 @@ Livello::Livello(int id) {
         contatoreNemici++;
     }
 
-    // Generazione del nemico Intelligente
+    //Generazione del nemico Intelligente
     if (idLivello >= 4) {
         int numIntelligenti = idLivello - 3;
         for (int i = 0; i < numIntelligenti; i++) {
@@ -176,7 +175,7 @@ void Livello::genera_MuraDistruttibili() {
     }
 
     //Calcolo probabilità delle mura DURE
-    // L1 e L2: 0% | L3: 10% | L4: 20% | L5: 30%
+    // L1 e L2: 0% , L3: 10% , L4: 20% , L5: 30%
     int prob_muro_duro = 0;
     if (idLivello >= 3) {
         prob_muro_duro = (idLivello - 2) * 10;
@@ -187,8 +186,8 @@ void Livello::genera_MuraDistruttibili() {
         for (int x=1; x < max_x - 1; x++) {
             int wall_rate= rand() % 100;
             if (wall_rate < wall_cap && griglia[y][x] != 'M') {
-                //mutatore mura dure
-                if (mutatore == 3) {
+                // Mutatore 2: Zona blindata, forziamo tutte le mura a essere Dure!
+                if (mutatore == 2) {
                     griglia[y][x] = 'H';
                 } else {
                     // Altrimenti logica classica
@@ -224,17 +223,17 @@ void Livello::genera_teletrasporto() {
         int opp_y = max_y - 1 - rand_y;
         int opp_x = max_x - 1 - rand_x;
 
-        // --- LA GUARDIA (Calcolo Distanza) ---
-        // Calcoliamo quanti "passi" separano i due teletrasporti
+        //Guardia per garantire una distanza minima tra i portali
+        //Calcolo distanza
         int distanza = std::abs(rand_x - opp_x) + std::abs(rand_y - opp_y);
 
-        // Se sono a meno di 15 passi di distanza, saltiamo il resto del codice
-        // e il ciclo while ricomincerà istantaneamente a cercare nuove coordinate!
+        //Se sono a meno di 25 passi di distanza, saltiamo il resto del codice
+        //e il ciclo while ricomincerà istantaneamente a cercare nuove coordinate
         if (distanza < 25) {
             continue;
         }
 
-            //Verifico se sono spazi vuoti
+        //Verifico se sono spazi vuoti
         if (griglia[rand_y][rand_x] == ' ' && griglia[opp_y][opp_x] == ' ') {
 
             //Entrambi diversi dalla zona di spawn
@@ -310,6 +309,7 @@ void Livello::apriPortaUscita() {
     }
 }
 
+//Prendo in input le coordinate del player per il mutatore Blackout
 void Livello::disegna(int playerX, int playerY) {
     box(stdscr, 0, 0);
 
@@ -319,14 +319,14 @@ void Livello::disegna(int playerX, int playerY) {
     for (int y = 0; y < max_y; y++) {
         for (int x = 0; x < max_x; x++) {
 
-            // --- LA MAGIA DEL BLACKOUT (Fog of War) ---
-            if (mutatore == 2 && playerX != -1 && playerY != -1) {
-                // Calcoliamo la distanza dal giocatore
+            // Mutatore 4= Blackout
+            if (mutatore == 4 && playerX != -1 && playerY != -1) {
+                //Calcolo distanza
                 int distX = std::abs(x - playerX);
                 int distY = std::abs(y - playerY);
 
-                // Raggio visivo 10x10 attorno al player = quadrato 7x7 visibile
-                if (distX > 10 || distY > 10) {
+                // Raggio visivo 10x10 attorno al player = quadrato 10x10 visibile
+                if (distX > DIAMETRO_VISIVO || distY > DIAMETRO_VISIVO) {
                     mvaddch(start_y + y, start_x + x, ' '); // Stampa il buio assoluto!
                     continue; // Salta il resto del disegno per questa casella
                 }
@@ -386,16 +386,15 @@ void Livello::disegna(int playerX, int playerY) {
     int coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
 
     if (mutatore == 2) {
-        strcpy(nomeMutatore, "- [ BLACKOUT ]");
-        // L'A_REVERSE inverte i colori (es. testo nero su sfondo bianco), è infallibile!
-        coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
-    }
-    else if (mutatore == 3) {
         strcpy(nomeMutatore, "- [ ZONA BLINDATA ]");
         coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
     }
-    else if (mutatore == 4) {
+    else if (mutatore == 3) {
         strcpy(nomeMutatore, "- [ CARESTIA ]");
+        coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
+    }
+    else if (mutatore == 4) {
+        strcpy(nomeMutatore, "- [ BLACKOUT ]");
         coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
     }
 
@@ -415,8 +414,8 @@ void Livello::disegna(int playerX, int playerY) {
 }
 
 void Livello::generaDrop(int y, int x) {
-    //niente item per tutto il livello
-    if (mutatore == 4) {
+    // Mutatore 3: niente item per tutto il livello!
+    if (mutatore == 3) {
         griglia[y][x] = ' ';
         return;
     }
@@ -442,5 +441,3 @@ void Livello::generaDrop(int y, int x) {
 int Livello::getTempoMaxLivello() {
     return 150 + (idLivello * 30);
 }
-
-

@@ -36,17 +36,24 @@ void Game::inizializzaGrafica() {
     init_pair(MURO_INDISTRUTTIBILE, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
+
     init_pair(COLORE_X, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(COLORE_Z, COLOR_CYAN, COLOR_BLACK);
     init_pair(COLORE_I, COLOR_RED, COLOR_BLACK);
+
     init_pair(LAYER_1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(LAYER_2, LAYER_2, COLOR_BLACK);
     init_pair(LAYER_3, COLOR_RED, COLOR_BLACK);
     init_pair(LAYER_4, LAYER_4, COLOR_BLACK);
+
     init_pair(SCELTA_MENU, COLOR_YELLOW, COLOR_BLACK);
+
     init_pair(TELETRASPORTO, COLOR_BLUE, COLOR_BLACK);
+
     init_pair(PORTALE, COLOR_RED, COLOR_BLACK);
-    init_pair(99, COLOR_BLACK, COLOR_YELLOW);
+
+    init_pair(ITEM_RARO_ATTIVO, COLOR_BLACK, COLOR_YELLOW);
+
     init_pair(COLORE_BOMBA, COLORE_BOMBA, COLOR_BLACK);
     init_pair(COLORE_ESPLOSIONE, COLORE_ESPLOSIONE, COLOR_BLACK);
 
@@ -78,8 +85,9 @@ void Game::run() {
                 for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                     int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                     int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
-                    if (gestoreMappa.livelloCorrente->mutatore == 2) {
-                        if (std::abs(nX - giocatore.getX()) > 3 || std::abs(nY - giocatore.getY()) > 3) continue;
+                    // Mutatore 4 = Blackout
+                    if (gestoreMappa.livelloCorrente->mutatore == 4) {
+                        if (std::abs(nX - giocatore.getX()) > DIAMETRO_VISIVO || std::abs(nY - giocatore.getY()) > DIAMETRO_VISIVO) continue;
                     }
                     gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 }
@@ -364,11 +372,11 @@ void Game::run() {
                             bool disegnaBomba = true;
                             int t = gestoreMappa.livelloCorrente->bombTimer[b];
 
-                            // Se siamo nel Blackout, nascondiamo la bomba se è troppo lontana!
-                            if (gestoreMappa.livelloCorrente->mutatore == 2) {
+                            // Se siamo nel Blackout (Mutatore 4), nascondiamo la bomba se è troppo lontana!
+                            if (gestoreMappa.livelloCorrente->mutatore == 4) {
                                 int distX = std::abs(gestoreMappa.livelloCorrente->bombX[b] - giocatore.getX());
                                 int distY = std::abs(gestoreMappa.livelloCorrente->bombY[b] - giocatore.getY());
-                                if (distX > 3 || distY > 3) disegnaBomba = false;
+                                if (distX > DIAMETRO_VISIVO || distY > DIAMETRO_VISIVO) disegnaBomba = false;
                             }
 
                             if (t >= INIZIO_BOMBA_PALPITANTE && t < INIZIO_BOMBA_PANICO) if (t % 8 < 4) disegnaBomba = false;
@@ -383,11 +391,11 @@ void Game::run() {
                     }
 
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
-                        // Se siamo nel Blackout, nascondiamo i nemici distanti!
-                        if (gestoreMappa.livelloCorrente->mutatore == 2) {
+                        // Se siamo nel Blackout (Mutatore 4), nascondiamo i nemici distanti!
+                        if (gestoreMappa.livelloCorrente->mutatore == 4) {
                             int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                             int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
-                            if (std::abs(nX - giocatore.getX()) > 3 || std::abs(nY - giocatore.getY()) > 3) continue;
+                            if (std::abs(nX - giocatore.getX()) > DIAMETRO_VISIVO || std::abs(nY - giocatore.getY()) > DIAMETRO_VISIVO) continue;
                         }
                         gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                     }
@@ -401,9 +409,9 @@ void Game::run() {
 
                     if (disegnaGiocatore) {
                         if (giocatore.isRadiusBoosted(gestoreMappa.livelloCorrente)) {
-                            attron(COLOR_PAIR(99) | A_BOLD);
+                            attron(COLOR_PAIR(ITEM_RARO_ATTIVO) | A_BOLD);
                             mvaddch(gestoreMappa.livelloCorrente->start_y + giocatore.getY(), gestoreMappa.livelloCorrente->start_x + giocatore.getX(), 'P');
-                            attroff(COLOR_PAIR(99) | A_BOLD);
+                            attroff(COLOR_PAIR(ITEM_RARO_ATTIVO) | A_BOLD);
                         } else {
                             giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x, false);
                         }

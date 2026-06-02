@@ -39,7 +39,7 @@ public:
 
     char griglia[max_y][max_x];
 
-    // 1=Normale, 2=Frenesia, 3=Mura Dure, 4=Nessun item
+    // 1=Normale, 2=Blackout, 3=Mura Dure, 4=Nessun item
     int mutatore;
 
     // Memoria posizione giocatore per questo livello
