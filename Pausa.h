@@ -13,12 +13,12 @@ private:
     int scelta_pausa;
     bool in_pausa;
 
-    // AUMENTATO A 4 OPZIONI
+    //4 opzioni
     char opzioni_pausa[4][20];
 
     void disegnaPause();
 
-    // NUOVA FUNZIONE PER I COMANDI
+    //Funzione per la Legenda
     void mostraLegenda();
 
 public:

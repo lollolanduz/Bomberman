@@ -11,7 +11,7 @@ Pausa::Pausa() {
     scelta_pausa = 0;
     in_pausa = false;
 
-    // ORA CI SONO 4 OPZIONI
+    //4 opzioni per il tasto Pausa
     strcpy(opzioni_pausa[0], "Continua");
     strcpy(opzioni_pausa[1], "Leggenda");
     strcpy(opzioni_pausa[2], "Ricomincia");
@@ -74,7 +74,7 @@ void Pausa::mostraLegenda() {
 
     wrefresh(win_legenda);
 
-    // Aspetta che il giocatore prema un tasto qualsiasi
+    //Aspetto che il giocatore prema un tasto
     getch();
 
     delwin(win_legenda);
@@ -101,25 +101,24 @@ int Pausa::gestisciPause() {
             }
         }
         else if (input == '\n') {
-            // GESTIONE INTELLIGENTE DEI RETURN
+            //Gestione dei Return
             if (scelta_pausa == 0) {
                 return 0; // Continua
             }
             else if (scelta_pausa == 1) {
-                // Apre la leggenda
+                //Apre la leggenda
                 mostraLegenda();
 
-                // --- IL TRUCCO ANTI-GLITCH ---
-                // Diciamo a ncurses di rinfrescare l'intero schermo di base (stdscr)
-                // Questo "cancella" visivamente la Legenda rimettendoci sopra la mappa!
+                //Serve a "resettare" l'intero schermo (stdscr)
+                //Questo "cancella" visivamente la Legenda rimettendo la pausa sopra la mappa
                 touchwin(stdscr);
                 refresh();
             }
             else if (scelta_pausa == 2) {
-                return 1; // Ricomincia (Come prima)
+                return 1; // Ricomincia
             }
             else if (scelta_pausa == 3) {
-                return 2; // Torna al menu (Come prima)
+                return 2; // Torna al menu
             }
         }
     }

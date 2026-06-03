@@ -56,7 +56,7 @@ public:
     int bombTimer[10];
     int bombRadius[10];
 
-    // Array dei nemici (ora appartengono al Livello!)
+    //Array dei nemici (ora appartengono al Livello!)
     Entity* nemici[300];
     int contatoreNemici;
 

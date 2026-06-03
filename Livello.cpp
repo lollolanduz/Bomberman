@@ -23,7 +23,7 @@ Livello::Livello(int id) {
     //Serve a gestire il portale per concludere il livello
     Portale = false;
 
-    // Inizialmente, la posizione salvata è lo spawn (1,1)
+    //Inizialmente, la posizione salvata è lo spawn (1,1)
     player_save_x = 1;
     player_save_y = 1;
 
@@ -35,8 +35,8 @@ Livello::Livello(int id) {
 
     playerRadiusTimer = 0;
 
-    // MAtrice mutatori
-    // Colonne: {Normale (1), Mura Dure (2), Carestia (3), Blackout (4)}
+    //Matrice mutatori
+    //Colonne: {Normale (1), Mura Dure (2), Carestia (3), Blackout (4)}
     int probabilita[5][4] = {
         {85, 15,  0,  0},  // Livello 1 (facile)
         {75, 15, 10,  0},  // Livello 2 (facile)
@@ -300,6 +300,7 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
 }
 
 void Livello::apriPortaUscita() {
+    mutatore=1;
     if (!Portale) {
         //Genera il portale di distruzione del livello sul bordo a destra
         for (int y = (max_y/2) - 2; y <= (max_y/2) + 2; y++) {
@@ -325,7 +326,7 @@ void Livello::disegna(int playerX, int playerY) {
                 int distX = std::abs(x - playerX);
                 int distY = std::abs(y - playerY);
 
-                // Raggio visivo 10x10 attorno al player = quadrato 10x10 visibile
+                // Raggio visivo attorno al player = quadrato visibile
                 if (distX > DIAMETRO_VISIVO || distY > DIAMETRO_VISIVO) {
                     mvaddch(start_y + y, start_x + x, ' '); // Stampa il buio assoluto!
                     continue; // Salta il resto del disegno per questa casella

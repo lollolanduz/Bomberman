@@ -33,6 +33,7 @@ void Game::inizializzaGrafica() {
     init_color(COLORE_ESPLOSIONE, 686, 0, 0);
 
     init_pair(COLORE_BASE, COLOR_WHITE, COLOR_BLACK);
+
     init_pair(MURO_INDISTRUTTIBILE, COLOR_WHITE, COLOR_BLACK);
     init_pair(MURO_DURO, MURO_DURO, COLOR_BLACK);
     init_pair(MURO_DISTRUTTIBILE, MURO_DISTRUTTIBILE, COLOR_BLACK);
@@ -360,7 +361,7 @@ void Game::run() {
                     }
 
                     erase();
-                    // Passiamo le coordinate al disegno per applicare il Blackout!
+                    // Passiamo le coordinate al disegno per applicare il Blackout
                     gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
 
                     int visualizzaMinuti = (tempoRimanente > 0) ? tempoRimanente / 60 : 0;
@@ -372,7 +373,7 @@ void Game::run() {
                             bool disegnaBomba = true;
                             int t = gestoreMappa.livelloCorrente->bombTimer[b];
 
-                            // Se siamo nel Blackout (Mutatore 4), nascondiamo la bomba se è troppo lontana!
+                            // Se siamo nel Blackout (Mutatore 4), nascondiamo la bomba se è troppo lontana
                             if (gestoreMappa.livelloCorrente->mutatore == 4) {
                                 int distX = std::abs(gestoreMappa.livelloCorrente->bombX[b] - giocatore.getX());
                                 int distY = std::abs(gestoreMappa.livelloCorrente->bombY[b] - giocatore.getY());
@@ -391,7 +392,7 @@ void Game::run() {
                     }
 
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
-                        // Se siamo nel Blackout (Mutatore 4), nascondiamo i nemici distanti!
+                        // Se siamo nel Blackout (Mutatore 4), nascondiamo i nemici distanti
                         if (gestoreMappa.livelloCorrente->mutatore == 4) {
                             int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                             int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
