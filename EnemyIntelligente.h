@@ -43,6 +43,15 @@ public:
 
         if (frameCounter >= FRAME_NEMICO_I) {
 
+            // --- FIX DEFINITIVO DEL CRASH ---
+            // Se il nemico si trova GIA' sulle coordinate del giocatore (es. al respawn),
+            // non ha senso cercare un percorso. La matrice 'parent' risulterebbe vuota
+            // e manderebbe in SegFault il gioco. Lo blocchiamo subito!
+            if (x == playerX && y == playerY) {
+                frameCounter = 0;
+                return;
+            }
+
             int distanza = std::abs(x - playerX) + std::abs(y - playerY);
 
             bool inFuria = (distanza <= 3);
