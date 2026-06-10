@@ -114,6 +114,8 @@ Livello::Livello(int id) {
         }
     }
 }
+
+//Distruttore
 Livello::~Livello() {
     // Distrugge tutti i nemici in un colpo solo, indipendentemente dal tipo!
     for (int i = 0; i < contatoreNemici; i++) {
@@ -123,8 +125,6 @@ Livello::~Livello() {
         delete itemsATerra[i];
     }
 }
-
-
 
 void Livello::genera_griglia_vuota() {
     //Stampo lo spazio vuoto in tutta la griglia, per evitare
@@ -186,7 +186,7 @@ void Livello::genera_MuraDistruttibili() {
         for (int x=1; x < max_x - 1; x++) {
             int wall_rate= rand() % 100;
             if (wall_rate < wall_cap && griglia[y][x] != 'M') {
-                // Mutatore 2: Zona blindata, forziamo tutte le mura a essere Dure!
+                // Mutatore 2: Zona blindata, forziamo tutte le mura ad H (Hard)
                 if (mutatore == 2) {
                     griglia[y][x] = 'H';
                 } else {
@@ -327,6 +327,7 @@ void Livello::disegna(int playerX, int playerY) {
                 int distY = std::abs(y - playerY);
 
                 // Raggio visivo attorno al player = quadrato visibile
+                //Se distanza superiore al diametro_visivo allora non stampa nulla
                 if (distX > DIAMETRO_VISIVO || distY > DIAMETRO_VISIVO) {
                     mvaddch(start_y + y, start_x + x, ' '); // Stampa il buio assoluto!
                     continue; // Salta il resto del disegno per questa casella
@@ -380,10 +381,10 @@ void Livello::disegna(int playerX, int playerY) {
         }
     }
 
-    // --- L'ANNUNCIO DINAMICO DEL MUTATORE (TUTTO COLORE BASE) ---
+    //Per capire all'interno del livello che mutatore è presente
     char nomeMutatore[30] = "";
 
-    // Usiamo sempre e solo il COLORE_BASE per tutti!
+    //Mutatore 1
     int coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
 
     if (mutatore == 2) {
@@ -399,6 +400,9 @@ void Livello::disegna(int playerX, int playerY) {
         coloreTitolo = COLOR_PAIR(COLORE_BASE) | A_BOLD;
     }
 
+    //Uso sprintf al posto di strcpy poichè quest'ultimo a differenza
+    //gestisce stringhe già pronte e stampando sempre un livello
+    //(e possibilmente un mutatore diverso) richiederebbe più righe di codice
     char stringa_titolo[80];
     if (mutatore == 1) {
         sprintf(stringa_titolo, "BOMBERMAN ASCII - LIVELLO %d", idLivello);
@@ -406,6 +410,7 @@ void Livello::disegna(int playerX, int playerY) {
         sprintf(stringa_titolo, "BOMBERMAN ASCII - LIVELLO %d %s", idLivello, nomeMutatore);
     }
 
+    //Per stampare al centro dello schermo calcolando la lunghezza della stringa
     int lunghezza_stringa = strlen(stringa_titolo);
     int stampa = (max_x - lunghezza_stringa)/2;
 
@@ -415,7 +420,7 @@ void Livello::disegna(int playerX, int playerY) {
 }
 
 void Livello::generaDrop(int y, int x) {
-    // Mutatore 3: niente item per tutto il livello!
+    // Mutatore 3: nessun item per tutto il livello
     if (mutatore == 3) {
         griglia[y][x] = ' ';
         return;

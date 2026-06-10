@@ -34,7 +34,8 @@ void Menu::disegnaMenu() {
     attron(COLOR_PAIR(LAYER_1));
     mvprintw(title_y, center_x - 24,   "  ___  ___  __  __ ___ ___ ___ __  __   _   _  _ ");
     attroff(COLOR_PAIR(LAYER_1));
-
+    //Nota: namps serve a sospendere l'esecuzione del programma
+    //per un tempo dato (in millisecondi) prima di ripartire
     if (!animazioneCompletata) {
         refresh();
         napms(100);

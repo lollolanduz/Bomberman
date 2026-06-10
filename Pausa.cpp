@@ -28,7 +28,7 @@ void Pausa::disegnaPause() {
     mvwprintw(finestra, 2, (num_colonne - 5) / 2, "PAUSA");
     mvwhline(finestra, 3, 1, ACS_HLINE, num_colonne - 2);
 
-    // IL CICLO ORA GIRA FINO A 4
+    //Ciclo for per le scelte della pausa (simile alla sceltaa del menu)
     for (int i = 0; i < 4; i++) {
         int riga_y = 6 + (i * 2);
         int start_col = 4;
@@ -47,7 +47,7 @@ void Pausa::disegnaPause() {
     delwin(finestra);
 }
 
-// LA NUOVA FINESTRA DELLA LEGENDA
+//Finestra della legenda
 void Pausa::mostraLegenda() {
     int height = 14;
     int width = 45;
