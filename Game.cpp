@@ -126,11 +126,6 @@ void Game::run() {
                                 }
                                 break;
                             }
-
-                            case 'q':
-                                inGioco = false;
-                                break;
-
                             case '+': {
                                 time_t ora = std::time(nullptr);
                                 if (gestoreMappa.livelloCorrente->tempoLivello > 1000000) gestoreMappa.livelloCorrente->tempoLivello = ora - gestoreMappa.livelloCorrente->tempoLivello;
