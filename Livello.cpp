@@ -107,7 +107,7 @@ Livello::Livello(int id) {
             do {
                 temp_x = (rand() % (max_x - 2)) + 1;
                 temp_y = (rand() % (max_y - 2)) + 1;
-            } while (griglia[temp_y][temp_x] != ' ');
+            } while (griglia[temp_y][temp_x] != ' ' || temp_x < 15 && temp_y < 15);
 
             nemici[contatoreNemici] = new EnemyIntelligente(temp_x, temp_y, 'i', COLORE_I);
             contatoreNemici++;
