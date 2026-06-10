@@ -459,10 +459,23 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     while (cursore < 10) {
         int ch = getch();
 
+        // Invio per confermare (funziona solo se è stato inserito almeno un carattere)
         if ((ch == '\n' || ch == '\r' || ch == KEY_ENTER) && cursore > 0) {
             break;
         }
 
+        // --- GESTIONE TASTO CANCELLA (BACKSPACE) ---
+        if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
+            if (cursore > 0) {
+                cursore--;          // Sposta il cursore indietro nell'array
+                nome[cursore] = '\0'; // Cancella il carattere in memoria
+                mvaddch(16, 25 + cursore, ' '); // Cancella il carattere a schermo stampando uno spazio
+                refresh();
+            }
+            continue; // Salta il resto del ciclo e aspetta il prossimo tasto
+        }
+
+        // Accetta solo lettere
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
             if (ch >= 'a' && ch <= 'z') ch -= 32;
             nome[cursore] = ch;

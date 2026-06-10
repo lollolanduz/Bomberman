@@ -137,32 +137,46 @@ void Menu::mostraClassifica() {
     mvprintw(5, 20, "--- C L A S S I F I C A ---");
     attroff(COLOR_PAIR(LAYER_1) | A_BOLD);
 
-    mvprintw(8, 15, "Quanti giocatori vuoi visualizzare? (Premi da 1 a 9): ");
+    // Messaggio aggiornato con l'indicazione per uscire
+    mvprintw(8, 11, "Quanti giocatori vuoi visualizzare? (Premi da 1 a 9, o 'Q' per uscire): ");
     refresh();
 
     int n_da_visualizzare = 0;
+    bool esciSubito = false;
 
     flushinp();
-    timeout(-1); // Aspettiamo un tasto all'infinito
+    timeout(-1);
 
     while (n_da_visualizzare < 1 || n_da_visualizzare > 9) {
         int ch = getch();
+
         if (ch >= '1' && ch <= '9') {
             n_da_visualizzare = ch - '0';
         }
+        // 27 è il codice ASCII del tasto ESC
+        else if (ch == 'q' || ch == 'Q' || ch == 27) {
+            esciSubito = true;
+            break;
+        }
     }
 
-    mvprintw(8, 69, "%d", n_da_visualizzare);
+    // Se l'utente ha voluto annullare, puliamo lo schermo e usciamo dalla funzione
+    if (esciSubito) {
+        clear();
+        return;
+    }
+
+    mvprintw(8, 81, "%d", n_da_visualizzare);
     refresh();
 
+    // ... DA QUI IN POI IL CODICE RESTA IDENTICO A PRIMA ...
     RecordClassifica arrayScore[100];
     int tot_record = 0;
 
     std::ifstream fileIn("classifica.txt");
     if (fileIn.is_open()) {
-        char nomeTemp[11]; // Aggiornato a 11
+        char nomeTemp[11];
         int puntiTemp;
-
         while (fileIn >> nomeTemp >> puntiTemp && tot_record < 100) {
             strcpy(arrayScore[tot_record].nome, nomeTemp);
             arrayScore[tot_record].punti = puntiTemp;
@@ -188,7 +202,6 @@ void Menu::mostraClassifica() {
     } else {
         attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
         for (int i = 0; i < righe_stampa; i++) {
-            // %-10s formatta la stringa per occupare sempre 10 spazi, allineando bene i punteggi
             mvprintw(11 + (i*2), 25, "%d. %-10s  -  %05d pt", i+1, arrayScore[i].nome, arrayScore[i].punti);
         }
         attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
@@ -197,9 +210,8 @@ void Menu::mostraClassifica() {
     mvprintw(11 + (righe_stampa*2) + 3, 20, "Premi un tasto per tornare al menu...");
     refresh();
 
-
-    flushinp();  //  Svuota qualsiasi tasto tu abbia premuto prima per sbaglio
-    timeout(-1); // Dice a ncurses "Aspetta per sempre finché non premo un tasto"
-    getch();     //  Il blocco effettivo
+    flushinp();
+    timeout(-1);
+    getch();
     clear();
 }
