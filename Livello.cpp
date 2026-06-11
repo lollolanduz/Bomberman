@@ -300,7 +300,6 @@ void Livello::gestisciTeletrasporto(int &giocatore_y, int &giocatore_x) {
 }
 
 void Livello::apriPortaUscita() {
-    mutatore=1;
     if (!Portale) {
         //Genera il portale di distruzione del livello sul bordo a destra
         for (int y = (max_y/2) - 2; y <= (max_y/2) + 2; y++) {
@@ -321,7 +320,8 @@ void Livello::disegna(int playerX, int playerY) {
         for (int x = 0; x < max_x; x++) {
 
             // Mutatore 4= Blackout
-            if (mutatore == 4 && playerX != -1 && playerY != -1) {
+            //rimane attivo anche se il portale è ancora chiuso
+            if (mutatore == 4 && !Portale && playerX != -1 && playerY != -1) {
                 //Calcolo distanza
                 int distX = std::abs(x - playerX);
                 int distY = std::abs(y - playerY);

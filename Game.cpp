@@ -87,7 +87,7 @@ void Game::run() {
                     int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                     int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
                     // Mutatore 4 = Blackout
-                    if (gestoreMappa.livelloCorrente->mutatore == 4) {
+                    if (gestoreMappa.livelloCorrente->mutatore == 4 && !gestoreMappa.livelloCorrente->Portale) {
                         if (std::abs(nX - giocatore.getX()) > DIAMETRO_VISIVO || std::abs(nY - giocatore.getY()) > DIAMETRO_VISIVO) continue;
                     }
                     gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
@@ -369,7 +369,7 @@ void Game::run() {
                             int t = gestoreMappa.livelloCorrente->bombTimer[b];
 
                             // Se siamo nel Blackout (Mutatore 4), nascondiamo la bomba se è troppo lontana
-                            if (gestoreMappa.livelloCorrente->mutatore == 4) {
+                            if (gestoreMappa.livelloCorrente->mutatore == 4 && !gestoreMappa.livelloCorrente->Portale) {
                                 int distX = std::abs(gestoreMappa.livelloCorrente->bombX[b] - giocatore.getX());
                                 int distY = std::abs(gestoreMappa.livelloCorrente->bombY[b] - giocatore.getY());
                                 if (distX > DIAMETRO_VISIVO || distY > DIAMETRO_VISIVO) disegnaBomba = false;
@@ -388,7 +388,7 @@ void Game::run() {
 
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                         // Se siamo nel Blackout (Mutatore 4), nascondiamo i nemici distanti
-                        if (gestoreMappa.livelloCorrente->mutatore == 4) {
+                        if (gestoreMappa.livelloCorrente->mutatore == 4 && !gestoreMappa.livelloCorrente->Portale) {
                             int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                             int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
                             if (std::abs(nX - giocatore.getX()) > DIAMETRO_VISIVO || std::abs(nY - giocatore.getY()) > DIAMETRO_VISIVO) continue;
