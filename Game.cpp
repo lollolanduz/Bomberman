@@ -488,10 +488,64 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
 
     napms(500);
 
-    std::ofstream fileClassifica("classifica.txt", std::ios::app);
-    if (fileClassifica.is_open()) {
-        fileClassifica << nome << " " << punteggio << "\n";
-        fileClassifica.close();
+    // 1. CALCOLO DELLA DATA ATTUALE
+    time_t t = std::time(nullptr);
+    tm* now = std::localtime(&t);
+    char dataOdierna[6];
+    // Formattiamo giorno e mese (es: "12/06")
+    sprintf(dataOdierna, "%02d/%02d", now->tm_mday, now->tm_mon + 1);
+
+    // Struttura locale per l'ordinamento
+    struct RecordTemp {
+        char n[11];
+        int p;
+        char d[6];
+    };
+
+    RecordTemp arrayScore[100];
+    int tot_record = 0;
+
+    // 2. LETTURA DEL VECCHIO FILE
+    std::ifstream fileIn("classifica.txt");
+    if (fileIn.is_open()) {
+        char nTemp[11], dTemp[6];
+        int pTemp;
+        // Leggiamo massimo 99 record per far spazio al nuovo
+        while (fileIn >> nTemp >> pTemp >> dTemp && tot_record < 99) {
+            strcpy(arrayScore[tot_record].n, nTemp);
+            arrayScore[tot_record].p = pTemp;
+            strcpy(arrayScore[tot_record].d, dTemp);
+            tot_record++;
+        }
+        fileIn.close();
+    }
+
+    // 3. INSERIMENTO DEL NUOVO RECORD
+    strcpy(arrayScore[tot_record].n, nome);
+    arrayScore[tot_record].p = punteggio;
+    strcpy(arrayScore[tot_record].d, dataOdierna);
+    tot_record++;
+
+    // 4. ORDINAMENTO DAL PIÙ ALTO AL PIÙ BASSO
+    for (int i = 0; i < tot_record - 1; i++) {
+        for (int j = 0; j < tot_record - i - 1; j++) {
+            if (arrayScore[j].p < arrayScore[j+1].p) {
+                RecordTemp temp = arrayScore[j];
+                arrayScore[j] = arrayScore[j+1];
+                arrayScore[j+1] = temp;
+            }
+        }
+    }
+
+    // 5. SOVRASCRITTURA DEL FILE (Mantiene solo la Top 50)
+    std::ofstream fileOut("classifica.txt"); // Niente ios::app! Questo resetta il file.
+    if (fileOut.is_open()) {
+        int limite_salvataggi = (tot_record < 50) ? tot_record : 50;
+
+        for (int i = 0; i < limite_salvataggi; i++) {
+            fileOut << arrayScore[i].n << " " << arrayScore[i].p << " " << arrayScore[i].d << "\n";
+        }
+        fileOut.close();
     }
 
     clear();

@@ -129,6 +129,7 @@ int Menu::gestisciInput() {
 struct RecordClassifica {
     char nome[11];
     int punti;
+    char data[6]; // <--- Aggiunto lo spazio per la data
 };
 
 void Menu::mostraClassifica() {
@@ -138,7 +139,6 @@ void Menu::mostraClassifica() {
     mvprintw(5, 20, "--- C L A S S I F I C A ---");
     attroff(COLOR_PAIR(LAYER_1) | A_BOLD);
 
-    // Messaggio aggiornato con l'indicazione per uscire
     mvprintw(8, 11, "Quanti giocatori vuoi visualizzare? (Premi da 1 a 9, o 'Q' per uscire): ");
     refresh();
 
@@ -154,14 +154,12 @@ void Menu::mostraClassifica() {
         if (ch >= '1' && ch <= '9') {
             n_da_visualizzare = ch - '0';
         }
-        // 27 è il codice ASCII del tasto ESC
         else if (ch == 'q' || ch == 'Q' || ch == 27) {
             esciSubito = true;
             break;
         }
     }
 
-    // Se l'utente ha voluto annullare, puliamo lo schermo e usciamo dalla funzione
     if (esciSubito) {
         clear();
         return;
@@ -170,7 +168,6 @@ void Menu::mostraClassifica() {
     mvprintw(8, 81, "%d", n_da_visualizzare);
     refresh();
 
-    // ... DA QUI IN POI IL CODICE RESTA IDENTICO A PRIMA ...
     RecordClassifica arrayScore[100];
     int tot_record = 0;
 
@@ -178,14 +175,19 @@ void Menu::mostraClassifica() {
     if (fileIn.is_open()) {
         char nomeTemp[11];
         int puntiTemp;
-        while (fileIn >> nomeTemp >> puntiTemp && tot_record < 100) {
+        char dataTemp[6]; // <--- Variabile temporanea per la data
+
+        // Ora leggiamo TRE elementi per riga
+        while (fileIn >> nomeTemp >> puntiTemp >> dataTemp && tot_record < 100) {
             strcpy(arrayScore[tot_record].nome, nomeTemp);
             arrayScore[tot_record].punti = puntiTemp;
+            strcpy(arrayScore[tot_record].data, dataTemp); // Copiamo la data
             tot_record++;
         }
         fileIn.close();
     }
 
+    // Ordinamento Bubble Sort
     for (int i = 0; i < tot_record - 1; i++) {
         for (int j = 0; j < tot_record - i - 1; j++) {
             if (arrayScore[j].punti < arrayScore[j+1].punti) {
@@ -203,7 +205,8 @@ void Menu::mostraClassifica() {
     } else {
         attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
         for (int i = 0; i < righe_stampa; i++) {
-            mvprintw(11 + (i*2), 25, "%d. %-10s  -  %05d pt", i+1, arrayScore[i].nome, arrayScore[i].punti);
+            // Aggiunto il %s per la data e spostata la X a 21 per tenerlo centrato
+            mvprintw(11 + (i*2), 21, "%d. %-10s  -  %05d pt  (%s)", i+1, arrayScore[i].nome, arrayScore[i].punti, arrayScore[i].data);
         }
         attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
     }
