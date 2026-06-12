@@ -451,15 +451,15 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     flushinp();
     timeout(-1);
 
-    while (cursore < 10) {
+    while (true) {
         int ch = getch();
 
-        // Invio per confermare (funziona solo se è stato inserito almeno un carattere)
+        // 1. Invio per confermare (funziona solo se è stato inserito almeno un carattere)
         if ((ch == '\n' || ch == '\r' || ch == KEY_ENTER) && cursore > 0) {
             break;
         }
 
-        // --- GESTIONE TASTO CANCELLA (BACKSPACE) ---
+        // 2. --- GESTIONE TASTO CANCELLA (BACKSPACE) ---
         if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
             if (cursore > 0) {
                 cursore--;          // Sposta il cursore indietro nell'array
@@ -470,17 +470,19 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
             continue; // Salta il resto del ciclo e aspetta il prossimo tasto
         }
 
-        // Accetta solo lettere
+        // 3. Accetta solo lettere e previene l'overflow oltre i 10 caratteri
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
-            if (ch >= 'a' && ch <= 'z') ch -= 32;
-            nome[cursore] = ch;
+            if (cursore < 10) {
+                if (ch >= 'a' && ch <= 'z') ch -= 32;
+                nome[cursore] = ch;
 
-            attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-            mvaddch(16, 25 + cursore, ch);
-            attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
-            refresh();
+                attron(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+                mvaddch(16, 25 + cursore, ch);
+                attroff(COLOR_PAIR(SCELTA_MENU) | A_BOLD);
+                refresh();
 
-            cursore++;
+                cursore++;
+            }
         }
     }
 
