@@ -25,10 +25,10 @@ void Game::inizializzaGrafica() {
     start_color();
     PDC_set_blink(TRUE);
 
-    init_color(MURO_DISTRUTTIBILE, 0, 460, 0);
+    init_color(MURO_DISTRUTTIBILE, 0, 480, 0);
     init_color(LAYER_2, 1000, 500, 0);
     init_color(LAYER_4, 500, 0, 0);
-    init_color(MURO_DURO, 0, 250, 0);
+    init_color(MURO_DURO, 0, 320, 0);
     init_color(COLORE_BOMBA, 800, 0, 0);
     init_color(COLORE_ESPLOSIONE, 686, 0, 0);
 
