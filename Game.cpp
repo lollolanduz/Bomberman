@@ -363,6 +363,8 @@ void Game::run() {
                     int visualizzaSecondi = (tempoRimanente > 0) ? tempoRimanente % 60 : 0;
                     mvprintw(gestoreMappa.livelloCorrente->start_y - 1, gestoreMappa.livelloCorrente->start_x + 1, "Vite: %d  |  Tempo: %02d:%02d  |  Punti: %d", giocatore.getlife(), visualizzaMinuti, visualizzaSecondi, giocatore.getPunteggio());
 
+                    mvprintw(gestoreMappa.livelloCorrente->start_y + Livello::max_y, gestoreMappa.livelloCorrente->start_x, "Premi 'T' per Pausa");
+
                     for (int b = 0; b < 10; b++) {
                         if (gestoreMappa.livelloCorrente->isBombActive[b]) {
                             bool disegnaBomba = true;
