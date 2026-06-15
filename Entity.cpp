@@ -1,5 +1,5 @@
 #include "Entity.h"
-#include <pdcurses.h>
+#include "terminal_config.h"
 
 // Costruttore base condiviso da Player e Nemici
 Entity::Entity(int X, int Y, char S, int CP) :

@@ -2,8 +2,6 @@
 #define BOMBERMAN_MENU_H
 
 #pragma once
-#include <pdcurses.h>
-#include <cstring>
 
 class Menu {
 private:

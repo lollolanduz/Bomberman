@@ -1,7 +1,7 @@
 #include "EnemyIntelligente.h"
 #include <cmath>
 #include <cstdlib>
-#include <pdcurses.h>
+#include "terminal_config.h"
 
 EnemyIntelligente::EnemyIntelligente(int start_x, int start_y, char sim, int col)
         : Entity(start_x, start_y, sim, col) {

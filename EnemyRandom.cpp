@@ -1,7 +1,7 @@
 #include "EnemyRandom.h"
 #include "Costanti.h"
 #include <cstdlib>
-#include <pdcurses.h>
+#include "terminal_config.h"
 
 EnemyRandom::EnemyRandom(int start_x, int start_y, char sim, int punti, int vel, int col)
     : Entity(start_x, start_y, sim, col) {

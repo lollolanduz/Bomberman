@@ -5,7 +5,7 @@
 #include "Menu.h"
 #include "Costanti.h"
 #include <iostream>
-#include <pdcurses.h>
+#include "terminal_config.h"
 #include <fstream>
 #include <cstring>
 

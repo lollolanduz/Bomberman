@@ -1,5 +1,5 @@
 #include "Game.h"
-#include <pdcurses.h>
+#include "terminal_config.h"
 #include <cstdlib>
 #include <ctime>
 #include "Mappa.h"
@@ -11,6 +11,7 @@
 #include "Pausa.h"
 #include <fstream>
 #include <cmath>
+#include <cstring>
 
 Game::Game() {
     inizializzaGrafica();

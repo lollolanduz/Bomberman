@@ -1,7 +1,6 @@
 //
 // Created by Utente on 19/02/2026.
 //
-#include <pdcurses.h>
 #include "Mappa.h"
 #include "Livello.h"
 

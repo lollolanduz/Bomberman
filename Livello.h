@@ -6,7 +6,7 @@
 #define BOMBERMAN_LIVELLI_H
 
 #pragma once
-#include <pdcurses.h>
+#include "terminal_config.h"
 #include "item.h"
 #include "Entity.h"
 

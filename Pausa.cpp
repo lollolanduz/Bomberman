@@ -5,7 +5,7 @@
 #include "Pausa.h"
 #include <iostream>
 #include <cstring>
-#include <pdcurses.h>
+#include "terminal_config.h"
 
 Pausa::Pausa() {
     scelta_pausa = 0;
