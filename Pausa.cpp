@@ -81,47 +81,45 @@ void Pausa::mostraLegenda() {
 }
 
 int Pausa::gestisciPause() {
-    in_pausa = true;
-    timeout(-1);
+    timeout(-1); // Disattiva il timeout per attendere l'input all'infinito
 
-    while (in_pausa) {
+    while (true) {
         disegnaPause();
         int input = getch();
 
+        // Movimento verso l'alto
         if (input == KEY_UP || input == 'w') {
             scelta_pausa--;
             if (scelta_pausa < 0) {
-                scelta_pausa = 3; // ORA IL MASSIMO E' 3
+                scelta_pausa = 3;
             }
         }
+        // Movimento verso il basso
         else if (input == KEY_DOWN || input == 's') {
             scelta_pausa++;
-            if (scelta_pausa > 3) { // ORA IL MASSIMO E' 3
+            if (scelta_pausa > 3) {
                 scelta_pausa = 0;
             }
         }
+        // Selezione con il tasto INVIO
         else if (input == '\n') {
-            //Gestione dei Return
             if (scelta_pausa == 0) {
-                return 0; // Continua
+                return 0; // Continua la partita attuale
             }
-            else if (scelta_pausa == 1) {
-                //Apre la leggenda
-                mostraLegenda();
 
-                //Serve a "resettare" l'intero schermo (stdscr)
-                //Questo "cancella" visivamente la Legenda rimettendo la pausa sopra la mappa
+            if (scelta_pausa == 1) {
+                mostraLegenda(); // Mostra i comandi di gioco
+
+                // Forza il ripristino grafico della schermata di pausa sopra la mappa
                 touchwin(stdscr);
                 refresh();
             }
             else if (scelta_pausa == 2) {
-                return 1; // Ricomincia
+                return 1; // Ricomincia il livello da capo
             }
             else if (scelta_pausa == 3) {
-                return 2; // Torna al menu
+                return 2; // Torna al menu principale
             }
         }
     }
-
-    return 0;
 }
