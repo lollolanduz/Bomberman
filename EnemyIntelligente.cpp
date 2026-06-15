@@ -45,8 +45,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
         // Se è lontano dorme ('i' minuscola) e salta il turno
         if (!isSveglio) { frameCounter = 0; return; }
 
-        // Ragazzi, visto che vector/queue sono vietati, ho simulato la coda della BFS a mano
-        // con un array statico da 960 (40x24) per essere sicuro di non andare mai in buffer overflow
         bool visited[Livello::max_y][Livello::max_x] = {false};
         Punto parent[Livello::max_y][Livello::max_x];
 
