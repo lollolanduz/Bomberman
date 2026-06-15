@@ -5,7 +5,8 @@
 #ifndef BOMBERMAN_ENTITY_H
 #define BOMBERMAN_ENTITY_H
 
-class Livello; // "Forward declaration": avvisa il compilatore che esiste la classe Livello
+// Forward declaration per evitare problemi di inclusione circolare con Livello.h
+class Livello;
 
 class Entity {
 protected:
@@ -15,18 +16,19 @@ protected:
     int colorPair;
 
 public:
-    Entity(int X, int Y, char S,int CP = 0);
-    virtual ~Entity() {} // Distruttore virtuale (IMPORTANTISSIMO per il polimorfismo!)
+    Entity(int X, int Y, char S, int CP = 0);
+
+    // Distruttore virtuale (indispensabile per il polimorfismo, altrimenti sclera coi puntatori dei nemici)
+    virtual ~Entity() {}
 
     int getX();
     int getY();
 
     virtual void draw(int offsetY, int offsetX);
 
-    // Funzioni vuote di base. Ogni nemico le "sovrascriverà" (override) a modo suo.
+    // Funzioni base che Player e Nemici andranno a sovrascrivere (override)
     virtual void move(Livello* livello, int playerX, int playerY) {}
     virtual int getPunti() { return 0; }
 };
-
 
 #endif //BOMBERMAN_ENTITY_H

@@ -5,7 +5,7 @@
 #include "Costanti.h"
 #include "Livello.h"
 
-// Struttura di supporto per ricordare le coordinate nella mappa
+// Struct al volo per mappare le coordinate durante la ricerca del percorso
 struct Punto {
     int x, y;
 };
@@ -13,16 +13,14 @@ struct Punto {
 class EnemyIntelligente : public Entity {
 private:
     int frameCounter;
-    bool isSveglio;
+    bool isSveglio; // Cambia da 'i' a 'I' se rileva il player nei paraggi
 
-    // Dichiarazione della funzione helper
+    // Funzione di comodo per capire se una casella è calpestabile
     bool puoMuoversi(int targetX, int targetY, Livello* livello, bool inFuria);
 
 public:
-    // Dichiarazione del costruttore
     EnemyIntelligente(int start_x, int start_y, char sim, int col);
 
-    // Dichiarazioni dei metodi sovrascritti (override)
     void move(Livello* livello, int playerX, int playerY) override;
     int getPunti() override;
     void draw(int offsetY, int offsetX) override;

@@ -1,22 +1,22 @@
 #include "EnemyIntelligente.h"
 #include <cmath>
 #include <cstdlib>
-#include <pdcurses.h> // Necessario per le funzioni grafiche (attron, mvaddch, ecc.)
+#include <pdcurses.h>
 
-// Costruttore: inizializza le variabili base richiamando il costruttore di Entity
 EnemyIntelligente::EnemyIntelligente(int start_x, int start_y, char sim, int col)
         : Entity(start_x, start_y, sim, col) {
     frameCounter = 0;
     isSveglio = false;
 }
 
-// Implementazione della funzione helper
 bool EnemyIntelligente::puoMuoversi(int targetX, int targetY, Livello* livello, bool inFuria) {
+    // Fuori dai bordi?
     if (targetX < 0 || targetX >= Livello::max_x || targetY < 0 || targetY >= Livello::max_y) return false;
 
     char ostacolo = livello->griglia[targetY][targetX];
     if (ostacolo == 'M' || ostacolo == 'D' || ostacolo == 'H' || ostacolo == 'T' || ostacolo == 'U') return false;
 
+    // Se è "in furia" se ne sbatte e passa pure sopra le bombe, altrimenti le evita
     if (!inFuria) {
         for (int b = 0; b < 10; b++) {
             if (livello->isBombActive[b] && livello->bombX[b] == targetX && livello->bombY[b] == targetY) return false;
@@ -25,13 +25,12 @@ bool EnemyIntelligente::puoMuoversi(int targetX, int targetY, Livello* livello, 
     return true;
 }
 
-// Implementazione del movimento intelligente (BFS)
 void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
     frameCounter++;
 
     if (frameCounter >= FRAME_NEMICO_I) {
 
-        // --- FIX DEFINITIVO DEL CRASH ---
+        // Se sono già addosso al player esco per evitare calcoli inutili o divisioni per zero
         if (x == playerX && y == playerY) {
             frameCounter = 0;
             return;
@@ -43,33 +42,28 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
         isSveglio = (distanza <= 12);
         symbol = isSveglio ? 'I' : 'i';
 
+        // Se è lontano dorme ('i' minuscola) e salta il turno
         if (!isSveglio) { frameCounter = 0; return; }
 
-        // ====================================================================
-        // --- BFS CON CODA CUSTOM (Array Statico, niente std::queue) ---
-        // ====================================================================
-
+        // Ragazzi, visto che vector/queue sono vietati, ho simulato la coda della BFS a mano
+        // con un array statico da 960 (40x24) per essere sicuro di non andare mai in buffer overflow
         bool visited[Livello::max_y][Livello::max_x] = {false};
         Punto parent[Livello::max_y][Livello::max_x];
 
-        // Creiamo la nostra coda manuale. Max celle possibili = 40x24 = 960
         Punto coda[960];
         int inizioCoda = 0;
         int fineCoda = 0;
 
-        // "Push" della posizione iniziale nella coda
+        // Infilo la partenza nella coda
         coda[fineCoda] = {x, y};
         fineCoda++;
         visited[y][x] = true;
 
         bool trovato = false;
-
         int dx[] = {0, 0, -1, 1};
         int dy[] = {-1, 1, 0, 0};
 
-        // Il ciclo continua finché ci sono elementi nella coda
         while (inizioCoda < fineCoda) {
-            // "Pop" dell'elemento corrente
             Punto corrente = coda[inizioCoda];
             inizioCoda++;
 
@@ -78,6 +72,7 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
                 break;
             }
 
+            // Esploro le celle adiacenti
             for (int i = 0; i < 4; i++) {
                 int nx = corrente.x + dx[i];
                 int ny = corrente.y + dy[i];
@@ -86,14 +81,13 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
                     visited[ny][nx] = true;
                     parent[ny][nx] = corrente;
 
-                    // "Push" del nuovo punto nella coda
                     coda[fineCoda] = {nx, ny};
                     fineCoda++;
                 }
             }
         }
 
-        // --- Ricostruzione del percorso ---
+        // Se ha trovato la strada fa "rewind" dell'array parent per capire quale passo fare ora
         if (trovato) {
             Punto step = {playerX, playerY};
             while (parent[step.y][step.x].x != x || parent[step.y][step.x].y != y) {
@@ -103,7 +97,7 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
             y = step.y;
         }
         else {
-            // Passi casuali se è bloccato
+            // Se è incastrato (es. player coperto da bombe) fa passi a caso per non rimanere bloccato
             int stradeLibere[4];
             int countLibere = 0;
             for (int i = 0; i < 4; i++) {
@@ -120,19 +114,15 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
     }
 }
 
-// Ritorna i punti del nemico
-int EnemyIntelligente::getPunti() { 
-    return 300; 
-}
+int EnemyIntelligente::getPunti() { return 300; }
 
-// Funzione di disegno grafico
 void EnemyIntelligente::draw(int offsetY, int offsetX) {
     if (isSveglio) {
-        attron(COLOR_PAIR(COLORE_I) | A_BOLD);
+        attron(COLOR_PAIR(COLORE_I) | A_BOLD); // Rosso quando caccia ('I')
         mvaddch(y + offsetY, x + offsetX, symbol);
         attroff(COLOR_PAIR(COLORE_I) | A_BOLD);
     } else {
-        attron(COLOR_PAIR(COLORE_BASE));
+        attron(COLOR_PAIR(COLORE_BASE)); // Bianco quando dorme ('i')
         mvaddch(y + offsetY, x + offsetX, symbol);
         attroff(COLOR_PAIR(COLORE_BASE));
     }

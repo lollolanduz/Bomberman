@@ -7,55 +7,49 @@
 #include "Entity.h"
 #include "Livello.h"
 
-
 class Player : public Entity {
 protected:
-    int life;               //numero di vite
-    bool isInvincible;      // Flag immortalità
-    int invincibilityTimer; // Timer immortalità
+    int life;
+    bool isInvincible;      // Gestione degli i-frames (invincibilità post-danno)
+    int invincibilityTimer;
     int raggioBomba;
     int maxBombe;
-    int radiusTimer; // Timer per il raggio potenziato
+    int radiusTimer;        // Timer per il potenziamento del raggio
     int punteggio;
 
 public:
+    Player(int X, int Y, char S, int LIFE);
 
-    Player(int X, int Y, char S, int LIFE);          //costruttore
-
-
-    // Nuovo metodo per impostare la posizione salvata
+    // Forza le coordinate del giocatore (es. per il cambio livello)
     void set_position(int newX, int newY);
 
-    int getlife();//funzione utile al main per sapere quante vite ha il player
+    // Riporta il giocatore al punto di spawn
+    void reset_position();
+
+    // Ragazzi, usate questi getter nel main/game per stampare l'HUD
+    int getlife();
+    int getPunteggio();
 
     int getRaggioBomba(Livello* currentLevel);
-
     int getMaxBombe();
 
-    void take_damage();    //funzione per togliere una vita quando subisce danno
+    // Togle una vita e attiva lo scudo temporaneo
+    void take_damage();
 
-    void reset_position(); // Riporta il giocatore al punto di spawn
-
-    void collect_item(char tipoCasella, Livello* currentLevel);    //funzione per collezionare oggetti
-
-    void move(int input, Livello* currentLevel );
+    void collect_item(char tipoCasella, Livello* currentLevel);
+    void move(int input, Livello* currentLevel);
 
     bool getIsInvincible();
-
     void tickInvincibility();
 
+    // Avvia la logica del teletrasporto passandogli la matrice
+    void check_teleport(Livello* currentLevel);
 
-    void check_teleport(Livello* currentLevel); //Controlla se attivare la funzione teletrasporto
-
-    //Aggiunto Blinking
-    //Successivamente utile per anche l'immortalità
+    // Disegno grafico (passate isBlinking a true per fargli fare l'animazione di danno)
     void draw(int offsetY, int offsetX, bool isBlinking = false);
 
     bool isRadiusBoosted(Livello* currentLevel);
-
     void addPunteggio(int punti);
-    int getPunteggio();
 };
-
 
 #endif //BOMBERMAN_PLAYER_H

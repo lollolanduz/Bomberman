@@ -1,7 +1,3 @@
-//
-// Created by loren on 12/03/2026.
-//
-
 #include "Player.h"
 #include "Costanti.h"
 
@@ -25,15 +21,14 @@ void Player::reset_position() {
     y = 1;
 }
 
-int Player::getlife() {
-    return life;
-}
+int Player::getlife() { return life; }
 
 void Player::take_damage() {
+    // Togliamo vita solo se non ha già lo scudo attivo
     if (life > 0 && !isInvincible) {
         life = life - 1;
         isInvincible = true;
-        invincibilityTimer = 30; // 3 secondi di scudo
+        invincibilityTimer = 30; // Circa 3 secondi di scudo
     }
 }
 
@@ -41,49 +36,34 @@ void Player::move(int input, Livello *currentLevel) {
     int nuovaX = x;
     int nuovaY = y;
 
-    // 1. Calcolo la direzione
-    if (input == 'w' || input == KEY_UP) {
-        nuovaY--; // vado su
-    }
-    else if (input == 's' || input == KEY_DOWN) {
-        nuovaY++; // vado giù
-    }
-    else if (input == 'a' || input == KEY_LEFT) {
-        nuovaX--; // vado a sinistra
-    }
-    else if (input == 'd' || input == KEY_RIGHT) {
-        nuovaX++; // vado a destra
-    }
-    else {
-        //se ha premuto un tasto a caso, non faccio nulla
-        return;
-    }
+    // Calcolo dove sta cercando di andare
+    if (input == 'w' || input == KEY_UP) nuovaY--;
+    else if (input == 's' || input == KEY_DOWN) nuovaY++;
+    else if (input == 'a' || input == KEY_LEFT) nuovaX--;
+    else if (input == 'd' || input == KEY_RIGHT) nuovaX++;
+    else return; // Tasto a caso ignorato
 
-    // 2. Controllo l'ostacolo NELLA NUOVA POSIZIONE
+    // Controllo in anticipo (look-ahead) cosa c'è nella casella di destinazione
+    // per evitare compenetrazioni grafiche fastidiose
     char ostacolo = currentLevel->griglia[nuovaY][nuovaX];
 
-    // Se la casella non è un muro solido ('M') e non è un muro da rompere ('D')
     if (ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'H') {
-        // Mi sposto fisicamente
         x = nuovaX;
         y = nuovaY;
 
-        // 3. ORA che mi sono spostato, controllo se sono finito su un ITEM
+        // Se ci siamo spostati e c'è un drop, lo raccogliamo e lo togliamo dalla mappa
+        // Simo/Ricky: ricordate di passare sempre il currentLevel quando chiamate move!
         char casella = currentLevel->griglia[y][x];
         if (casella == 'C' || casella == 'R' || casella == 'E') {
-            collect_item(casella, currentLevel); // <-- Passiamo currentLevel
+            collect_item(casella, currentLevel);
             currentLevel->griglia[y][x] = ' ';
         }
     }
 }
 
-
-
-//Utile per l'immortalità
 void Player::draw(int offsetY, int offsetX, bool isBlinking) {
     if (isBlinking) {
-        // Usiamo il colore del teletrasporto E il lampeggio
-        attron(A_BLINK | A_BOLD);
+        attron(A_BLINK | A_BOLD); // Effetto lampeggiante quando è invincibile
     }
 
     mvaddch(y + offsetY, x + offsetX, symbol);
@@ -93,23 +73,20 @@ void Player::draw(int offsetY, int offsetX, bool isBlinking) {
     }
 }
 
-
-//Per la funzione teletrasporto in livello.cpp
 void Player::check_teleport(Livello* currentLevel) {
     currentLevel->gestisciTeletrasporto(y,x);
 }
 
-
-// Funzioni dell'immortalità
 bool Player::getIsInvincible() {
     return isInvincible;
 }
 
 void Player::tickInvincibility() {
+    // Da chiamare nel game loop ad ogni giro
     if (isInvincible) {
         invincibilityTimer--;
         if (invincibilityTimer <= 0) {
-            isInvincible = false; // Torna mortale
+            isInvincible = false;
         }
     }
 }
@@ -120,7 +97,7 @@ void Player::collect_item(char tipoCasella, Livello* currentLevel) {
             addPunteggio(50);
             break;
         case 'R':
-            currentLevel->playerRadiusTimer = 100; //Il potenziamento va al livelloi in cui si trova
+            currentLevel->playerRadiusTimer = 100; // Il buff è legato al livello corrente
             break;
         case 'E':
             life++;
@@ -129,25 +106,15 @@ void Player::collect_item(char tipoCasella, Livello* currentLevel) {
 }
 
 int Player::getRaggioBomba(Livello* currentLevel) {
-    if (currentLevel->playerRadiusTimer > 0) {
-        return 2;
-    }
+    if (currentLevel->playerRadiusTimer > 0) return 2;
     return 1;
 }
 
-int Player::getMaxBombe() {
-    return maxBombe;
-}
-
+int Player::getMaxBombe() { return maxBombe; }
 
 bool Player::isRadiusBoosted(Livello* currentLevel) {
     return currentLevel->playerRadiusTimer > 0;
 }
 
-void Player::addPunteggio(int punti) {
-    punteggio += punti;
-}
-
-int Player::getPunteggio() {
-    return punteggio;
-}
+void Player::addPunteggio(int punti) { punteggio += punti; }
+int Player::getPunteggio() { return punteggio; }

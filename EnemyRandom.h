@@ -4,12 +4,13 @@
 #include "Entity.h"
 #include "Livello.h"
 
+// Nemico base: cammina a caso finché non trova un muro, a quel punto cambia direzione
 class EnemyRandom : public Entity {
 private:
     int frameCounter;
     int velocita;
     int puntiGarantiti;
-    int lastDir;
+    int lastDir; // Si ricorda l'ultima mossa per non fare inutili "avanti-indietro"
 
 public:
     EnemyRandom(int start_x, int start_y, char sim, int punti, int vel, int col);
