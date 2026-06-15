@@ -3,9 +3,9 @@
 Un'implementazione C++ del classico videogioco arcade Bomberman, giocabile interamente da terminale. Sviluppato come progetto per l'esame di Programmazione (A.A. 2025/2026).
 
 ## 👥 Membri del Gruppo
-* **Simone Iorio** - simone.iorio3@studio.unibo.it
-* **Lorenzo Landuzzi** - lorenzo.landuzzi3@studio.unibo.it
-* **Riccardo Zuffi** - riccardo.zuffi@studio.unibo.it
+* **Simone Iorio** - simone.iorio3@studio.unibo.it | Numero Matricola 0001222337
+* **Lorenzo Landuzzi** - lorenzo.landuzzi3@studio.unibo.it | Numero Matricola 0001213118
+* **Riccardo Zuffi** - riccardo.zuffi@studio.unibo.it | Numero Matricola 0001223770
 
 ---
 
