@@ -26,9 +26,11 @@ void Pausa::disegnaPause() {
     box(finestra, 0, 0);
 
     mvwprintw(finestra, 2, (num_colonne - 5) / 2, "PAUSA");
+    //disegna una linea orizzontale
+    //mvwhline(WINDOW *win, int y (riga di partenza), int x(colonna di partenza), chtype ch, int n (lunghezza massima));
     mvwhline(finestra, 3, 1, ACS_HLINE, num_colonne - 2);
 
-    //Ciclo for per le scelte della pausa (simile alla sceltaa del menu)
+    //Ciclo for per le scelte della pausa (simile alla scelta del menu)
     for (int i = 0; i < 4; i++) {
         int riga_y = 6 + (i * 2);
         int start_col = 4;
@@ -54,7 +56,7 @@ void Pausa::mostraLegenda() {
     int start_y = (getmaxy(stdscr) - height) / 2;
     int start_x = (getmaxx(stdscr) - width) / 2;
 
-    // Creiamo una finestra un po' più larga per farci stare le spiegazioni
+    //Finestra più larga per le spiegazioni
     WINDOW* win_legenda = newwin(height, width, start_y, start_x);
     box(win_legenda, 0, 0);
 

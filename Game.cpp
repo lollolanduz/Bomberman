@@ -6,8 +6,6 @@
 #include "Menu.h"
 #include "Player.h"
 #include "Costanti.h"
-#include "EnemyRandom.h"
-#include "EnemyIntelligente.h"
 #include "Pausa.h"
 #include <fstream>
 #include <cmath>
@@ -73,6 +71,7 @@ void Game::run() {
         int scelta = menuPrincipale.gestisciInput();
 
         if (scelta == 0) {
+            //Variabile per "Ricomincia" nella pausa
             bool vuoleRicominciare;
 
             do {
@@ -84,13 +83,15 @@ void Game::run() {
                 gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
                 giocatore.draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
 
+                //Ciclo for per disegnare i nemici
                 for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                     int nX = gestoreMappa.livelloCorrente->nemici[i]->getX();
                     int nY = gestoreMappa.livelloCorrente->nemici[i]->getY();
-                    // Mutatore 4 = Blackout
+                    // Mutatore 4 = Blackout, se i nemici sono fuori del diametro visivo allora non li disegna
                     if (gestoreMappa.livelloCorrente->mutatore == 4 && !gestoreMappa.livelloCorrente->Portale) {
                         if (std::abs(nX - giocatore.getX()) > DIAMETRO_VISIVO || std::abs(nY - giocatore.getY()) > DIAMETRO_VISIVO) continue;
                     }
+                    //Disegna i
                     gestoreMappa.livelloCorrente->nemici[i]->draw(gestoreMappa.livelloCorrente->start_y, gestoreMappa.livelloCorrente->start_x);
                 }
 
@@ -98,7 +99,7 @@ void Game::run() {
 
                 bool inGioco = true;
                 timeout(mps);
-                int contatoreFrameX = 0;
+                int contatoreFrame = 0;
 
                 gestoreMappa.livelloCorrente->tempoLivello = std::time(nullptr);
 
@@ -282,6 +283,7 @@ void Game::run() {
                                 refresh();
                                 napms(150);
 
+                                //Gestione della distruzione della bomba, ditrugge mura, reca danno a se stesso, elimina i nemici
                                 for (int i = 0; i < numCelle; i++) {
                                     int eX = esplosioneX[i];
                                     int eY = esplosioneY[i];
@@ -299,11 +301,13 @@ void Game::run() {
                                             inGioco = false; }
                                     }
 
+                                    //Elimina il nemico sulla mappa
                                     for (int k = 0; k < gestoreMappa.livelloCorrente->contatoreNemici; k++) {
                                         if (gestoreMappa.livelloCorrente->nemici[k]->getX() == eX && gestoreMappa.livelloCorrente->nemici[k]->getY() == eY) {
                                             giocatore.addPunteggio(gestoreMappa.livelloCorrente->nemici[k]->getPunti());
                                             gestoreMappa.livelloCorrente->generaDrop(eY, eX);
                                             delete gestoreMappa.livelloCorrente->nemici[k];
+                                            //Riduce il numero di nemici dal totale
                                             for (int j = k; j < gestoreMappa.livelloCorrente->contatoreNemici - 1; j++) {
                                                 gestoreMappa.livelloCorrente->nemici[j] = gestoreMappa.livelloCorrente->nemici[j + 1];
                                             }
@@ -318,12 +322,13 @@ void Game::run() {
                         }
                     }
 
-                    contatoreFrameX++;
+                    contatoreFrame++;
 
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                         gestoreMappa.livelloCorrente->nemici[i]->move(gestoreMappa.livelloCorrente, giocatore.getX(), giocatore.getY());
                     }
 
+                    //Gestione della distruzione degli item a terra
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreItems; i++) {
                         gestoreMappa.livelloCorrente->itemsATerra[i]->timerVita--;
                         if (gestoreMappa.livelloCorrente->itemsATerra[i]->timerVita <= 0) {
@@ -337,6 +342,7 @@ void Game::run() {
                         }
                     }
 
+                    //Gestione del danno al player (perde una vita se colpito da bomba o nemici)
                     bool colpito = false;
                     for (int i = 0; i < gestoreMappa.livelloCorrente->contatoreNemici; i++) {
                         if (giocatore.getX() == gestoreMappa.livelloCorrente->nemici[i]->getX() && giocatore.getY() == gestoreMappa.livelloCorrente->nemici[i]->getY()) {
@@ -403,8 +409,8 @@ void Game::run() {
                     bool possoLampeggiareTele = sulTeletrasporto && (gestoreMappa.livelloCorrente->tempodiInizio != -1);
                     bool disegnaGiocatore = true;
 
-                    if (possoLampeggiareTele && contatoreFrameX % 4 < 2) disegnaGiocatore = false;
-                    if (giocatore.getIsInvincible() && contatoreFrameX % 2 == 0) disegnaGiocatore = false;
+                    if (possoLampeggiareTele && contatoreFrame % 4 < 2) disegnaGiocatore = false;
+                    if (giocatore.getIsInvincible() && contatoreFrame % 2 == 0) disegnaGiocatore = false;
 
                     if (disegnaGiocatore) {
                         if (giocatore.isRadiusBoosted(gestoreMappa.livelloCorrente)) {
