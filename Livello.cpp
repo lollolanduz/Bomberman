@@ -117,7 +117,7 @@ Livello::Livello(int id) {
 
 //Distruttore
 Livello::~Livello() {
-    // Distrugge tutti i nemici in un colpo solo, indipendentemente dal tipo!
+    // Distrugge tutti i nemici e item in un colpo solo, indipendentemente dal tipo
     for (int i = 0; i < contatoreNemici; i++) {
         delete nemici[i];
     }

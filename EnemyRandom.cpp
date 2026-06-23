@@ -15,16 +15,15 @@ void EnemyRandom::move(Livello* livello, int playerX, int playerY) {
     frameCounter++;
 
     if (frameCounter >= velocita) {
-        // Vettori direzione: Su, Giù, Sinistra, Destra
+
         int dy[] = {-1, 1, 0, 0};
         int dx[] = {0, 0, -1, 1};
-        int opposto[] = {1, 0, 3, 2}; // Serve per evitare che torni subito indietro
+        int opposto[] = {1, 0, 3, 2};
 
         int stradeValide[4];
         int countValide = 0;
         int backDir = (lastDir != -1) ? opposto[lastDir] : -1;
 
-        // Analizza le 4 caselle attorno
         for(int i = 0; i < 4; i++) {
             int cY = y + dy[i];
             int cX = x + dx[i];
@@ -39,7 +38,6 @@ void EnemyRandom::move(Livello* livello, int playerX, int playerY) {
                 }
             }
 
-            // Salva solo le direzioni libere da muri o bombe attive
             if(ostacolo != 'M' && ostacolo != 'D' && ostacolo != 'T' && ostacolo != 'U' && ostacolo != 'H' && !cE_unaBomba) {
                 stradeValide[countValide++] = i;
             }
@@ -47,7 +45,7 @@ void EnemyRandom::move(Livello* livello, int playerX, int playerY) {
 
         if (countValide > 0) {
             int sceltaFinale = -1;
-            // Se c'è un bivio, cerchiamo di non fargli fare marcia indietro come uno scemo
+
             if (countValide > 1 && backDir != -1) {
                 int stradeSenzaRitorno[4];
                 int countSenzaRitorno = 0;

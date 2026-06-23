@@ -363,7 +363,6 @@ void Game::run() {
                     }
 
                     erase();
-                    // Passiamo le coordinate al disegno per applicare il Blackout
                     gestoreMappa.livelloCorrente->disegna(giocatore.getX(), giocatore.getY());
 
                     int visualizzaMinuti = (tempoRimanente > 0) ? tempoRimanente / 60 : 0;
@@ -463,23 +462,21 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     while (true) {
         int ch = getch();
 
-        // 1. Invio per confermare (funziona solo se è stato inserito almeno un carattere)
         if ((ch == '\n' || ch == '\r' || ch == KEY_ENTER) && cursore > 0) {
             break;
         }
 
-        // 2. --- GESTIONE TASTO CANCELLA (BACKSPACE) ---
+
         if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
             if (cursore > 0) {
-                cursore--;          // Sposta il cursore indietro nell'array
-                nome[cursore] = '\0'; // Cancella il carattere in memoria
-                mvaddch(16, 25 + cursore, ' '); // Cancella il carattere a schermo stampando uno spazio
+                cursore--;
+                nome[cursore] = '\0';
+                mvaddch(16, 25 + cursore, ' ');
                 refresh();
             }
-            continue; // Salta il resto del ciclo e aspetta il prossimo tasto
+            continue;
         }
 
-        // 3. Accetta solo lettere e previene l'overflow oltre i 10 caratteri
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
             if (cursore < 10) {
                 if (ch >= 'a' && ch <= 'z') ch -= 32;
@@ -497,14 +494,12 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
 
     napms(500);
 
-    // 1. CALCOLO DELLA DATA ATTUALE
     time_t t = std::time(nullptr);
     tm* now = std::localtime(&t);
     char dataOdierna[6];
-    // Formattiamo giorno e mese (es: "12/06")
+
     sprintf(dataOdierna, "%02d/%02d", now->tm_mday, now->tm_mon + 1);
 
-    // Struttura locale per l'ordinamento
     struct RecordTemp {
         char n[11];
         int p;
@@ -514,12 +509,11 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
     RecordTemp arrayScore[100];
     int tot_record = 0;
 
-    // 2. LETTURA DEL VECCHIO FILE
     std::ifstream fileIn("classifica.txt");
     if (fileIn.is_open()) {
         char nTemp[11], dTemp[6];
         int pTemp;
-        // Leggiamo massimo 99 record per far spazio al nuovo
+
         while (fileIn >> nTemp >> pTemp >> dTemp && tot_record < 99) {
             strcpy(arrayScore[tot_record].n, nTemp);
             arrayScore[tot_record].p = pTemp;
@@ -529,13 +523,12 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
         fileIn.close();
     }
 
-    // 3. INSERIMENTO DEL NUOVO RECORD
+
     strcpy(arrayScore[tot_record].n, nome);
     arrayScore[tot_record].p = punteggio;
     strcpy(arrayScore[tot_record].d, dataOdierna);
     tot_record++;
 
-    // 4. ORDINAMENTO DAL PIÙ ALTO AL PIÙ BASSO
     for (int i = 0; i < tot_record - 1; i++) {
         for (int j = 0; j < tot_record - i - 1; j++) {
             if (arrayScore[j].p < arrayScore[j+1].p) {
@@ -546,8 +539,8 @@ void Game::gestisciFinePartita(bool vittoria, int punteggio) {
         }
     }
 
-    // 5. SOVRASCRITTURA DEL FILE (Mantiene solo la Top 50)
-    std::ofstream fileOut("classifica.txt"); // Niente ios::app! Questo resetta il file.
+
+    std::ofstream fileOut("classifica.txt");
     if (fileOut.is_open()) {
         int limite_salvataggi = (tot_record < 50) ? tot_record : 50;
 

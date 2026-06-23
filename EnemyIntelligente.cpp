@@ -10,13 +10,12 @@ EnemyIntelligente::EnemyIntelligente(int start_x, int start_y, char sim, int col
 }
 
 bool EnemyIntelligente::puoMuoversi(int targetX, int targetY, Livello* livello, bool inFuria) {
-    // Fuori dai bordi?
+
     if (targetX < 0 || targetX >= Livello::max_x || targetY < 0 || targetY >= Livello::max_y) return false;
 
     char ostacolo = livello->griglia[targetY][targetX];
     if (ostacolo == 'M' || ostacolo == 'D' || ostacolo == 'H' || ostacolo == 'T' || ostacolo == 'U') return false;
 
-    // Se è "in furia" se ne sbatte e passa pure sopra le bombe, altrimenti le evita
     if (!inFuria) {
         for (int b = 0; b < 10; b++) {
             if (livello->isBombActive[b] && livello->bombX[b] == targetX && livello->bombY[b] == targetY) return false;
@@ -30,7 +29,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
 
     if (frameCounter >= FRAME_NEMICO_I) {
 
-        // Se sono già addosso al player esco per evitare calcoli inutili o divisioni per zero
         if (x == playerX && y == playerY) {
             frameCounter = 0;
             return;
@@ -42,7 +40,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
         isSveglio = (distanza <= 12);
         symbol = isSveglio ? 'I' : 'i';
 
-        // Se è lontano dorme ('i' minuscola) e salta il turno
         if (!isSveglio) { frameCounter = 0; return; }
 
         bool visited[Livello::max_y][Livello::max_x] = {false};
@@ -52,7 +49,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
         int inizioCoda = 0;
         int fineCoda = 0;
 
-        // Infilo la partenza nella coda
         coda[fineCoda] = {x, y};
         fineCoda++;
         visited[y][x] = true;
@@ -70,7 +66,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
                 break;
             }
 
-            // Esploro le celle adiacenti
             for (int i = 0; i < 4; i++) {
                 int nx = corrente.x + dx[i];
                 int ny = corrente.y + dy[i];
@@ -85,7 +80,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
             }
         }
 
-        // Se ha trovato la strada fa "rewind" dell'array parent per capire quale passo fare ora
         if (trovato) {
             Punto step = {playerX, playerY};
             while (parent[step.y][step.x].x != x || parent[step.y][step.x].y != y) {
@@ -95,7 +89,6 @@ void EnemyIntelligente::move(Livello* livello, int playerX, int playerY) {
             y = step.y;
         }
         else {
-            // Se è incastrato (es. player coperto da bombe) fa passi a caso per non rimanere bloccato
             int stradeLibere[4];
             int countLibere = 0;
             for (int i = 0; i < 4; i++) {
@@ -116,11 +109,11 @@ int EnemyIntelligente::getPunti() { return 300; }
 
 void EnemyIntelligente::draw(int offsetY, int offsetX) {
     if (isSveglio) {
-        attron(COLOR_PAIR(COLORE_I) | A_BOLD); // Rosso quando caccia ('I')
+        attron(COLOR_PAIR(COLORE_I) | A_BOLD);
         mvaddch(y + offsetY, x + offsetX, symbol);
         attroff(COLOR_PAIR(COLORE_I) | A_BOLD);
     } else {
-        attron(COLOR_PAIR(COLORE_BASE)); // Bianco quando dorme ('i')
+        attron(COLOR_PAIR(COLORE_BASE));
         mvaddch(y + offsetY, x + offsetX, symbol);
         attroff(COLOR_PAIR(COLORE_BASE));
     }
